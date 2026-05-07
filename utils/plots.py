@@ -479,7 +479,7 @@ def create_html_leaderboard(
     df,
     target,
     metric,
-    filename,
+    filename=None,
     aggfunc='median',
     lower_is_better=True,
     scale_order=['hourly', 'daily', 'weekly', 'monthly', 'seasonal', 'anom', 'iav'],
@@ -492,6 +492,7 @@ def create_html_leaderboard(
     wrap_html=True,
     page_title=None,
     page_heading=None,
+    return_html=False,
 ):
     # --- 1. Data Preparation ---
     pivot_df, overall_scores, skill_scores_df = get_pivot_df_with_scores(
@@ -569,6 +570,9 @@ def create_html_leaderboard(
     )
 
     table_html = styler.to_html()
+
+    if return_html:
+        return table_html
 
     # --- 3. Save ---
     if wrap_html:

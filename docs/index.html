@@ -3,47 +3,2862 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FLUXNET ML Leaderboard</title>
+  <title>FLUXtrapolation Leaderboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>FLUXNET ML Leaderboard</h1>
-  </header>
-  <main>
+    <h1>FLUXtrapolation Leaderboard</h1>
     <p>
-      This leaderboard tracks machine-learning model performance on the FLUXNET
+      This leaderboard tracks machine-learning model performance on the FLUXtrapolation
       benchmark across three evaluation settings (temporal split, spatial split,
       temperature-based split) and three carbon/water flux targets (GPP, ET, NEE).
-      Metrics are pre-computed by submitters and validated automatically on pull
-      request. See the
-      <a href="https://github.com/{TODO: owner/repo}">GitHub repository</a>
+      See the <a href="https://github.com/{TODO: owner/repo}">GitHub repository</a>
       for submission instructions.
     </p>
-    
-    <section>
-      <h2>ET</h2>
-      <ul>
-        <li><a href="leaderboard_ET.html">Median RMSE — ET</a></li>
-        <li><a href="leaderboard_q90_ET.html">90th-percentile RMSE — ET</a></li>
-      </ul>
-    </section>
+  </header>
+  <main>
+    <div role="tablist" class="tab-bar">
+      <button role="tab" data-target="ET" aria-selected="true" class="active">ET</button>
+      <button role="tab" data-target="GPP" aria-selected="false">GPP</button>
+      <button role="tab" data-target="NEE" aria-selected="false">NEE</button>
+    </div>
+    <div role="tabpanel" data-tab="ET">
+      <h2>Median RMSE</h2>
+      <style type="text/css">
+#T_6754e table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_6754e th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_6754e  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_6754e th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_6754e th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_6754e th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_6754e th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_6754e_row0_col0, #T_6754e_row1_col0, #T_6754e_row2_col0, #T_6754e_row3_col0, #T_6754e_row4_col0, #T_6754e_row5_col0 {
+  background-color: #f8f9fa;
+}
+#T_6754e_row0_col1 {
+  background-color: #6DC283;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col2, #T_6754e_row0_col3, #T_6754e_row0_col6, #T_6754e_row0_col11, #T_6754e_row0_col16, #T_6754e_row0_col17, #T_6754e_row1_col1, #T_6754e_row1_col5, #T_6754e_row1_col8, #T_6754e_row1_col9, #T_6754e_row1_col12, #T_6754e_row2_col7, #T_6754e_row2_col8, #T_6754e_row2_col10, #T_6754e_row2_col13, #T_6754e_row2_col14, #T_6754e_row2_col15, #T_6754e_row2_col18, #T_6754e_row3_col10, #T_6754e_row5_col4 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col4 {
+  background-color: #77C68C;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col5, #T_6754e_row3_col11 {
+  background-color: #89CE9B;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col7 {
+  background-color: #7CC890;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col8 {
+  background-color: #7FC992;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col9 {
+  background-color: #B6E0C1;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col10 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col12 {
+  background-color: #68C07F;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col13 {
+  background-color: #9BD5AA;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col14 {
+  background-color: #78C68C;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col15 {
+  background-color: #8DCF9E;
+  color: #1a1a1a;
+}
+#T_6754e_row0_col18, #T_6754e_row2_col1, #T_6754e_row3_col7 {
+  background-color: #74C589;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col2 {
+  background-color: #80CA94;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col3, #T_6754e_row2_col5 {
+  background-color: #88CD9A;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col4 {
+  background-color: #6DC284;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col6 {
+  background-color: #70C386;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col7 {
+  background-color: #79C78D;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col10 {
+  background-color: #75C58A;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col11, #T_6754e_row3_col1 {
+  background-color: #7EC992;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col13 {
+  background-color: #8ECF9F;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col14 {
+  background-color: #BDE3C7;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col15 {
+  background-color: #6AC081;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col16 {
+  background-color: #65BF7D;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col17 {
+  background-color: #DBF0E1;
+  color: #1a1a1a;
+}
+#T_6754e_row1_col18 {
+  background-color: #D9EFDE;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col2 {
+  background-color: #A7DAB4;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col3 {
+  background-color: #B8E1C3;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col4 {
+  background-color: #7BC88F;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col6 {
+  background-color: #80CA93;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col9 {
+  background-color: #BCE3C6;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col11 {
+  background-color: #96D3A6;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col12 {
+  background-color: #FBFDFC;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col16 {
+  background-color: #6BC182;
+  color: #1a1a1a;
+}
+#T_6754e_row2_col17 {
+  background-color: #F8FCF9;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col2 {
+  background-color: #AEDDBA;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col3 {
+  background-color: #E2F2E6;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col4 {
+  background-color: #84CB97;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col5 {
+  background-color: #97D3A7;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col6, #T_6754e_row3_col14, #T_6754e_row3_col18, #T_6754e_row4_col1, #T_6754e_row4_col2, #T_6754e_row4_col3, #T_6754e_row4_col4, #T_6754e_row4_col6, #T_6754e_row4_col7, #T_6754e_row4_col8, #T_6754e_row4_col9, #T_6754e_row4_col11, #T_6754e_row4_col12, #T_6754e_row4_col13, #T_6754e_row4_col14, #T_6754e_row4_col15, #T_6754e_row4_col16, #T_6754e_row4_col18, #T_6754e_row5_col2, #T_6754e_row5_col3, #T_6754e_row5_col6, #T_6754e_row5_col7, #T_6754e_row5_col8, #T_6754e_row5_col9, #T_6754e_row5_col10, #T_6754e_row5_col12, #T_6754e_row5_col13, #T_6754e_row5_col14, #T_6754e_row5_col15, #T_6754e_row5_col17, #T_6754e_row5_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col8 {
+  background-color: #8FD0A0;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col9 {
+  background-color: #85CC98;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col12 {
+  background-color: #A6DAB3;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col13 {
+  background-color: #E6F4E9;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col15 {
+  background-color: #F2F9F4;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col16 {
+  background-color: #7AC78E;
+  color: #1a1a1a;
+}
+#T_6754e_row3_col17 {
+  background-color: #98D4A8;
+  color: #1a1a1a;
+}
+#T_6754e_row4_col5 {
+  background-color: #9ED6AD;
+  color: #1a1a1a;
+}
+#T_6754e_row4_col10 {
+  background-color: #D5EDDC;
+  color: #1a1a1a;
+}
+#T_6754e_row4_col17 {
+  background-color: #E8F5EB;
+  color: #1a1a1a;
+}
+#T_6754e_row5_col1 {
+  background-color: #C1E5CA;
+  color: #1a1a1a;
+}
+#T_6754e_row5_col5 {
+  background-color: #C4E6CD;
+  color: #1a1a1a;
+}
+#T_6754e_row5_col11 {
+  background-color: #F0F8F2;
+  color: #1a1a1a;
+}
+#T_6754e_row5_col16 {
+  background-color: #F3FAF5;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_6754e">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_6754e_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_6754e_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_6754e_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_6754e_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_6754e_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_6754e_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_6754e_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_6754e_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_6754e_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_6754e_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_6754e_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_6754e_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_6754e_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_6754e_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_6754e_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_6754e_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_6754e_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_6754e_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_6754e_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_6754e_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_6754e_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_6754e_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_6754e_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_6754e_level0_row0" class="row_heading level0 row0" >coral</th>
+      <th id="T_6754e_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_6754e_row0_col0" class="data row0 col0" ><b>0.25</b></td>
+      <td id="T_6754e_row0_col1" class="data row0 col1" >0.039</td>
+      <td id="T_6754e_row0_col2" class="data row0 col2" >0.017</td>
+      <td id="T_6754e_row0_col3" class="data row0 col3" >0.015</td>
+      <td id="T_6754e_row0_col4" class="data row0 col4" >0.016</td>
+      <td id="T_6754e_row0_col5" class="data row0 col5" >0.0025</td>
+      <td id="T_6754e_row0_col6" class="data row0 col6" >0.0068</td>
+      <td id="T_6754e_row0_col7" class="data row0 col7" >0.048</td>
+      <td id="T_6754e_row0_col8" class="data row0 col8" >0.024</td>
+      <td id="T_6754e_row0_col9" class="data row0 col9" >0.02</td>
+      <td id="T_6754e_row0_col10" class="data row0 col10" >0.018</td>
+      <td id="T_6754e_row0_col11" class="data row0 col11" >0.004</td>
+      <td id="T_6754e_row0_col12" class="data row0 col12" >0.0096</td>
+      <td id="T_6754e_row0_col13" class="data row0 col13" >0.059</td>
+      <td id="T_6754e_row0_col14" class="data row0 col14" >0.024</td>
+      <td id="T_6754e_row0_col15" class="data row0 col15" >0.02</td>
+      <td id="T_6754e_row0_col16" class="data row0 col16" >0.019</td>
+      <td id="T_6754e_row0_col17" class="data row0 col17" >0.0037</td>
+      <td id="T_6754e_row0_col18" class="data row0 col18" >0.0084</td>
+    </tr>
+    <tr>
+      <th id="T_6754e_level0_row1" class="row_heading level0 row1" >mlp</th>
+      <th id="T_6754e_level1_row1" class="row_heading level1 row1" >mean</th>
+      <td id="T_6754e_row1_col0" class="data row1 col0" ><b>0.24</b></td>
+      <td id="T_6754e_row1_col1" class="data row1 col1" >0.038</td>
+      <td id="T_6754e_row1_col2" class="data row1 col2" >0.018</td>
+      <td id="T_6754e_row1_col3" class="data row1 col3" >0.016</td>
+      <td id="T_6754e_row1_col4" class="data row1 col4" >0.015</td>
+      <td id="T_6754e_row1_col5" class="data row1 col5" >0.0023</td>
+      <td id="T_6754e_row1_col6" class="data row1 col6" >0.0069</td>
+      <td id="T_6754e_row1_col7" class="data row1 col7" >0.048</td>
+      <td id="T_6754e_row1_col8" class="data row1 col8" >0.024</td>
+      <td id="T_6754e_row1_col9" class="data row1 col9" >0.018</td>
+      <td id="T_6754e_row1_col10" class="data row1 col10" >0.018</td>
+      <td id="T_6754e_row1_col11" class="data row1 col11" >0.0041</td>
+      <td id="T_6754e_row1_col12" class="data row1 col12" >0.0096</td>
+      <td id="T_6754e_row1_col13" class="data row1 col13" >0.058</td>
+      <td id="T_6754e_row1_col14" class="data row1 col14" >0.026</td>
+      <td id="T_6754e_row1_col15" class="data row1 col15" >0.019</td>
+      <td id="T_6754e_row1_col16" class="data row1 col16" >0.019</td>
+      <td id="T_6754e_row1_col17" class="data row1 col17" >0.0043</td>
+      <td id="T_6754e_row1_col18" class="data row1 col18" >0.0094</td>
+    </tr>
+    <tr>
+      <th id="T_6754e_level0_row2" class="row_heading level0 row2" >xgb</th>
+      <th id="T_6754e_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_6754e_row2_col0" class="data row2 col0" ><b>0.23</b></td>
+      <td id="T_6754e_row2_col1" class="data row2 col1" >0.039</td>
+      <td id="T_6754e_row2_col2" class="data row2 col2" >0.018</td>
+      <td id="T_6754e_row2_col3" class="data row2 col3" >0.016</td>
+      <td id="T_6754e_row2_col4" class="data row2 col4" >0.016</td>
+      <td id="T_6754e_row2_col5" class="data row2 col5" >0.0025</td>
+      <td id="T_6754e_row2_col6" class="data row2 col6" >0.007</td>
+      <td id="T_6754e_row2_col7" class="data row2 col7" >0.047</td>
+      <td id="T_6754e_row2_col8" class="data row2 col8" >0.024</td>
+      <td id="T_6754e_row2_col9" class="data row2 col9" >0.02</td>
+      <td id="T_6754e_row2_col10" class="data row2 col10" >0.018</td>
+      <td id="T_6754e_row2_col11" class="data row2 col11" >0.0042</td>
+      <td id="T_6754e_row2_col12" class="data row2 col12" >0.011</td>
+      <td id="T_6754e_row2_col13" class="data row2 col13" >0.055</td>
+      <td id="T_6754e_row2_col14" class="data row2 col14" >0.024</td>
+      <td id="T_6754e_row2_col15" class="data row2 col15" >0.019</td>
+      <td id="T_6754e_row2_col16" class="data row2 col16" >0.019</td>
+      <td id="T_6754e_row2_col17" class="data row2 col17" >0.0044</td>
+      <td id="T_6754e_row2_col18" class="data row2 col18" >0.0082</td>
+    </tr>
+    <tr>
+      <th id="T_6754e_level0_row3" class="row_heading level0 row3" >gdro</th>
+      <th id="T_6754e_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_6754e_row3_col0" class="data row3 col0" ><b>0.17</b></td>
+      <td id="T_6754e_row3_col1" class="data row3 col1" >0.04</td>
+      <td id="T_6754e_row3_col2" class="data row3 col2" >0.019</td>
+      <td id="T_6754e_row3_col3" class="data row3 col3" >0.017</td>
+      <td id="T_6754e_row3_col4" class="data row3 col4" >0.016</td>
+      <td id="T_6754e_row3_col5" class="data row3 col5" >0.0025</td>
+      <td id="T_6754e_row3_col6" class="data row3 col6" >0.0089</td>
+      <td id="T_6754e_row3_col7" class="data row3 col7" >0.048</td>
+      <td id="T_6754e_row3_col8" class="data row3 col8" >0.025</td>
+      <td id="T_6754e_row3_col9" class="data row3 col9" >0.018</td>
+      <td id="T_6754e_row3_col10" class="data row3 col10" >0.018</td>
+      <td id="T_6754e_row3_col11" class="data row3 col11" >0.0042</td>
+      <td id="T_6754e_row3_col12" class="data row3 col12" >0.01</td>
+      <td id="T_6754e_row3_col13" class="data row3 col13" >0.065</td>
+      <td id="T_6754e_row3_col14" class="data row3 col14" >0.03</td>
+      <td id="T_6754e_row3_col15" class="data row3 col15" >0.022</td>
+      <td id="T_6754e_row3_col16" class="data row3 col16" >0.02</td>
+      <td id="T_6754e_row3_col17" class="data row3 col17" >0.0039</td>
+      <td id="T_6754e_row3_col18" class="data row3 col18" >0.017</td>
+    </tr>
+    <tr>
+      <th id="T_6754e_level0_row4" class="row_heading level0 row4" >lr</th>
+      <th id="T_6754e_level1_row4" class="row_heading level1 row4" >mean</th>
+      <td id="T_6754e_row4_col0" class="data row4 col0" ><b>0.00</b></td>
+      <td id="T_6754e_row4_col1" class="data row4 col1" >0.06</td>
+      <td id="T_6754e_row4_col2" class="data row4 col2" >0.028</td>
+      <td id="T_6754e_row4_col3" class="data row4 col3" >0.026</td>
+      <td id="T_6754e_row4_col4" class="data row4 col4" >0.019</td>
+      <td id="T_6754e_row4_col5" class="data row4 col5" >0.0025</td>
+      <td id="T_6754e_row4_col6" class="data row4 col6" >0.012</td>
+      <td id="T_6754e_row4_col7" class="data row4 col7" >0.061</td>
+      <td id="T_6754e_row4_col8" class="data row4 col8" >0.029</td>
+      <td id="T_6754e_row4_col9" class="data row4 col9" >0.026</td>
+      <td id="T_6754e_row4_col10" class="data row4 col10" >0.021</td>
+      <td id="T_6754e_row4_col11" class="data row4 col11" >0.0048</td>
+      <td id="T_6754e_row4_col12" class="data row4 col12" >0.014</td>
+      <td id="T_6754e_row4_col13" class="data row4 col13" >0.075</td>
+      <td id="T_6754e_row4_col14" class="data row4 col14" >0.031</td>
+      <td id="T_6754e_row4_col15" class="data row4 col15" >0.025</td>
+      <td id="T_6754e_row4_col16" class="data row4 col16" >0.023</td>
+      <td id="T_6754e_row4_col17" class="data row4 col17" >0.0043</td>
+      <td id="T_6754e_row4_col18" class="data row4 col18" >0.015</td>
+    </tr>
+    <tr>
+      <th id="T_6754e_level0_row5" class="row_heading level0 row5" >mmd</th>
+      <th id="T_6754e_level1_row5" class="row_heading level1 row5" >mean</th>
+      <td id="T_6754e_row5_col0" class="data row5 col0" ><b>-0.31</b></td>
+      <td id="T_6754e_row5_col1" class="data row5 col1" >0.043</td>
+      <td id="T_6754e_row5_col2" class="data row5 col2" >0.023</td>
+      <td id="T_6754e_row5_col3" class="data row5 col3" >0.022</td>
+      <td id="T_6754e_row5_col4" class="data row5 col4" >0.015</td>
+      <td id="T_6754e_row5_col5" class="data row5 col5" >0.0026</td>
+      <td id="T_6754e_row5_col6" class="data row5 col6" >0.014</td>
+      <td id="T_6754e_row5_col7" class="data row5 col7" >0.094</td>
+      <td id="T_6754e_row5_col8" class="data row5 col8" >0.055</td>
+      <td id="T_6754e_row5_col9" class="data row5 col9" >0.053</td>
+      <td id="T_6754e_row5_col10" class="data row5 col10" >0.024</td>
+      <td id="T_6754e_row5_col11" class="data row5 col11" >0.0047</td>
+      <td id="T_6754e_row5_col12" class="data row5 col12" >0.028</td>
+      <td id="T_6754e_row5_col13" class="data row5 col13" >0.11</td>
+      <td id="T_6754e_row5_col14" class="data row5 col14" >0.05</td>
+      <td id="T_6754e_row5_col15" class="data row5 col15" >0.048</td>
+      <td id="T_6754e_row5_col16" class="data row5 col16" >0.022</td>
+      <td id="T_6754e_row5_col17" class="data row5 col17" >0.0046</td>
+      <td id="T_6754e_row5_col18" class="data row5 col18" >0.027</td>
+    </tr>
+  </tbody>
+</table>
 
-    <section>
-      <h2>GPP</h2>
-      <ul>
-        <li><a href="leaderboard_GPP.html">Median RMSE — GPP</a></li>
-        <li><a href="leaderboard_q90_GPP.html">90th-percentile RMSE — GPP</a></li>
-      </ul>
-    </section>
+      <h2>90th-percentile RMSE</h2>
+      <style type="text/css">
+#T_879ae table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_879ae th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_879ae  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_879ae th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_879ae th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_879ae th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_879ae th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_879ae_row0_col0, #T_879ae_row1_col0, #T_879ae_row2_col0, #T_879ae_row3_col0, #T_879ae_row4_col0, #T_879ae_row5_col0 {
+  background-color: #f8f9fa;
+}
+#T_879ae_row0_col1, #T_879ae_row0_col2, #T_879ae_row0_col3, #T_879ae_row0_col13, #T_879ae_row0_col16, #T_879ae_row1_col9, #T_879ae_row1_col14, #T_879ae_row1_col15, #T_879ae_row1_col18, #T_879ae_row2_col6, #T_879ae_row2_col7, #T_879ae_row2_col10, #T_879ae_row2_col17, #T_879ae_row3_col4, #T_879ae_row3_col8, #T_879ae_row3_col11, #T_879ae_row3_col12, #T_879ae_row4_col5 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col4, #T_879ae_row3_col10 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col5 {
+  background-color: #6EC284;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col6, #T_879ae_row1_col10, #T_879ae_row1_col11 {
+  background-color: #70C386;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col7, #T_879ae_row3_col1 {
+  background-color: #74C589;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col8, #T_879ae_row1_col6 {
+  background-color: #97D3A7;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col9 {
+  background-color: #9ED6AD;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col10, #T_879ae_row2_col16 {
+  background-color: #6AC181;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col11, #T_879ae_row1_col16 {
+  background-color: #72C488;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col12 {
+  background-color: #F6FBF7;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col14 {
+  background-color: #C4E6CD;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col15 {
+  background-color: #91D1A2;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col17, #T_879ae_row5_col5 {
+  background-color: #80CA93;
+  color: #1a1a1a;
+}
+#T_879ae_row0_col18 {
+  background-color: #A6DAB4;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col1, #T_879ae_row1_col3 {
+  background-color: #95D3A5;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col2, #T_879ae_row4_col17 {
+  background-color: #8DCF9F;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col4 {
+  background-color: #78C68D;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col5 {
+  background-color: #B6E0C1;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col7 {
+  background-color: #7DC991;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col8 {
+  background-color: #77C68C;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col12, #T_879ae_row2_col15, #T_879ae_row3_col14, #T_879ae_row3_col15, #T_879ae_row3_col18, #T_879ae_row4_col1, #T_879ae_row4_col2, #T_879ae_row4_col3, #T_879ae_row4_col6, #T_879ae_row4_col8, #T_879ae_row4_col9, #T_879ae_row4_col12, #T_879ae_row4_col13, #T_879ae_row4_col15, #T_879ae_row5_col6, #T_879ae_row5_col7, #T_879ae_row5_col8, #T_879ae_row5_col9, #T_879ae_row5_col10, #T_879ae_row5_col12, #T_879ae_row5_col13, #T_879ae_row5_col14, #T_879ae_row5_col15, #T_879ae_row5_col16, #T_879ae_row5_col17, #T_879ae_row5_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col13, #T_879ae_row2_col2 {
+  background-color: #68C07F;
+  color: #1a1a1a;
+}
+#T_879ae_row1_col17 {
+  background-color: #C1E5CA;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col1, #T_879ae_row5_col4 {
+  background-color: #71C487;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col3 {
+  background-color: #79C78E;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col4 {
+  background-color: #66BF7E;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col5 {
+  background-color: #88CD9A;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col8 {
+  background-color: #CEEAD5;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col9, #T_879ae_row4_col14 {
+  background-color: #D0EBD7;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col11 {
+  background-color: #6CC183;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col12 {
+  background-color: #ECF7EF;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col13 {
+  background-color: #64BE7C;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col14 {
+  background-color: #F1F9F3;
+  color: #1a1a1a;
+}
+#T_879ae_row2_col18 {
+  background-color: #D9EFDF;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col2 {
+  background-color: #87CD99;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col3 {
+  background-color: #9FD7AD;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col5 {
+  background-color: #A1D7AF;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col6 {
+  background-color: #D4EDDB;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col7 {
+  background-color: #7AC78E;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col9 {
+  background-color: #73C489;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col13 {
+  background-color: #FAFDFB;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col16 {
+  background-color: #ADDCB9;
+  color: #1a1a1a;
+}
+#T_879ae_row3_col17, #T_879ae_row5_col1 {
+  background-color: #96D3A6;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col4 {
+  background-color: #B0DEBC;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col7 {
+  background-color: #F5FBF7;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col10 {
+  background-color: #9CD6AC;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col11 {
+  background-color: #D3ECD9;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col16 {
+  background-color: #E0F2E5;
+  color: #1a1a1a;
+}
+#T_879ae_row4_col18 {
+  background-color: #F3FAF4;
+  color: #1a1a1a;
+}
+#T_879ae_row5_col2 {
+  background-color: #9CD6AB;
+  color: #1a1a1a;
+}
+#T_879ae_row5_col3 {
+  background-color: #CBE9D3;
+  color: #1a1a1a;
+}
+#T_879ae_row5_col11 {
+  background-color: #B7E1C2;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_879ae">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_879ae_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_879ae_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_879ae_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_879ae_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_879ae_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_879ae_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_879ae_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_879ae_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_879ae_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_879ae_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_879ae_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_879ae_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_879ae_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_879ae_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_879ae_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_879ae_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_879ae_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_879ae_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_879ae_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_879ae_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_879ae_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_879ae_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_879ae_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_879ae_level0_row0" class="row_heading level0 row0" >coral</th>
+      <th id="T_879ae_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_879ae_row0_col0" class="data row0 col0" ><b>0.17</b></td>
+      <td id="T_879ae_row0_col1" class="data row0 col1" >0.062</td>
+      <td id="T_879ae_row0_col2" class="data row0 col2" >0.033</td>
+      <td id="T_879ae_row0_col3" class="data row0 col3" >0.027</td>
+      <td id="T_879ae_row0_col4" class="data row0 col4" >0.024</td>
+      <td id="T_879ae_row0_col5" class="data row0 col5" >0.0077</td>
+      <td id="T_879ae_row0_col6" class="data row0 col6" >0.021</td>
+      <td id="T_879ae_row0_col7" class="data row0 col7" >0.074</td>
+      <td id="T_879ae_row0_col8" class="data row0 col8" >0.039</td>
+      <td id="T_879ae_row0_col9" class="data row0 col9" >0.035</td>
+      <td id="T_879ae_row0_col10" class="data row0 col10" >0.026</td>
+      <td id="T_879ae_row0_col11" class="data row0 col11" >0.0084</td>
+      <td id="T_879ae_row0_col12" class="data row0 col12" >0.026</td>
+      <td id="T_879ae_row0_col13" class="data row0 col13" >0.084</td>
+      <td id="T_879ae_row0_col14" class="data row0 col14" >0.047</td>
+      <td id="T_879ae_row0_col15" class="data row0 col15" >0.037</td>
+      <td id="T_879ae_row0_col16" class="data row0 col16" >0.024</td>
+      <td id="T_879ae_row0_col17" class="data row0 col17" >0.0087</td>
+      <td id="T_879ae_row0_col18" class="data row0 col18" >0.034</td>
+    </tr>
+    <tr>
+      <th id="T_879ae_level0_row1" class="row_heading level0 row1" >xgb</th>
+      <th id="T_879ae_level1_row1" class="row_heading level1 row1" >mean</th>
+      <td id="T_879ae_row1_col0" class="data row1 col0" ><b>0.16</b></td>
+      <td id="T_879ae_row1_col1" class="data row1 col1" >0.066</td>
+      <td id="T_879ae_row1_col2" class="data row1 col2" >0.035</td>
+      <td id="T_879ae_row1_col3" class="data row1 col3" >0.029</td>
+      <td id="T_879ae_row1_col4" class="data row1 col4" >0.024</td>
+      <td id="T_879ae_row1_col5" class="data row1 col5" >0.0084</td>
+      <td id="T_879ae_row1_col6" class="data row1 col6" >0.022</td>
+      <td id="T_879ae_row1_col7" class="data row1 col7" >0.075</td>
+      <td id="T_879ae_row1_col8" class="data row1 col8" >0.037</td>
+      <td id="T_879ae_row1_col9" class="data row1 col9" >0.033</td>
+      <td id="T_879ae_row1_col10" class="data row1 col10" >0.026</td>
+      <td id="T_879ae_row1_col11" class="data row1 col11" >0.0084</td>
+      <td id="T_879ae_row1_col12" class="data row1 col12" >0.028</td>
+      <td id="T_879ae_row1_col13" class="data row1 col13" >0.084</td>
+      <td id="T_879ae_row1_col14" class="data row1 col14" >0.042</td>
+      <td id="T_879ae_row1_col15" class="data row1 col15" >0.034</td>
+      <td id="T_879ae_row1_col16" class="data row1 col16" >0.025</td>
+      <td id="T_879ae_row1_col17" class="data row1 col17" >0.0094</td>
+      <td id="T_879ae_row1_col18" class="data row1 col18" >0.032</td>
+    </tr>
+    <tr>
+      <th id="T_879ae_level0_row2" class="row_heading level0 row2" >mlp</th>
+      <th id="T_879ae_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_879ae_row2_col0" class="data row2 col0" ><b>0.15</b></td>
+      <td id="T_879ae_row2_col1" class="data row2 col1" >0.063</td>
+      <td id="T_879ae_row2_col2" class="data row2 col2" >0.033</td>
+      <td id="T_879ae_row2_col3" class="data row2 col3" >0.028</td>
+      <td id="T_879ae_row2_col4" class="data row2 col4" >0.023</td>
+      <td id="T_879ae_row2_col5" class="data row2 col5" >0.008</td>
+      <td id="T_879ae_row2_col6" class="data row2 col6" >0.02</td>
+      <td id="T_879ae_row2_col7" class="data row2 col7" >0.072</td>
+      <td id="T_879ae_row2_col8" class="data row2 col8" >0.042</td>
+      <td id="T_879ae_row2_col9" class="data row2 col9" >0.037</td>
+      <td id="T_879ae_row2_col10" class="data row2 col10" >0.026</td>
+      <td id="T_879ae_row2_col11" class="data row2 col11" >0.0084</td>
+      <td id="T_879ae_row2_col12" class="data row2 col12" >0.026</td>
+      <td id="T_879ae_row2_col13" class="data row2 col13" >0.084</td>
+      <td id="T_879ae_row2_col14" class="data row2 col14" >0.05</td>
+      <td id="T_879ae_row2_col15" class="data row2 col15" >0.043</td>
+      <td id="T_879ae_row2_col16" class="data row2 col16" >0.024</td>
+      <td id="T_879ae_row2_col17" class="data row2 col17" >0.0084</td>
+      <td id="T_879ae_row2_col18" class="data row2 col18" >0.037</td>
+    </tr>
+    <tr>
+      <th id="T_879ae_level0_row3" class="row_heading level0 row3" >gdro</th>
+      <th id="T_879ae_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_879ae_row3_col0" class="data row3 col0" ><b>0.04</b></td>
+      <td id="T_879ae_row3_col1" class="data row3 col1" >0.063</td>
+      <td id="T_879ae_row3_col2" class="data row3 col2" >0.035</td>
+      <td id="T_879ae_row3_col3" class="data row3 col3" >0.029</td>
+      <td id="T_879ae_row3_col4" class="data row3 col4" >0.023</td>
+      <td id="T_879ae_row3_col5" class="data row3 col5" >0.0082</td>
+      <td id="T_879ae_row3_col6" class="data row3 col6" >0.023</td>
+      <td id="T_879ae_row3_col7" class="data row3 col7" >0.075</td>
+      <td id="T_879ae_row3_col8" class="data row3 col8" >0.036</td>
+      <td id="T_879ae_row3_col9" class="data row3 col9" >0.033</td>
+      <td id="T_879ae_row3_col10" class="data row3 col10" >0.026</td>
+      <td id="T_879ae_row3_col11" class="data row3 col11" >0.0083</td>
+      <td id="T_879ae_row3_col12" class="data row3 col12" >0.022</td>
+      <td id="T_879ae_row3_col13" class="data row3 col13" >0.1</td>
+      <td id="T_879ae_row3_col14" class="data row3 col14" >0.073</td>
+      <td id="T_879ae_row3_col15" class="data row3 col15" >0.07</td>
+      <td id="T_879ae_row3_col16" class="data row3 col16" >0.026</td>
+      <td id="T_879ae_row3_col17" class="data row3 col17" >0.0089</td>
+      <td id="T_879ae_row3_col18" class="data row3 col18" >0.057</td>
+    </tr>
+    <tr>
+      <th id="T_879ae_level0_row4" class="row_heading level0 row4" >lr</th>
+      <th id="T_879ae_level1_row4" class="row_heading level1 row4" >mean</th>
+      <td id="T_879ae_row4_col0" class="data row4 col0" ><b>0.00</b></td>
+      <td id="T_879ae_row4_col1" class="data row4 col1" >0.081</td>
+      <td id="T_879ae_row4_col2" class="data row4 col2" >0.043</td>
+      <td id="T_879ae_row4_col3" class="data row4 col3" >0.042</td>
+      <td id="T_879ae_row4_col4" class="data row4 col4" >0.026</td>
+      <td id="T_879ae_row4_col5" class="data row4 col5" >0.0076</td>
+      <td id="T_879ae_row4_col6" class="data row4 col6" >0.029</td>
+      <td id="T_879ae_row4_col7" class="data row4 col7" >0.086</td>
+      <td id="T_879ae_row4_col8" class="data row4 col8" >0.055</td>
+      <td id="T_879ae_row4_col9" class="data row4 col9" >0.054</td>
+      <td id="T_879ae_row4_col10" class="data row4 col10" >0.028</td>
+      <td id="T_879ae_row4_col11" class="data row4 col11" >0.0094</td>
+      <td id="T_879ae_row4_col12" class="data row4 col12" >0.039</td>
+      <td id="T_879ae_row4_col13" class="data row4 col13" >0.1</td>
+      <td id="T_879ae_row4_col14" class="data row4 col14" >0.048</td>
+      <td id="T_879ae_row4_col15" class="data row4 col15" >0.043</td>
+      <td id="T_879ae_row4_col16" class="data row4 col16" >0.028</td>
+      <td id="T_879ae_row4_col17" class="data row4 col17" >0.0088</td>
+      <td id="T_879ae_row4_col18" class="data row4 col18" >0.038</td>
+    </tr>
+    <tr>
+      <th id="T_879ae_level0_row5" class="row_heading level0 row5" >mmd</th>
+      <th id="T_879ae_level1_row5" class="row_heading level1 row5" >mean</th>
+      <td id="T_879ae_row5_col0" class="data row5 col0" ><b>-0.15</b></td>
+      <td id="T_879ae_row5_col1" class="data row5 col1" >0.066</td>
+      <td id="T_879ae_row5_col2" class="data row5 col2" >0.036</td>
+      <td id="T_879ae_row5_col3" class="data row5 col3" >0.031</td>
+      <td id="T_879ae_row5_col4" class="data row5 col4" >0.024</td>
+      <td id="T_879ae_row5_col5" class="data row5 col5" >0.0079</td>
+      <td id="T_879ae_row5_col6" class="data row5 col6" >0.026</td>
+      <td id="T_879ae_row5_col7" class="data row5 col7" >0.14</td>
+      <td id="T_879ae_row5_col8" class="data row5 col8" >0.067</td>
+      <td id="T_879ae_row5_col9" class="data row5 col9" >0.067</td>
+      <td id="T_879ae_row5_col10" class="data row5 col10" >0.031</td>
+      <td id="T_879ae_row5_col11" class="data row5 col11" >0.0092</td>
+      <td id="T_879ae_row5_col12" class="data row5 col12" >0.053</td>
+      <td id="T_879ae_row5_col13" class="data row5 col13" >0.16</td>
+      <td id="T_879ae_row5_col14" class="data row5 col14" >0.063</td>
+      <td id="T_879ae_row5_col15" class="data row5 col15" >0.058</td>
+      <td id="T_879ae_row5_col16" class="data row5 col16" >0.032</td>
+      <td id="T_879ae_row5_col17" class="data row5 col17" >0.011</td>
+      <td id="T_879ae_row5_col18" class="data row5 col18" >0.05</td>
+    </tr>
+  </tbody>
+</table>
 
-    <section>
-      <h2>NEE</h2>
-      <ul>
-        <li><a href="leaderboard_NEE.html">Median RMSE — NEE</a></li>
-        <li><a href="leaderboard_q90_NEE.html">90th-percentile RMSE — NEE</a></li>
-      </ul>
-    </section>
+    </div>
+    <div role="tabpanel" data-tab="GPP" hidden>
+      <h2>Median RMSE</h2>
+      <style type="text/css">
+#T_ca2aa table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_ca2aa th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_ca2aa  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_ca2aa th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_ca2aa th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_ca2aa th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_ca2aa th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_ca2aa_row0_col0, #T_ca2aa_row1_col0, #T_ca2aa_row2_col0, #T_ca2aa_row3_col0, #T_ca2aa_row4_col0, #T_ca2aa_row5_col0 {
+  background-color: #f8f9fa;
+}
+#T_ca2aa_row0_col1 {
+  background-color: #6BC182;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col2, #T_ca2aa_row0_col3, #T_ca2aa_row0_col9, #T_ca2aa_row0_col10, #T_ca2aa_row0_col12, #T_ca2aa_row0_col17, #T_ca2aa_row0_col18, #T_ca2aa_row1_col1, #T_ca2aa_row1_col5, #T_ca2aa_row1_col6, #T_ca2aa_row1_col7, #T_ca2aa_row1_col8, #T_ca2aa_row1_col10, #T_ca2aa_row1_col11, #T_ca2aa_row2_col4, #T_ca2aa_row2_col13, #T_ca2aa_row2_col14, #T_ca2aa_row2_col15, #T_ca2aa_row2_col16 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col4, #T_ca2aa_row3_col1 {
+  background-color: #65BE7C;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col5 {
+  background-color: #9AD4A9;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col6 {
+  background-color: #7AC78F;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col7, #T_ca2aa_row2_col6 {
+  background-color: #75C58A;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col8, #T_ca2aa_row3_col5 {
+  background-color: #74C589;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col11 {
+  background-color: #6DC284;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col13 {
+  background-color: #C1E5CA;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col14, #T_ca2aa_row2_col12 {
+  background-color: #B7E1C2;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col15 {
+  background-color: #BDE3C7;
+  color: #1a1a1a;
+}
+#T_ca2aa_row0_col16 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col2 {
+  background-color: #71C487;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col3 {
+  background-color: #89CE9B;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col4 {
+  background-color: #6CC183;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col9 {
+  background-color: #96D3A6;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col12 {
+  background-color: #9CD5AB;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col13 {
+  background-color: #C7E7CF;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col14, #T_ca2aa_row3_col18 {
+  background-color: #A7DAB5;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col15 {
+  background-color: #D8EFDE;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col16 {
+  background-color: #64BE7C;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col17 {
+  background-color: #D4EDDB;
+  color: #1a1a1a;
+}
+#T_ca2aa_row1_col18, #T_ca2aa_row2_col2 {
+  background-color: #83CB96;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col1, #T_ca2aa_row3_col4 {
+  background-color: #70C386;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col3 {
+  background-color: #97D3A7;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col5 {
+  background-color: #E0F2E4;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col7 {
+  background-color: #9FD7AD;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col8 {
+  background-color: #B3DFBF;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col9 {
+  background-color: #93D2A3;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col10 {
+  background-color: #67BF7E;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col11 {
+  background-color: #B1DEBD;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col17, #T_ca2aa_row3_col12, #T_ca2aa_row4_col1, #T_ca2aa_row4_col2, #T_ca2aa_row4_col3, #T_ca2aa_row4_col4, #T_ca2aa_row4_col6, #T_ca2aa_row4_col7, #T_ca2aa_row4_col8, #T_ca2aa_row4_col9, #T_ca2aa_row4_col11, #T_ca2aa_row4_col12, #T_ca2aa_row4_col13, #T_ca2aa_row4_col14, #T_ca2aa_row4_col15, #T_ca2aa_row4_col18, #T_ca2aa_row5_col1, #T_ca2aa_row5_col2, #T_ca2aa_row5_col3, #T_ca2aa_row5_col6, #T_ca2aa_row5_col8, #T_ca2aa_row5_col9, #T_ca2aa_row5_col11, #T_ca2aa_row5_col12, #T_ca2aa_row5_col13, #T_ca2aa_row5_col14, #T_ca2aa_row5_col15, #T_ca2aa_row5_col16, #T_ca2aa_row5_col17, #T_ca2aa_row5_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_ca2aa_row2_col18 {
+  background-color: #6CC283;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col2 {
+  background-color: #6AC181;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col3 {
+  background-color: #73C488;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col6 {
+  background-color: #6FC385;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col7 {
+  background-color: #A1D8AF;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col8 {
+  background-color: #D5EDDB;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col9 {
+  background-color: #A8DAB5;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col10 {
+  background-color: #64BE7B;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col11 {
+  background-color: #BBE2C5;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col13 {
+  background-color: #9CD6AB;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col14 {
+  background-color: #A1D7AF;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col15 {
+  background-color: #F5FBF7;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col16 {
+  background-color: #72C487;
+  color: #1a1a1a;
+}
+#T_ca2aa_row3_col17 {
+  background-color: #9AD5AA;
+  color: #1a1a1a;
+}
+#T_ca2aa_row4_col5 {
+  background-color: #A9DBB6;
+  color: #1a1a1a;
+}
+#T_ca2aa_row4_col10 {
+  background-color: #F9FCFA;
+  color: #1a1a1a;
+}
+#T_ca2aa_row4_col16 {
+  background-color: #8DCF9F;
+  color: #1a1a1a;
+}
+#T_ca2aa_row4_col17 {
+  background-color: #EDF7F0;
+  color: #1a1a1a;
+}
+#T_ca2aa_row5_col4 {
+  background-color: #CDEAD4;
+  color: #1a1a1a;
+}
+#T_ca2aa_row5_col5 {
+  background-color: #BCE3C7;
+  color: #1a1a1a;
+}
+#T_ca2aa_row5_col7 {
+  background-color: #C4E6CD;
+  color: #1a1a1a;
+}
+#T_ca2aa_row5_col10 {
+  background-color: #B0DEBC;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_ca2aa">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_ca2aa_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_ca2aa_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_ca2aa_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_ca2aa_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_ca2aa_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_ca2aa_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_ca2aa_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_ca2aa_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_ca2aa_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_ca2aa_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_ca2aa_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_ca2aa_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_ca2aa_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_ca2aa_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_ca2aa_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_ca2aa_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_ca2aa_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_ca2aa_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_ca2aa_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_ca2aa_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_ca2aa_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_ca2aa_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_ca2aa_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_ca2aa_level0_row0" class="row_heading level0 row0" >mmd</th>
+      <th id="T_ca2aa_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_ca2aa_row0_col0" class="data row0 col0" ><b>0.28</b></td>
+      <td id="T_ca2aa_row0_col1" class="data row0 col1" >2.4</td>
+      <td id="T_ca2aa_row0_col2" class="data row0 col2" >1.1</td>
+      <td id="T_ca2aa_row0_col3" class="data row0 col3" >0.99</td>
+      <td id="T_ca2aa_row0_col4" class="data row0 col4" >0.89</td>
+      <td id="T_ca2aa_row0_col5" class="data row0 col5" >0.2</td>
+      <td id="T_ca2aa_row0_col6" class="data row0 col6" >0.42</td>
+      <td id="T_ca2aa_row0_col7" class="data row0 col7" >3.3</td>
+      <td id="T_ca2aa_row0_col8" class="data row0 col8" >1.8</td>
+      <td id="T_ca2aa_row0_col9" class="data row0 col9" >1.2</td>
+      <td id="T_ca2aa_row0_col10" class="data row0 col10" >1.2</td>
+      <td id="T_ca2aa_row0_col11" class="data row0 col11" >0.31</td>
+      <td id="T_ca2aa_row0_col12" class="data row0 col12" >0.6</td>
+      <td id="T_ca2aa_row0_col13" class="data row0 col13" >3.3</td>
+      <td id="T_ca2aa_row0_col14" class="data row0 col14" >1.4</td>
+      <td id="T_ca2aa_row0_col15" class="data row0 col15" >1.1</td>
+      <td id="T_ca2aa_row0_col16" class="data row0 col16" >0.83</td>
+      <td id="T_ca2aa_row0_col17" class="data row0 col17" >0.17</td>
+      <td id="T_ca2aa_row0_col18" class="data row0 col18" >0.57</td>
+    </tr>
+    <tr>
+      <th id="T_ca2aa_level0_row1" class="row_heading level0 row1" >mlp</th>
+      <th id="T_ca2aa_level1_row1" class="row_heading level1 row1" >mean</th>
+      <td id="T_ca2aa_row1_col0" class="data row1 col0" ><b>0.27</b></td>
+      <td id="T_ca2aa_row1_col1" class="data row1 col1" >2.4</td>
+      <td id="T_ca2aa_row1_col2" class="data row1 col2" >1.1</td>
+      <td id="T_ca2aa_row1_col3" class="data row1 col3" >1</td>
+      <td id="T_ca2aa_row1_col4" class="data row1 col4" >0.9</td>
+      <td id="T_ca2aa_row1_col5" class="data row1 col5" >0.19</td>
+      <td id="T_ca2aa_row1_col6" class="data row1 col6" >0.41</td>
+      <td id="T_ca2aa_row1_col7" class="data row1 col7" >3.2</td>
+      <td id="T_ca2aa_row1_col8" class="data row1 col8" >1.8</td>
+      <td id="T_ca2aa_row1_col9" class="data row1 col9" >1.3</td>
+      <td id="T_ca2aa_row1_col10" class="data row1 col10" >1.2</td>
+      <td id="T_ca2aa_row1_col11" class="data row1 col11" >0.31</td>
+      <td id="T_ca2aa_row1_col12" class="data row1 col12" >0.64</td>
+      <td id="T_ca2aa_row1_col13" class="data row1 col13" >3.3</td>
+      <td id="T_ca2aa_row1_col14" class="data row1 col14" >1.3</td>
+      <td id="T_ca2aa_row1_col15" class="data row1 col15" >1.1</td>
+      <td id="T_ca2aa_row1_col16" class="data row1 col16" >0.82</td>
+      <td id="T_ca2aa_row1_col17" class="data row1 col17" >0.19</td>
+      <td id="T_ca2aa_row1_col18" class="data row1 col18" >0.6</td>
+    </tr>
+    <tr>
+      <th id="T_ca2aa_level0_row2" class="row_heading level0 row2" >xgb</th>
+      <th id="T_ca2aa_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_ca2aa_row2_col0" class="data row2 col0" ><b>0.26</b></td>
+      <td id="T_ca2aa_row2_col1" class="data row2 col1" >2.4</td>
+      <td id="T_ca2aa_row2_col2" class="data row2 col2" >1.2</td>
+      <td id="T_ca2aa_row2_col3" class="data row2 col3" >1.1</td>
+      <td id="T_ca2aa_row2_col4" class="data row2 col4" >0.89</td>
+      <td id="T_ca2aa_row2_col5" class="data row2 col5" >0.22</td>
+      <td id="T_ca2aa_row2_col6" class="data row2 col6" >0.42</td>
+      <td id="T_ca2aa_row2_col7" class="data row2 col7" >3.5</td>
+      <td id="T_ca2aa_row2_col8" class="data row2 col8" >1.9</td>
+      <td id="T_ca2aa_row2_col9" class="data row2 col9" >1.3</td>
+      <td id="T_ca2aa_row2_col10" class="data row2 col10" >1.2</td>
+      <td id="T_ca2aa_row2_col11" class="data row2 col11" >0.34</td>
+      <td id="T_ca2aa_row2_col12" class="data row2 col12" >0.67</td>
+      <td id="T_ca2aa_row2_col13" class="data row2 col13" >2.9</td>
+      <td id="T_ca2aa_row2_col14" class="data row2 col14" >1.2</td>
+      <td id="T_ca2aa_row2_col15" class="data row2 col15" >0.96</td>
+      <td id="T_ca2aa_row2_col16" class="data row2 col16" >0.82</td>
+      <td id="T_ca2aa_row2_col17" class="data row2 col17" >0.21</td>
+      <td id="T_ca2aa_row2_col18" class="data row2 col18" >0.58</td>
+    </tr>
+    <tr>
+      <th id="T_ca2aa_level0_row3" class="row_heading level0 row3" >coral</th>
+      <th id="T_ca2aa_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_ca2aa_row3_col0" class="data row3 col0" ><b>0.25</b></td>
+      <td id="T_ca2aa_row3_col1" class="data row3 col1" >2.4</td>
+      <td id="T_ca2aa_row3_col2" class="data row3 col2" >1.1</td>
+      <td id="T_ca2aa_row3_col3" class="data row3 col3" >1</td>
+      <td id="T_ca2aa_row3_col4" class="data row3 col4" >0.9</td>
+      <td id="T_ca2aa_row3_col5" class="data row3 col5" >0.19</td>
+      <td id="T_ca2aa_row3_col6" class="data row3 col6" >0.41</td>
+      <td id="T_ca2aa_row3_col7" class="data row3 col7" >3.5</td>
+      <td id="T_ca2aa_row3_col8" class="data row3 col8" >2</td>
+      <td id="T_ca2aa_row3_col9" class="data row3 col9" >1.3</td>
+      <td id="T_ca2aa_row3_col10" class="data row3 col10" >1.2</td>
+      <td id="T_ca2aa_row3_col11" class="data row3 col11" >0.34</td>
+      <td id="T_ca2aa_row3_col12" class="data row3 col12" >0.83</td>
+      <td id="T_ca2aa_row3_col13" class="data row3 col13" >3.1</td>
+      <td id="T_ca2aa_row3_col14" class="data row3 col14" >1.3</td>
+      <td id="T_ca2aa_row3_col15" class="data row3 col15" >1.1</td>
+      <td id="T_ca2aa_row3_col16" class="data row3 col16" >0.83</td>
+      <td id="T_ca2aa_row3_col17" class="data row3 col17" >0.18</td>
+      <td id="T_ca2aa_row3_col18" class="data row3 col18" >0.62</td>
+    </tr>
+    <tr>
+      <th id="T_ca2aa_level0_row4" class="row_heading level0 row4" >lr</th>
+      <th id="T_ca2aa_level1_row4" class="row_heading level1 row4" >mean</th>
+      <td id="T_ca2aa_row4_col0" class="data row4 col0" ><b>0.00</b></td>
+      <td id="T_ca2aa_row4_col1" class="data row4 col1" >4.3</td>
+      <td id="T_ca2aa_row4_col2" class="data row4 col2" >2.1</td>
+      <td id="T_ca2aa_row4_col3" class="data row4 col3" >1.9</td>
+      <td id="T_ca2aa_row4_col4" class="data row4 col4" >1.1</td>
+      <td id="T_ca2aa_row4_col5" class="data row4 col5" >0.2</td>
+      <td id="T_ca2aa_row4_col6" class="data row4 col6" >0.89</td>
+      <td id="T_ca2aa_row4_col7" class="data row4 col7" >4.5</td>
+      <td id="T_ca2aa_row4_col8" class="data row4 col8" >2.1</td>
+      <td id="T_ca2aa_row4_col9" class="data row4 col9" >1.7</td>
+      <td id="T_ca2aa_row4_col10" class="data row4 col10" >1.4</td>
+      <td id="T_ca2aa_row4_col11" class="data row4 col11" >0.4</td>
+      <td id="T_ca2aa_row4_col12" class="data row4 col12" >0.82</td>
+      <td id="T_ca2aa_row4_col13" class="data row4 col13" >4.6</td>
+      <td id="T_ca2aa_row4_col14" class="data row4 col14" >1.9</td>
+      <td id="T_ca2aa_row4_col15" class="data row4 col15" >1.5</td>
+      <td id="T_ca2aa_row4_col16" class="data row4 col16" >0.86</td>
+      <td id="T_ca2aa_row4_col17" class="data row4 col17" >0.2</td>
+      <td id="T_ca2aa_row4_col18" class="data row4 col18" >1.2</td>
+    </tr>
+    <tr>
+      <th id="T_ca2aa_level0_row5" class="row_heading level0 row5" >gdro</th>
+      <th id="T_ca2aa_level1_row5" class="row_heading level1 row5" >mean</th>
+      <td id="T_ca2aa_row5_col0" class="data row5 col0" ><b>-0.06</b></td>
+      <td id="T_ca2aa_row5_col1" class="data row5 col1" >3.4</td>
+      <td id="T_ca2aa_row5_col2" class="data row5 col2" >1.8</td>
+      <td id="T_ca2aa_row5_col3" class="data row5 col3" >1.7</td>
+      <td id="T_ca2aa_row5_col4" class="data row5 col4" >1</td>
+      <td id="T_ca2aa_row5_col5" class="data row5 col5" >0.21</td>
+      <td id="T_ca2aa_row5_col6" class="data row5 col6" >0.75</td>
+      <td id="T_ca2aa_row5_col7" class="data row5 col7" >3.6</td>
+      <td id="T_ca2aa_row5_col8" class="data row5 col8" >2.2</td>
+      <td id="T_ca2aa_row5_col9" class="data row5 col9" >1.8</td>
+      <td id="T_ca2aa_row5_col10" class="data row5 col10" >1.3</td>
+      <td id="T_ca2aa_row5_col11" class="data row5 col11" >0.38</td>
+      <td id="T_ca2aa_row5_col12" class="data row5 col12" >0.81</td>
+      <td id="T_ca2aa_row5_col13" class="data row5 col13" >4.2</td>
+      <td id="T_ca2aa_row5_col14" class="data row5 col14" >2.7</td>
+      <td id="T_ca2aa_row5_col15" class="data row5 col15" >2.5</td>
+      <td id="T_ca2aa_row5_col16" class="data row5 col16" >1</td>
+      <td id="T_ca2aa_row5_col17" class="data row5 col17" >0.25</td>
+      <td id="T_ca2aa_row5_col18" class="data row5 col18" >2</td>
+    </tr>
+  </tbody>
+</table>
+
+      <h2>90th-percentile RMSE</h2>
+      <style type="text/css">
+#T_57c03 table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_57c03 th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_57c03  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_57c03 th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_57c03 th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_57c03 th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_57c03 th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_57c03_row0_col0, #T_57c03_row1_col0, #T_57c03_row2_col0, #T_57c03_row3_col0, #T_57c03_row4_col0, #T_57c03_row5_col0 {
+  background-color: #f8f9fa;
+}
+#T_57c03_row0_col1 {
+  background-color: #82CA95;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col2, #T_57c03_row2_col8, #T_57c03_row3_col1 {
+  background-color: #6DC283;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col3 {
+  background-color: #66BF7D;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col4, #T_57c03_row0_col5, #T_57c03_row0_col12, #T_57c03_row0_col13, #T_57c03_row0_col14, #T_57c03_row0_col15, #T_57c03_row0_col16, #T_57c03_row0_col18, #T_57c03_row1_col1, #T_57c03_row1_col3, #T_57c03_row1_col7, #T_57c03_row1_col8, #T_57c03_row1_col10, #T_57c03_row1_col11, #T_57c03_row1_col17, #T_57c03_row2_col6, #T_57c03_row2_col9, #T_57c03_row2_col17, #T_57c03_row3_col2, #T_57c03_row3_col4 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col6 {
+  background-color: #6FC385;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col7, #T_57c03_row0_col11 {
+  background-color: #94D2A4;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col8 {
+  background-color: #ACDCB9;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col9 {
+  background-color: #8DCF9F;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col10, #T_57c03_row2_col3, #T_57c03_row3_col7 {
+  background-color: #70C386;
+  color: #1a1a1a;
+}
+#T_57c03_row0_col17, #T_57c03_row4_col16 {
+  background-color: #88CD9A;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col2, #T_57c03_row2_col12 {
+  background-color: #68C07F;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col4 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col5, #T_57c03_row5_col5 {
+  background-color: #91D1A2;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col6 {
+  background-color: #80CA94;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col9 {
+  background-color: #7BC890;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col12 {
+  background-color: #9ED6AD;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col13 {
+  background-color: #95D2A5;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col14, #T_57c03_row2_col14, #T_57c03_row2_col18, #T_57c03_row3_col14, #T_57c03_row4_col1, #T_57c03_row4_col2, #T_57c03_row4_col3, #T_57c03_row4_col6, #T_57c03_row4_col7, #T_57c03_row4_col12, #T_57c03_row4_col13, #T_57c03_row4_col14, #T_57c03_row4_col15, #T_57c03_row4_col18, #T_57c03_row5_col3, #T_57c03_row5_col6, #T_57c03_row5_col12, #T_57c03_row5_col13, #T_57c03_row5_col14, #T_57c03_row5_col15, #T_57c03_row5_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col15 {
+  background-color: #D8EFDE;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col16 {
+  background-color: #7DC891;
+  color: #1a1a1a;
+}
+#T_57c03_row1_col18 {
+  background-color: #E2F3E6;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col1, #T_57c03_row4_col4 {
+  background-color: #71C487;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col2 {
+  background-color: #75C58A;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col4 {
+  background-color: #93D2A3;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col5 {
+  background-color: #64BE7C;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col7 {
+  background-color: #73C489;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col10 {
+  background-color: #64BE7B;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col11 {
+  background-color: #67BF7E;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col13, #T_57c03_row5_col4 {
+  background-color: #A6DAB4;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col15 {
+  background-color: #F2F9F4;
+  color: #1a1a1a;
+}
+#T_57c03_row2_col16 {
+  background-color: #7BC88F;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col3 {
+  background-color: #7DC991;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col5 {
+  background-color: #72C488;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col6 {
+  background-color: #98D4A8;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col8 {
+  background-color: #81CA95;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col9, #T_57c03_row5_col1 {
+  background-color: #B4DFBF;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col10 {
+  background-color: #65BF7D;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col11 {
+  background-color: #73C488;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col12 {
+  background-color: #C0E4C9;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col13 {
+  background-color: #8ED09F;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col15 {
+  background-color: #B9E1C4;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col16 {
+  background-color: #7AC78E;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col17 {
+  background-color: #74C589;
+  color: #1a1a1a;
+}
+#T_57c03_row3_col18 {
+  background-color: #E1F2E5;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col5 {
+  background-color: #A4D9B2;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col8 {
+  background-color: #DEF1E3;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col9 {
+  background-color: #FBFDFC;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col10 {
+  background-color: #D9EFDF;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col11 {
+  background-color: #C9E8D1;
+  color: #1a1a1a;
+}
+#T_57c03_row4_col17 {
+  background-color: #B5E0C0;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col2 {
+  background-color: #FDFEFD;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col7 {
+  background-color: #97D4A7;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col8 {
+  background-color: #ADDDBA;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col9 {
+  background-color: #DFF2E4;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col10 {
+  background-color: #A5D9B3;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col11 {
+  background-color: #78C68C;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col16 {
+  background-color: #E8F5EC;
+  color: #1a1a1a;
+}
+#T_57c03_row5_col17 {
+  background-color: #97D3A7;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_57c03">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_57c03_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_57c03_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_57c03_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_57c03_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_57c03_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_57c03_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_57c03_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_57c03_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_57c03_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_57c03_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_57c03_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_57c03_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_57c03_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_57c03_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_57c03_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_57c03_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_57c03_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_57c03_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_57c03_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_57c03_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_57c03_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_57c03_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_57c03_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_57c03_level0_row0" class="row_heading level0 row0" >xgb</th>
+      <th id="T_57c03_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_57c03_row0_col0" class="data row0 col0" ><b>0.17</b></td>
+      <td id="T_57c03_row0_col1" class="data row0 col1" >5.2</td>
+      <td id="T_57c03_row0_col2" class="data row0 col2" >2.9</td>
+      <td id="T_57c03_row0_col3" class="data row0 col3" >2.3</td>
+      <td id="T_57c03_row0_col4" class="data row0 col4" >2.2</td>
+      <td id="T_57c03_row0_col5" class="data row0 col5" >0.64</td>
+      <td id="T_57c03_row0_col6" class="data row0 col6" >1.3</td>
+      <td id="T_57c03_row0_col7" class="data row0 col7" >5.3</td>
+      <td id="T_57c03_row0_col8" class="data row0 col8" >3.3</td>
+      <td id="T_57c03_row0_col9" class="data row0 col9" >2.6</td>
+      <td id="T_57c03_row0_col10" class="data row0 col10" >2</td>
+      <td id="T_57c03_row0_col11" class="data row0 col11" >0.82</td>
+      <td id="T_57c03_row0_col12" class="data row0 col12" >1.8</td>
+      <td id="T_57c03_row0_col13" class="data row0 col13" >5</td>
+      <td id="T_57c03_row0_col14" class="data row0 col14" >2.5</td>
+      <td id="T_57c03_row0_col15" class="data row0 col15" >2.3</td>
+      <td id="T_57c03_row0_col16" class="data row0 col16" >1.4</td>
+      <td id="T_57c03_row0_col17" class="data row0 col17" >0.57</td>
+      <td id="T_57c03_row0_col18" class="data row0 col18" >1.7</td>
+    </tr>
+    <tr>
+      <th id="T_57c03_level0_row1" class="row_heading level0 row1" >mlp</th>
+      <th id="T_57c03_level1_row1" class="row_heading level1 row1" >mean</th>
+      <td id="T_57c03_row1_col0" class="data row1 col0" ><b>0.16</b></td>
+      <td id="T_57c03_row1_col1" class="data row1 col1" >5</td>
+      <td id="T_57c03_row1_col2" class="data row1 col2" >2.9</td>
+      <td id="T_57c03_row1_col3" class="data row1 col3" >2.3</td>
+      <td id="T_57c03_row1_col4" class="data row1 col4" >2.2</td>
+      <td id="T_57c03_row1_col5" class="data row1 col5" >0.67</td>
+      <td id="T_57c03_row1_col6" class="data row1 col6" >1.3</td>
+      <td id="T_57c03_row1_col7" class="data row1 col7" >5</td>
+      <td id="T_57c03_row1_col8" class="data row1 col8" >3</td>
+      <td id="T_57c03_row1_col9" class="data row1 col9" >2.6</td>
+      <td id="T_57c03_row1_col10" class="data row1 col10" >1.9</td>
+      <td id="T_57c03_row1_col11" class="data row1 col11" >0.77</td>
+      <td id="T_57c03_row1_col12" class="data row1 col12" >2</td>
+      <td id="T_57c03_row1_col13" class="data row1 col13" >5.3</td>
+      <td id="T_57c03_row1_col14" class="data row1 col14" >3.1</td>
+      <td id="T_57c03_row1_col15" class="data row1 col15" >2.6</td>
+      <td id="T_57c03_row1_col16" class="data row1 col16" >1.5</td>
+      <td id="T_57c03_row1_col17" class="data row1 col17" >0.54</td>
+      <td id="T_57c03_row1_col18" class="data row1 col18" >2</td>
+    </tr>
+    <tr>
+      <th id="T_57c03_level0_row2" class="row_heading level0 row2" >mmd</th>
+      <th id="T_57c03_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_57c03_row2_col0" class="data row2 col0" ><b>0.16</b></td>
+      <td id="T_57c03_row2_col1" class="data row2 col1" >5.1</td>
+      <td id="T_57c03_row2_col2" class="data row2 col2" >2.9</td>
+      <td id="T_57c03_row2_col3" class="data row2 col3" >2.3</td>
+      <td id="T_57c03_row2_col4" class="data row2 col4" >2.3</td>
+      <td id="T_57c03_row2_col5" class="data row2 col5" >0.64</td>
+      <td id="T_57c03_row2_col6" class="data row2 col6" >1.3</td>
+      <td id="T_57c03_row2_col7" class="data row2 col7" >5.1</td>
+      <td id="T_57c03_row2_col8" class="data row2 col8" >3.1</td>
+      <td id="T_57c03_row2_col9" class="data row2 col9" >2.5</td>
+      <td id="T_57c03_row2_col10" class="data row2 col10" >1.9</td>
+      <td id="T_57c03_row2_col11" class="data row2 col11" >0.78</td>
+      <td id="T_57c03_row2_col12" class="data row2 col12" >1.9</td>
+      <td id="T_57c03_row2_col13" class="data row2 col13" >5.4</td>
+      <td id="T_57c03_row2_col14" class="data row2 col14" >3</td>
+      <td id="T_57c03_row2_col15" class="data row2 col15" >2.7</td>
+      <td id="T_57c03_row2_col16" class="data row2 col16" >1.5</td>
+      <td id="T_57c03_row2_col17" class="data row2 col17" >0.54</td>
+      <td id="T_57c03_row2_col18" class="data row2 col18" >2.1</td>
+    </tr>
+    <tr>
+      <th id="T_57c03_level0_row3" class="row_heading level0 row3" >coral</th>
+      <th id="T_57c03_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_57c03_row3_col0" class="data row3 col0" ><b>0.15</b></td>
+      <td id="T_57c03_row3_col1" class="data row3 col1" >5.1</td>
+      <td id="T_57c03_row3_col2" class="data row3 col2" >2.9</td>
+      <td id="T_57c03_row3_col3" class="data row3 col3" >2.3</td>
+      <td id="T_57c03_row3_col4" class="data row3 col4" >2.2</td>
+      <td id="T_57c03_row3_col5" class="data row3 col5" >0.65</td>
+      <td id="T_57c03_row3_col6" class="data row3 col6" >1.4</td>
+      <td id="T_57c03_row3_col7" class="data row3 col7" >5</td>
+      <td id="T_57c03_row3_col8" class="data row3 col8" >3.1</td>
+      <td id="T_57c03_row3_col9" class="data row3 col9" >2.8</td>
+      <td id="T_57c03_row3_col10" class="data row3 col10" >1.9</td>
+      <td id="T_57c03_row3_col11" class="data row3 col11" >0.79</td>
+      <td id="T_57c03_row3_col12" class="data row3 col12" >2.1</td>
+      <td id="T_57c03_row3_col13" class="data row3 col13" >5.2</td>
+      <td id="T_57c03_row3_col14" class="data row3 col14" >3</td>
+      <td id="T_57c03_row3_col15" class="data row3 col15" >2.5</td>
+      <td id="T_57c03_row3_col16" class="data row3 col16" >1.5</td>
+      <td id="T_57c03_row3_col17" class="data row3 col17" >0.56</td>
+      <td id="T_57c03_row3_col18" class="data row3 col18" >2</td>
+    </tr>
+    <tr>
+      <th id="T_57c03_level0_row4" class="row_heading level0 row4" >lr</th>
+      <th id="T_57c03_level1_row4" class="row_heading level1 row4" >mean</th>
+      <td id="T_57c03_row4_col0" class="data row4 col0" ><b>0.00</b></td>
+      <td id="T_57c03_row4_col1" class="data row4 col1" >6.3</td>
+      <td id="T_57c03_row4_col2" class="data row4 col2" >3.5</td>
+      <td id="T_57c03_row4_col3" class="data row4 col3" >2.9</td>
+      <td id="T_57c03_row4_col4" class="data row4 col4" >2.2</td>
+      <td id="T_57c03_row4_col5" class="data row4 col5" >0.69</td>
+      <td id="T_57c03_row4_col6" class="data row4 col6" >2.5</td>
+      <td id="T_57c03_row4_col7" class="data row4 col7" >6</td>
+      <td id="T_57c03_row4_col8" class="data row4 col8" >3.5</td>
+      <td id="T_57c03_row4_col9" class="data row4 col9" >3</td>
+      <td id="T_57c03_row4_col10" class="data row4 col10" >2.2</td>
+      <td id="T_57c03_row4_col11" class="data row4 col11" >0.87</td>
+      <td id="T_57c03_row4_col12" class="data row4 col12" >2.4</td>
+      <td id="T_57c03_row4_col13" class="data row4 col13" >6.1</td>
+      <td id="T_57c03_row4_col14" class="data row4 col14" >3.6</td>
+      <td id="T_57c03_row4_col15" class="data row4 col15" >3.3</td>
+      <td id="T_57c03_row4_col16" class="data row4 col16" >1.5</td>
+      <td id="T_57c03_row4_col17" class="data row4 col17" >0.6</td>
+      <td id="T_57c03_row4_col18" class="data row4 col18" >2.8</td>
+    </tr>
+    <tr>
+      <th id="T_57c03_level0_row5" class="row_heading level0 row5" >gdro</th>
+      <th id="T_57c03_level1_row5" class="row_heading level1 row5" >mean</th>
+      <td id="T_57c03_row5_col0" class="data row5 col0" ><b>-0.05</b></td>
+      <td id="T_57c03_row5_col1" class="data row5 col1" >5.6</td>
+      <td id="T_57c03_row5_col2" class="data row5 col2" >3.4</td>
+      <td id="T_57c03_row5_col3" class="data row5 col3" >2.9</td>
+      <td id="T_57c03_row5_col4" class="data row5 col4" >2.4</td>
+      <td id="T_57c03_row5_col5" class="data row5 col5" >0.67</td>
+      <td id="T_57c03_row5_col6" class="data row5 col6" >1.9</td>
+      <td id="T_57c03_row5_col7" class="data row5 col7" >5.3</td>
+      <td id="T_57c03_row5_col8" class="data row5 col8" >3.3</td>
+      <td id="T_57c03_row5_col9" class="data row5 col9" >2.9</td>
+      <td id="T_57c03_row5_col10" class="data row5 col10" >2.1</td>
+      <td id="T_57c03_row5_col11" class="data row5 col11" >0.79</td>
+      <td id="T_57c03_row5_col12" class="data row5 col12" >2.4</td>
+      <td id="T_57c03_row5_col13" class="data row5 col13" >6.9</td>
+      <td id="T_57c03_row5_col14" class="data row5 col14" >4.9</td>
+      <td id="T_57c03_row5_col15" class="data row5 col15" >4.8</td>
+      <td id="T_57c03_row5_col16" class="data row5 col16" >1.7</td>
+      <td id="T_57c03_row5_col17" class="data row5 col17" >0.58</td>
+      <td id="T_57c03_row5_col18" class="data row5 col18" >4.2</td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+    <div role="tabpanel" data-tab="NEE" hidden>
+      <h2>Median RMSE</h2>
+      <style type="text/css">
+#T_eb3c8 table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_eb3c8 th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_eb3c8  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_eb3c8 th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_eb3c8 th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_eb3c8 th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_eb3c8 th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_eb3c8_row0_col0, #T_eb3c8_row1_col0, #T_eb3c8_row2_col0, #T_eb3c8_row3_col0, #T_eb3c8_row4_col0, #T_eb3c8_row5_col0, #T_eb3c8_row6_col0, #T_eb3c8_row7_col0 {
+  background-color: #f8f9fa;
+}
+#T_eb3c8_row0_col1, #T_eb3c8_row0_col2, #T_eb3c8_row0_col3, #T_eb3c8_row0_col7, #T_eb3c8_row0_col12, #T_eb3c8_row1_col8, #T_eb3c8_row1_col9, #T_eb3c8_row1_col10, #T_eb3c8_row1_col11, #T_eb3c8_row2_col5, #T_eb3c8_row2_col14, #T_eb3c8_row2_col16, #T_eb3c8_row2_col18, #T_eb3c8_row3_col4, #T_eb3c8_row3_col6, #T_eb3c8_row3_col15, #T_eb3c8_row4_col13, #T_eb3c8_row7_col17 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col4 {
+  background-color: #6CC283;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col5, #T_eb3c8_row2_col4 {
+  background-color: #7BC88F;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col6, #T_eb3c8_row0_col8, #T_eb3c8_row6_col17 {
+  background-color: #76C68B;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col9 {
+  background-color: #74C589;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col10, #T_eb3c8_row2_col1 {
+  background-color: #6EC284;
+  color: #1a1a1a;
+}
+#T_eb3c8_row0_col11 {
+  background-color: #8CCF9E;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col1, #T_eb3c8_row2_col10 {
+  background-color: #6DC283;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col2, #T_eb3c8_row1_col3, #T_eb3c8_row2_col13 {
+  background-color: #88CD9A;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col4, #T_eb3c8_row3_col8 {
+  background-color: #85CC98;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col5 {
+  background-color: #ABDCB7;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col6, #T_eb3c8_row5_col15, #T_eb3c8_row5_col17, #T_eb3c8_row6_col1, #T_eb3c8_row6_col2, #T_eb3c8_row6_col3, #T_eb3c8_row6_col5, #T_eb3c8_row6_col6, #T_eb3c8_row6_col9, #T_eb3c8_row6_col12, #T_eb3c8_row6_col13, #T_eb3c8_row6_col14, #T_eb3c8_row6_col15, #T_eb3c8_row6_col16, #T_eb3c8_row6_col18, #T_eb3c8_row7_col1, #T_eb3c8_row7_col2, #T_eb3c8_row7_col3, #T_eb3c8_row7_col4, #T_eb3c8_row7_col5, #T_eb3c8_row7_col6, #T_eb3c8_row7_col7, #T_eb3c8_row7_col9, #T_eb3c8_row7_col10, #T_eb3c8_row7_col11, #T_eb3c8_row7_col12, #T_eb3c8_row7_col13, #T_eb3c8_row7_col14, #T_eb3c8_row7_col15, #T_eb3c8_row7_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col7, #T_eb3c8_row3_col1 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_eb3c8_row1_col12 {
+  background-color: #86CC99;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col2 {
+  background-color: #73C488;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col3 {
+  background-color: #84CB97;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col6 {
+  background-color: #83CB96;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col7 {
+  background-color: #75C58A;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col8, #T_eb3c8_row2_col9 {
+  background-color: #6FC385;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col11 {
+  background-color: #97D3A7;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col12, #T_eb3c8_row5_col13 {
+  background-color: #64BE7C;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col15 {
+  background-color: #C9E8D1;
+  color: #1a1a1a;
+}
+#T_eb3c8_row2_col17 {
+  background-color: #C6E7CF;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col2, #T_eb3c8_row3_col3 {
+  background-color: #7AC78F;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col5 {
+  background-color: #9AD5A9;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col7 {
+  background-color: #79C78D;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col9 {
+  background-color: #6BC181;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col10 {
+  background-color: #65BF7D;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col11 {
+  background-color: #72C488;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col12 {
+  background-color: #E9F6ED;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col13 {
+  background-color: #84CB96;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col14 {
+  background-color: #E0F2E4;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col16 {
+  background-color: #92D1A2;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col17 {
+  background-color: #ECF7EF;
+  color: #1a1a1a;
+}
+#T_eb3c8_row3_col18 {
+  background-color: #9BD5AB;
+  color: #1a1a1a;
+}
+#T_eb3c8_row4_col14 {
+  background-color: #A5D9B3;
+  color: #1a1a1a;
+}
+#T_eb3c8_row4_col15 {
+  background-color: #EFF8F1;
+  color: #1a1a1a;
+}
+#T_eb3c8_row4_col16 {
+  background-color: #6DC284;
+  color: #1a1a1a;
+}
+#T_eb3c8_row4_col17 {
+  background-color: #C5E7CE;
+  color: #1a1a1a;
+}
+#T_eb3c8_row5_col14 {
+  background-color: #DCF0E1;
+  color: #1a1a1a;
+}
+#T_eb3c8_row5_col16 {
+  background-color: #6CC183;
+  color: #1a1a1a;
+}
+#T_eb3c8_row6_col4 {
+  background-color: #E7F5EB;
+  color: #1a1a1a;
+}
+#T_eb3c8_row6_col7 {
+  background-color: #D2ECD9;
+  color: #1a1a1a;
+}
+#T_eb3c8_row6_col8 {
+  background-color: #F1F9F3;
+  color: #1a1a1a;
+}
+#T_eb3c8_row6_col10 {
+  background-color: #86CC98;
+  color: #1a1a1a;
+}
+#T_eb3c8_row6_col11 {
+  background-color: #E4F3E8;
+  color: #1a1a1a;
+}
+#T_eb3c8_row7_col8 {
+  background-color: #EAF6EE;
+  color: #1a1a1a;
+}
+#T_eb3c8_row7_col16 {
+  background-color: #C4E6CD;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_eb3c8">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_eb3c8_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_eb3c8_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_eb3c8_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_eb3c8_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_eb3c8_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_eb3c8_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_eb3c8_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_eb3c8_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_eb3c8_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_eb3c8_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_eb3c8_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_eb3c8_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_eb3c8_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_eb3c8_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_eb3c8_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_eb3c8_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_eb3c8_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_eb3c8_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_eb3c8_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_eb3c8_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_eb3c8_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_eb3c8_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_eb3c8_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_eb3c8_level0_row0" class="row_heading level0 row0" >mlp</th>
+      <th id="T_eb3c8_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_eb3c8_row0_col0" class="data row0 col0" ><b>0.34</b></td>
+      <td id="T_eb3c8_row0_col1" class="data row0 col1" >2.3</td>
+      <td id="T_eb3c8_row0_col2" class="data row0 col2" >0.93</td>
+      <td id="T_eb3c8_row0_col3" class="data row0 col3" >0.78</td>
+      <td id="T_eb3c8_row0_col4" class="data row0 col4" >0.74</td>
+      <td id="T_eb3c8_row0_col5" class="data row0 col5" >0.11</td>
+      <td id="T_eb3c8_row0_col6" class="data row0 col6" >0.3</td>
+      <td id="T_eb3c8_row0_col7" class="data row0 col7" >2.9</td>
+      <td id="T_eb3c8_row0_col8" class="data row0 col8" >1.4</td>
+      <td id="T_eb3c8_row0_col9" class="data row0 col9" >1</td>
+      <td id="T_eb3c8_row0_col10" class="data row0 col10" >1</td>
+      <td id="T_eb3c8_row0_col11" class="data row0 col11" >0.19</td>
+      <td id="T_eb3c8_row0_col12" class="data row0 col12" >0.33</td>
+      <td id="T_eb3c8_row0_col13" class="data row0 col13" >-</td>
+      <td id="T_eb3c8_row0_col14" class="data row0 col14" >-</td>
+      <td id="T_eb3c8_row0_col15" class="data row0 col15" >-</td>
+      <td id="T_eb3c8_row0_col16" class="data row0 col16" >-</td>
+      <td id="T_eb3c8_row0_col17" class="data row0 col17" >-</td>
+      <td id="T_eb3c8_row0_col18" class="data row0 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row1" class="row_heading level0 row1" >mmd</th>
+      <th id="T_eb3c8_level1_row1" class="row_heading level1 row1" >mean</th>
+      <td id="T_eb3c8_row1_col0" class="data row1 col0" ><b>0.33</b></td>
+      <td id="T_eb3c8_row1_col1" class="data row1 col1" >2.3</td>
+      <td id="T_eb3c8_row1_col2" class="data row1 col2" >0.98</td>
+      <td id="T_eb3c8_row1_col3" class="data row1 col3" >0.82</td>
+      <td id="T_eb3c8_row1_col4" class="data row1 col4" >0.76</td>
+      <td id="T_eb3c8_row1_col5" class="data row1 col5" >0.12</td>
+      <td id="T_eb3c8_row1_col6" class="data row1 col6" >0.35</td>
+      <td id="T_eb3c8_row1_col7" class="data row1 col7" >2.9</td>
+      <td id="T_eb3c8_row1_col8" class="data row1 col8" >1.4</td>
+      <td id="T_eb3c8_row1_col9" class="data row1 col9" >0.99</td>
+      <td id="T_eb3c8_row1_col10" class="data row1 col10" >0.99</td>
+      <td id="T_eb3c8_row1_col11" class="data row1 col11" >0.18</td>
+      <td id="T_eb3c8_row1_col12" class="data row1 col12" >0.34</td>
+      <td id="T_eb3c8_row1_col13" class="data row1 col13" >-</td>
+      <td id="T_eb3c8_row1_col14" class="data row1 col14" >-</td>
+      <td id="T_eb3c8_row1_col15" class="data row1 col15" >-</td>
+      <td id="T_eb3c8_row1_col16" class="data row1 col16" >-</td>
+      <td id="T_eb3c8_row1_col17" class="data row1 col17" >-</td>
+      <td id="T_eb3c8_row1_col18" class="data row1 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row2" class="row_heading level0 row2" >coral</th>
+      <th id="T_eb3c8_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_eb3c8_row2_col0" class="data row2 col0" ><b>0.33</b></td>
+      <td id="T_eb3c8_row2_col1" class="data row2 col1" >2.3</td>
+      <td id="T_eb3c8_row2_col2" class="data row2 col2" >0.95</td>
+      <td id="T_eb3c8_row2_col3" class="data row2 col3" >0.82</td>
+      <td id="T_eb3c8_row2_col4" class="data row2 col4" >0.76</td>
+      <td id="T_eb3c8_row2_col5" class="data row2 col5" >0.11</td>
+      <td id="T_eb3c8_row2_col6" class="data row2 col6" >0.3</td>
+      <td id="T_eb3c8_row2_col7" class="data row2 col7" >3</td>
+      <td id="T_eb3c8_row2_col8" class="data row2 col8" >1.4</td>
+      <td id="T_eb3c8_row2_col9" class="data row2 col9" >1</td>
+      <td id="T_eb3c8_row2_col10" class="data row2 col10" >1</td>
+      <td id="T_eb3c8_row2_col11" class="data row2 col11" >0.19</td>
+      <td id="T_eb3c8_row2_col12" class="data row2 col12" >0.33</td>
+      <td id="T_eb3c8_row2_col13" class="data row2 col13" >2.9</td>
+      <td id="T_eb3c8_row2_col14" class="data row2 col14" >1</td>
+      <td id="T_eb3c8_row2_col15" class="data row2 col15" >0.89</td>
+      <td id="T_eb3c8_row2_col16" class="data row2 col16" >0.72</td>
+      <td id="T_eb3c8_row2_col17" class="data row2 col17" >0.14</td>
+      <td id="T_eb3c8_row2_col18" class="data row2 col18" >0.52</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row3" class="row_heading level0 row3" >xgb</th>
+      <th id="T_eb3c8_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_eb3c8_row3_col0" class="data row3 col0" ><b>0.32</b></td>
+      <td id="T_eb3c8_row3_col1" class="data row3 col1" >2.3</td>
+      <td id="T_eb3c8_row3_col2" class="data row3 col2" >0.96</td>
+      <td id="T_eb3c8_row3_col3" class="data row3 col3" >0.81</td>
+      <td id="T_eb3c8_row3_col4" class="data row3 col4" >0.73</td>
+      <td id="T_eb3c8_row3_col5" class="data row3 col5" >0.11</td>
+      <td id="T_eb3c8_row3_col6" class="data row3 col6" >0.29</td>
+      <td id="T_eb3c8_row3_col7" class="data row3 col7" >3</td>
+      <td id="T_eb3c8_row3_col8" class="data row3 col8" >1.5</td>
+      <td id="T_eb3c8_row3_col9" class="data row3 col9" >1</td>
+      <td id="T_eb3c8_row3_col10" class="data row3 col10" >0.99</td>
+      <td id="T_eb3c8_row3_col11" class="data row3 col11" >0.18</td>
+      <td id="T_eb3c8_row3_col12" class="data row3 col12" >0.38</td>
+      <td id="T_eb3c8_row3_col13" class="data row3 col13" >2.9</td>
+      <td id="T_eb3c8_row3_col14" class="data row3 col14" >1.2</td>
+      <td id="T_eb3c8_row3_col15" class="data row3 col15" >0.79</td>
+      <td id="T_eb3c8_row3_col16" class="data row3 col16" >0.76</td>
+      <td id="T_eb3c8_row3_col17" class="data row3 col17" >0.15</td>
+      <td id="T_eb3c8_row3_col18" class="data row3 col18" >0.55</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row4" class="row_heading level0 row4" >mmd</th>
+      <th id="T_eb3c8_level1_row4" class="row_heading level1 row4" >max</th>
+      <td id="T_eb3c8_row4_col0" class="data row4 col0" ><b>0.24</b></td>
+      <td id="T_eb3c8_row4_col1" class="data row4 col1" >-</td>
+      <td id="T_eb3c8_row4_col2" class="data row4 col2" >-</td>
+      <td id="T_eb3c8_row4_col3" class="data row4 col3" >-</td>
+      <td id="T_eb3c8_row4_col4" class="data row4 col4" >-</td>
+      <td id="T_eb3c8_row4_col5" class="data row4 col5" >-</td>
+      <td id="T_eb3c8_row4_col6" class="data row4 col6" >-</td>
+      <td id="T_eb3c8_row4_col7" class="data row4 col7" >-</td>
+      <td id="T_eb3c8_row4_col8" class="data row4 col8" >-</td>
+      <td id="T_eb3c8_row4_col9" class="data row4 col9" >-</td>
+      <td id="T_eb3c8_row4_col10" class="data row4 col10" >-</td>
+      <td id="T_eb3c8_row4_col11" class="data row4 col11" >-</td>
+      <td id="T_eb3c8_row4_col12" class="data row4 col12" >-</td>
+      <td id="T_eb3c8_row4_col13" class="data row4 col13" >2.8</td>
+      <td id="T_eb3c8_row4_col14" class="data row4 col14" >1.1</td>
+      <td id="T_eb3c8_row4_col15" class="data row4 col15" >0.93</td>
+      <td id="T_eb3c8_row4_col16" class="data row4 col16" >0.73</td>
+      <td id="T_eb3c8_row4_col17" class="data row4 col17" >0.14</td>
+      <td id="T_eb3c8_row4_col18" class="data row4 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row5" class="row_heading level0 row5" >mlp</th>
+      <th id="T_eb3c8_level1_row5" class="row_heading level1 row5" >max</th>
+      <td id="T_eb3c8_row5_col0" class="data row5 col0" ><b>0.20</b></td>
+      <td id="T_eb3c8_row5_col1" class="data row5 col1" >-</td>
+      <td id="T_eb3c8_row5_col2" class="data row5 col2" >-</td>
+      <td id="T_eb3c8_row5_col3" class="data row5 col3" >-</td>
+      <td id="T_eb3c8_row5_col4" class="data row5 col4" >-</td>
+      <td id="T_eb3c8_row5_col5" class="data row5 col5" >-</td>
+      <td id="T_eb3c8_row5_col6" class="data row5 col6" >-</td>
+      <td id="T_eb3c8_row5_col7" class="data row5 col7" >-</td>
+      <td id="T_eb3c8_row5_col8" class="data row5 col8" >-</td>
+      <td id="T_eb3c8_row5_col9" class="data row5 col9" >-</td>
+      <td id="T_eb3c8_row5_col10" class="data row5 col10" >-</td>
+      <td id="T_eb3c8_row5_col11" class="data row5 col11" >-</td>
+      <td id="T_eb3c8_row5_col12" class="data row5 col12" >-</td>
+      <td id="T_eb3c8_row5_col13" class="data row5 col13" >2.8</td>
+      <td id="T_eb3c8_row5_col14" class="data row5 col14" >1.2</td>
+      <td id="T_eb3c8_row5_col15" class="data row5 col15" >1</td>
+      <td id="T_eb3c8_row5_col16" class="data row5 col16" >0.73</td>
+      <td id="T_eb3c8_row5_col17" class="data row5 col17" >0.15</td>
+      <td id="T_eb3c8_row5_col18" class="data row5 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row6" class="row_heading level0 row6" >gdro</th>
+      <th id="T_eb3c8_level1_row6" class="row_heading level1 row6" >mean</th>
+      <td id="T_eb3c8_row6_col0" class="data row6 col0" ><b>0.00</b></td>
+      <td id="T_eb3c8_row6_col1" class="data row6 col1" >3.5</td>
+      <td id="T_eb3c8_row6_col2" class="data row6 col2" >1.9</td>
+      <td id="T_eb3c8_row6_col3" class="data row6 col3" >1.7</td>
+      <td id="T_eb3c8_row6_col4" class="data row6 col4" >0.86</td>
+      <td id="T_eb3c8_row6_col5" class="data row6 col5" >0.14</td>
+      <td id="T_eb3c8_row6_col6" class="data row6 col6" >0.89</td>
+      <td id="T_eb3c8_row6_col7" class="data row6 col7" >3.3</td>
+      <td id="T_eb3c8_row6_col8" class="data row6 col8" >1.6</td>
+      <td id="T_eb3c8_row6_col9" class="data row6 col9" >1.3</td>
+      <td id="T_eb3c8_row6_col10" class="data row6 col10" >1</td>
+      <td id="T_eb3c8_row6_col11" class="data row6 col11" >0.21</td>
+      <td id="T_eb3c8_row6_col12" class="data row6 col12" >0.52</td>
+      <td id="T_eb3c8_row6_col13" class="data row6 col13" >3.7</td>
+      <td id="T_eb3c8_row6_col14" class="data row6 col14" >2.3</td>
+      <td id="T_eb3c8_row6_col15" class="data row6 col15" >2.2</td>
+      <td id="T_eb3c8_row6_col16" class="data row6 col16" >0.89</td>
+      <td id="T_eb3c8_row6_col17" class="data row6 col17" >0.13</td>
+      <td id="T_eb3c8_row6_col18" class="data row6 col18" >1.7</td>
+    </tr>
+    <tr>
+      <th id="T_eb3c8_level0_row7" class="row_heading level0 row7" >lr</th>
+      <th id="T_eb3c8_level1_row7" class="row_heading level1 row7" >mean</th>
+      <td id="T_eb3c8_row7_col0" class="data row7 col0" ><b>0.00</b></td>
+      <td id="T_eb3c8_row7_col1" class="data row7 col1" >4</td>
+      <td id="T_eb3c8_row7_col2" class="data row7 col2" >1.7</td>
+      <td id="T_eb3c8_row7_col3" class="data row7 col3" >1.6</td>
+      <td id="T_eb3c8_row7_col4" class="data row7 col4" >0.93</td>
+      <td id="T_eb3c8_row7_col5" class="data row7 col5" >0.16</td>
+      <td id="T_eb3c8_row7_col6" class="data row7 col6" >0.9</td>
+      <td id="T_eb3c8_row7_col7" class="data row7 col7" >4.1</td>
+      <td id="T_eb3c8_row7_col8" class="data row7 col8" >1.6</td>
+      <td id="T_eb3c8_row7_col9" class="data row7 col9" >1.4</td>
+      <td id="T_eb3c8_row7_col10" class="data row7 col10" >1.2</td>
+      <td id="T_eb3c8_row7_col11" class="data row7 col11" >0.22</td>
+      <td id="T_eb3c8_row7_col12" class="data row7 col12" >0.68</td>
+      <td id="T_eb3c8_row7_col13" class="data row7 col13" >4.5</td>
+      <td id="T_eb3c8_row7_col14" class="data row7 col14" >1.8</td>
+      <td id="T_eb3c8_row7_col15" class="data row7 col15" >1.7</td>
+      <td id="T_eb3c8_row7_col16" class="data row7 col16" >0.81</td>
+      <td id="T_eb3c8_row7_col17" class="data row7 col17" >0.13</td>
+      <td id="T_eb3c8_row7_col18" class="data row7 col18" >1.4</td>
+    </tr>
+  </tbody>
+</table>
+
+      <h2>90th-percentile RMSE</h2>
+      <style type="text/css">
+#T_043b4 table {
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#T_043b4 th {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_043b4  td {
+  border: 1px solid #d3d3d3;
+  padding: 8px;
+}
+#T_043b4 th.col_heading.level1 {
+  height: 80px;
+  vertical-align: bottom;
+  padding: 5px;
+  min-width: 25px;
+}
+#T_043b4 th.col_heading.level1 span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  display: inline-block;
+}
+#T_043b4 th.col_heading.level0 {
+  background-color: #ececec;
+  font-weight: bold;
+}
+#T_043b4 th.row_heading {
+  background-color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+#T_043b4_row0_col0, #T_043b4_row1_col0, #T_043b4_row2_col0, #T_043b4_row3_col0, #T_043b4_row4_col0, #T_043b4_row5_col0, #T_043b4_row6_col0, #T_043b4_row7_col0 {
+  background-color: #f8f9fa;
+}
+#T_043b4_row0_col13, #T_043b4_row2_col10 {
+  background-color: #68C07F;
+  color: #1a1a1a;
+}
+#T_043b4_row0_col14 {
+  background-color: #A9DBB7;
+  color: #1a1a1a;
+}
+#T_043b4_row0_col15, #T_043b4_row0_col17, #T_043b4_row1_col13, #T_043b4_row2_col2, #T_043b4_row2_col3, #T_043b4_row2_col4, #T_043b4_row2_col6, #T_043b4_row2_col7, #T_043b4_row2_col12, #T_043b4_row2_col18, #T_043b4_row3_col1, #T_043b4_row3_col14, #T_043b4_row3_col16, #T_043b4_row4_col5, #T_043b4_row4_col8, #T_043b4_row5_col9, #T_043b4_row6_col10, #T_043b4_row6_col11 {
+  background-color: #63BE7B;
+  color: #1a1a1a;
+}
+#T_043b4_row0_col16, #T_043b4_row5_col10 {
+  background-color: #67C07F;
+  color: #1a1a1a;
+}
+#T_043b4_row1_col14 {
+  background-color: #C2E5CB;
+  color: #1a1a1a;
+}
+#T_043b4_row1_col15 {
+  background-color: #C1E5CA;
+  color: #1a1a1a;
+}
+#T_043b4_row1_col16, #T_043b4_row5_col1 {
+  background-color: #67BF7E;
+  color: #1a1a1a;
+}
+#T_043b4_row1_col17, #T_043b4_row5_col8 {
+  background-color: #6FC385;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col1 {
+  background-color: #6CC283;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col5 {
+  background-color: #72C488;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col8 {
+  background-color: #80CA93;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col9 {
+  background-color: #D6EEDC;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col11 {
+  background-color: #98D4A7;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col13 {
+  background-color: #7BC88F;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col14 {
+  background-color: #E8F5EB;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col15 {
+  background-color: #B6E0C2;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col16, #T_043b4_row3_col11 {
+  background-color: #83CB96;
+  color: #1a1a1a;
+}
+#T_043b4_row2_col17 {
+  background-color: #75C58A;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col2 {
+  background-color: #79C78E;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col3 {
+  background-color: #84CB97;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col4 {
+  background-color: #87CD99;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col5 {
+  background-color: #AFDEBC;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col6 {
+  background-color: #C4E6CD;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col7 {
+  background-color: #6CC182;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col8, #T_043b4_row4_col2, #T_043b4_row4_col10 {
+  background-color: #6DC284;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col9 {
+  background-color: #7EC992;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col10 {
+  background-color: #6AC181;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col12 {
+  background-color: #BEE4C8;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col13 {
+  background-color: #65BF7D;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col15 {
+  background-color: #7CC890;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col17 {
+  background-color: #6BC182;
+  color: #1a1a1a;
+}
+#T_043b4_row3_col18 {
+  background-color: #ACDCB9;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col1 {
+  background-color: #69C080;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col3 {
+  background-color: #77C68C;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col4 {
+  background-color: #88CD9A;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col6 {
+  background-color: #8ED09F;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col7 {
+  background-color: #75C58B;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col9 {
+  background-color: #7DC891;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col11 {
+  background-color: #8DCF9E;
+  color: #1a1a1a;
+}
+#T_043b4_row4_col12 {
+  background-color: #B9E2C4;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col2 {
+  background-color: #84CC97;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col3 {
+  background-color: #A0D7AE;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col4 {
+  background-color: #78C68D;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col5 {
+  background-color: #71C487;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col6 {
+  background-color: #EEF8F1;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col7 {
+  background-color: #85CC98;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col11 {
+  background-color: #92D1A2;
+  color: #1a1a1a;
+}
+#T_043b4_row5_col12 {
+  background-color: #9AD4A9;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col1 {
+  background-color: #CCEAD4;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col2, #T_043b4_row6_col3, #T_043b4_row6_col6, #T_043b4_row6_col8, #T_043b4_row6_col9, #T_043b4_row6_col12, #T_043b4_row6_col14, #T_043b4_row6_col15, #T_043b4_row6_col18, #T_043b4_row7_col1, #T_043b4_row7_col2, #T_043b4_row7_col3, #T_043b4_row7_col6, #T_043b4_row7_col7, #T_043b4_row7_col8, #T_043b4_row7_col9, #T_043b4_row7_col12, #T_043b4_row7_col14, #T_043b4_row7_col15, #T_043b4_row7_col18 {
+  background-color: #FFFFFF;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col4 {
+  background-color: #81CA94;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col5, #T_043b4_row6_col17, #T_043b4_row7_col17 {
+  background-color: #C9E8D1;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col7 {
+  background-color: #96D3A6;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col13 {
+  background-color: #EBF6EE;
+  color: #1a1a1a;
+}
+#T_043b4_row6_col16 {
+  background-color: #92D1A3;
+  color: #1a1a1a;
+}
+#T_043b4_row7_col4, #T_043b4_row7_col10 {
+  background-color: #9CD5AB;
+  color: #1a1a1a;
+}
+#T_043b4_row7_col5 {
+  background-color: #98D4A8;
+  color: #1a1a1a;
+}
+#T_043b4_row7_col11 {
+  background-color: #A9DBB6;
+  color: #1a1a1a;
+}
+#T_043b4_row7_col13 {
+  background-color: #F3FAF4;
+  color: #1a1a1a;
+}
+#T_043b4_row7_col16 {
+  background-color: #B2DFBE;
+  color: #1a1a1a;
+}
+</style>
+<table id="T_043b4">
+  <thead>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_043b4_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_043b4_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_043b4_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_043b4_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+    </tr>
+    <tr>
+      <th class="blank" >&nbsp;</th>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_043b4_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
+      <th id="T_043b4_level1_col1" class="col_heading level1 col1" >hourly</th>
+      <th id="T_043b4_level1_col2" class="col_heading level1 col2" >weekly</th>
+      <th id="T_043b4_level1_col3" class="col_heading level1 col3" >seasonal</th>
+      <th id="T_043b4_level1_col4" class="col_heading level1 col4" >anom</th>
+      <th id="T_043b4_level1_col5" class="col_heading level1 col5" >iav</th>
+      <th id="T_043b4_level1_col6" class="col_heading level1 col6" >site-mean</th>
+      <th id="T_043b4_level1_col7" class="col_heading level1 col7" >hourly</th>
+      <th id="T_043b4_level1_col8" class="col_heading level1 col8" >weekly</th>
+      <th id="T_043b4_level1_col9" class="col_heading level1 col9" >seasonal</th>
+      <th id="T_043b4_level1_col10" class="col_heading level1 col10" >anom</th>
+      <th id="T_043b4_level1_col11" class="col_heading level1 col11" >iav</th>
+      <th id="T_043b4_level1_col12" class="col_heading level1 col12" >site-mean</th>
+      <th id="T_043b4_level1_col13" class="col_heading level1 col13" >hourly</th>
+      <th id="T_043b4_level1_col14" class="col_heading level1 col14" >weekly</th>
+      <th id="T_043b4_level1_col15" class="col_heading level1 col15" >seasonal</th>
+      <th id="T_043b4_level1_col16" class="col_heading level1 col16" >anom</th>
+      <th id="T_043b4_level1_col17" class="col_heading level1 col17" >iav</th>
+      <th id="T_043b4_level1_col18" class="col_heading level1 col18" >site-mean</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >model</th>
+      <th class="index_name level1" >val_strategy</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+      <th class="blank col11" >&nbsp;</th>
+      <th class="blank col12" >&nbsp;</th>
+      <th class="blank col13" >&nbsp;</th>
+      <th class="blank col14" >&nbsp;</th>
+      <th class="blank col15" >&nbsp;</th>
+      <th class="blank col16" >&nbsp;</th>
+      <th class="blank col17" >&nbsp;</th>
+      <th class="blank col18" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_043b4_level0_row0" class="row_heading level0 row0" >mlp</th>
+      <th id="T_043b4_level1_row0" class="row_heading level1 row0" >max</th>
+      <td id="T_043b4_row0_col0" class="data row0 col0" ><b>0.25</b></td>
+      <td id="T_043b4_row0_col1" class="data row0 col1" >-</td>
+      <td id="T_043b4_row0_col2" class="data row0 col2" >-</td>
+      <td id="T_043b4_row0_col3" class="data row0 col3" >-</td>
+      <td id="T_043b4_row0_col4" class="data row0 col4" >-</td>
+      <td id="T_043b4_row0_col5" class="data row0 col5" >-</td>
+      <td id="T_043b4_row0_col6" class="data row0 col6" >-</td>
+      <td id="T_043b4_row0_col7" class="data row0 col7" >-</td>
+      <td id="T_043b4_row0_col8" class="data row0 col8" >-</td>
+      <td id="T_043b4_row0_col9" class="data row0 col9" >-</td>
+      <td id="T_043b4_row0_col10" class="data row0 col10" >-</td>
+      <td id="T_043b4_row0_col11" class="data row0 col11" >-</td>
+      <td id="T_043b4_row0_col12" class="data row0 col12" >-</td>
+      <td id="T_043b4_row0_col13" class="data row0 col13" >4.8</td>
+      <td id="T_043b4_row0_col14" class="data row0 col14" >1.9</td>
+      <td id="T_043b4_row0_col15" class="data row0 col15" >1.5</td>
+      <td id="T_043b4_row0_col16" class="data row0 col16" >1.2</td>
+      <td id="T_043b4_row0_col17" class="data row0 col17" >0.33</td>
+      <td id="T_043b4_row0_col18" class="data row0 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row1" class="row_heading level0 row1" >mmd</th>
+      <th id="T_043b4_level1_row1" class="row_heading level1 row1" >max</th>
+      <td id="T_043b4_row1_col0" class="data row1 col0" ><b>0.23</b></td>
+      <td id="T_043b4_row1_col1" class="data row1 col1" >-</td>
+      <td id="T_043b4_row1_col2" class="data row1 col2" >-</td>
+      <td id="T_043b4_row1_col3" class="data row1 col3" >-</td>
+      <td id="T_043b4_row1_col4" class="data row1 col4" >-</td>
+      <td id="T_043b4_row1_col5" class="data row1 col5" >-</td>
+      <td id="T_043b4_row1_col6" class="data row1 col6" >-</td>
+      <td id="T_043b4_row1_col7" class="data row1 col7" >-</td>
+      <td id="T_043b4_row1_col8" class="data row1 col8" >-</td>
+      <td id="T_043b4_row1_col9" class="data row1 col9" >-</td>
+      <td id="T_043b4_row1_col10" class="data row1 col10" >-</td>
+      <td id="T_043b4_row1_col11" class="data row1 col11" >-</td>
+      <td id="T_043b4_row1_col12" class="data row1 col12" >-</td>
+      <td id="T_043b4_row1_col13" class="data row1 col13" >4.8</td>
+      <td id="T_043b4_row1_col14" class="data row1 col14" >1.9</td>
+      <td id="T_043b4_row1_col15" class="data row1 col15" >1.6</td>
+      <td id="T_043b4_row1_col16" class="data row1 col16" >1.2</td>
+      <td id="T_043b4_row1_col17" class="data row1 col17" >0.34</td>
+      <td id="T_043b4_row1_col18" class="data row1 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row2" class="row_heading level0 row2" >xgb</th>
+      <th id="T_043b4_level1_row2" class="row_heading level1 row2" >mean</th>
+      <td id="T_043b4_row2_col0" class="data row2 col0" ><b>0.23</b></td>
+      <td id="T_043b4_row2_col1" class="data row2 col1" >4.8</td>
+      <td id="T_043b4_row2_col2" class="data row2 col2" >2.4</td>
+      <td id="T_043b4_row2_col3" class="data row2 col3" >1.7</td>
+      <td id="T_043b4_row2_col4" class="data row2 col4" >1.7</td>
+      <td id="T_043b4_row2_col5" class="data row2 col5" >0.4</td>
+      <td id="T_043b4_row2_col6" class="data row2 col6" >1</td>
+      <td id="T_043b4_row2_col7" class="data row2 col7" >4.4</td>
+      <td id="T_043b4_row2_col8" class="data row2 col8" >2.5</td>
+      <td id="T_043b4_row2_col9" class="data row2 col9" >2.2</td>
+      <td id="T_043b4_row2_col10" class="data row2 col10" >1.7</td>
+      <td id="T_043b4_row2_col11" class="data row2 col11" >0.59</td>
+      <td id="T_043b4_row2_col12" class="data row2 col12" >1.3</td>
+      <td id="T_043b4_row2_col13" class="data row2 col13" >4.9</td>
+      <td id="T_043b4_row2_col14" class="data row2 col14" >2</td>
+      <td id="T_043b4_row2_col15" class="data row2 col15" >1.6</td>
+      <td id="T_043b4_row2_col16" class="data row2 col16" >1.2</td>
+      <td id="T_043b4_row2_col17" class="data row2 col17" >0.34</td>
+      <td id="T_043b4_row2_col18" class="data row2 col18" >1.2</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row3" class="row_heading level0 row3" >coral</th>
+      <th id="T_043b4_level1_row3" class="row_heading level1 row3" >mean</th>
+      <td id="T_043b4_row3_col0" class="data row3 col0" ><b>0.23</b></td>
+      <td id="T_043b4_row3_col1" class="data row3 col1" >4.7</td>
+      <td id="T_043b4_row3_col2" class="data row3 col2" >2.5</td>
+      <td id="T_043b4_row3_col3" class="data row3 col3" >1.8</td>
+      <td id="T_043b4_row3_col4" class="data row3 col4" >1.8</td>
+      <td id="T_043b4_row3_col5" class="data row3 col5" >0.43</td>
+      <td id="T_043b4_row3_col6" class="data row3 col6" >1.2</td>
+      <td id="T_043b4_row3_col7" class="data row3 col7" >4.5</td>
+      <td id="T_043b4_row3_col8" class="data row3 col8" >2.4</td>
+      <td id="T_043b4_row3_col9" class="data row3 col9" >2</td>
+      <td id="T_043b4_row3_col10" class="data row3 col10" >1.7</td>
+      <td id="T_043b4_row3_col11" class="data row3 col11" >0.58</td>
+      <td id="T_043b4_row3_col12" class="data row3 col12" >1.5</td>
+      <td id="T_043b4_row3_col13" class="data row3 col13" >4.8</td>
+      <td id="T_043b4_row3_col14" class="data row3 col14" >1.7</td>
+      <td id="T_043b4_row3_col15" class="data row3 col15" >1.5</td>
+      <td id="T_043b4_row3_col16" class="data row3 col16" >1.2</td>
+      <td id="T_043b4_row3_col17" class="data row3 col17" >0.33</td>
+      <td id="T_043b4_row3_col18" class="data row3 col18" >1.3</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row4" class="row_heading level0 row4" >mlp</th>
+      <th id="T_043b4_level1_row4" class="row_heading level1 row4" >mean</th>
+      <td id="T_043b4_row4_col0" class="data row4 col0" ><b>0.21</b></td>
+      <td id="T_043b4_row4_col1" class="data row4 col1" >4.8</td>
+      <td id="T_043b4_row4_col2" class="data row4 col2" >2.4</td>
+      <td id="T_043b4_row4_col3" class="data row4 col3" >1.8</td>
+      <td id="T_043b4_row4_col4" class="data row4 col4" >1.8</td>
+      <td id="T_043b4_row4_col5" class="data row4 col5" >0.39</td>
+      <td id="T_043b4_row4_col6" class="data row4 col6" >1.1</td>
+      <td id="T_043b4_row4_col7" class="data row4 col7" >4.6</td>
+      <td id="T_043b4_row4_col8" class="data row4 col8" >2.4</td>
+      <td id="T_043b4_row4_col9" class="data row4 col9" >2</td>
+      <td id="T_043b4_row4_col10" class="data row4 col10" >1.7</td>
+      <td id="T_043b4_row4_col11" class="data row4 col11" >0.58</td>
+      <td id="T_043b4_row4_col12" class="data row4 col12" >1.5</td>
+      <td id="T_043b4_row4_col13" class="data row4 col13" >-</td>
+      <td id="T_043b4_row4_col14" class="data row4 col14" >-</td>
+      <td id="T_043b4_row4_col15" class="data row4 col15" >-</td>
+      <td id="T_043b4_row4_col16" class="data row4 col16" >-</td>
+      <td id="T_043b4_row4_col17" class="data row4 col17" >-</td>
+      <td id="T_043b4_row4_col18" class="data row4 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row5" class="row_heading level0 row5" >mmd</th>
+      <th id="T_043b4_level1_row5" class="row_heading level1 row5" >mean</th>
+      <td id="T_043b4_row5_col0" class="data row5 col0" ><b>0.20</b></td>
+      <td id="T_043b4_row5_col1" class="data row5 col1" >4.8</td>
+      <td id="T_043b4_row5_col2" class="data row5 col2" >2.5</td>
+      <td id="T_043b4_row5_col3" class="data row5 col3" >1.9</td>
+      <td id="T_043b4_row5_col4" class="data row5 col4" >1.8</td>
+      <td id="T_043b4_row5_col5" class="data row5 col5" >0.4</td>
+      <td id="T_043b4_row5_col6" class="data row5 col6" >1.2</td>
+      <td id="T_043b4_row5_col7" class="data row5 col7" >4.6</td>
+      <td id="T_043b4_row5_col8" class="data row5 col8" >2.4</td>
+      <td id="T_043b4_row5_col9" class="data row5 col9" >1.9</td>
+      <td id="T_043b4_row5_col10" class="data row5 col10" >1.7</td>
+      <td id="T_043b4_row5_col11" class="data row5 col11" >0.59</td>
+      <td id="T_043b4_row5_col12" class="data row5 col12" >1.4</td>
+      <td id="T_043b4_row5_col13" class="data row5 col13" >-</td>
+      <td id="T_043b4_row5_col14" class="data row5 col14" >-</td>
+      <td id="T_043b4_row5_col15" class="data row5 col15" >-</td>
+      <td id="T_043b4_row5_col16" class="data row5 col16" >-</td>
+      <td id="T_043b4_row5_col17" class="data row5 col17" >-</td>
+      <td id="T_043b4_row5_col18" class="data row5 col18" >-</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row6" class="row_heading level0 row6" >gdro</th>
+      <th id="T_043b4_level1_row6" class="row_heading level1 row6" >mean</th>
+      <td id="T_043b4_row6_col0" class="data row6 col0" ><b>0.01</b></td>
+      <td id="T_043b4_row6_col1" class="data row6 col1" >5.4</td>
+      <td id="T_043b4_row6_col2" class="data row6 col2" >3.2</td>
+      <td id="T_043b4_row6_col3" class="data row6 col3" >2.9</td>
+      <td id="T_043b4_row6_col4" class="data row6 col4" >1.8</td>
+      <td id="T_043b4_row6_col5" class="data row6 col5" >0.44</td>
+      <td id="T_043b4_row6_col6" class="data row6 col6" >2.3</td>
+      <td id="T_043b4_row6_col7" class="data row6 col7" >4.7</td>
+      <td id="T_043b4_row6_col8" class="data row6 col8" >2.9</td>
+      <td id="T_043b4_row6_col9" class="data row6 col9" >2.4</td>
+      <td id="T_043b4_row6_col10" class="data row6 col10" >1.7</td>
+      <td id="T_043b4_row6_col11" class="data row6 col11" >0.55</td>
+      <td id="T_043b4_row6_col12" class="data row6 col12" >2</td>
+      <td id="T_043b4_row6_col13" class="data row6 col13" >5.6</td>
+      <td id="T_043b4_row6_col14" class="data row6 col14" >3.4</td>
+      <td id="T_043b4_row6_col15" class="data row6 col15" >3.3</td>
+      <td id="T_043b4_row6_col16" class="data row6 col16" >1.3</td>
+      <td id="T_043b4_row6_col17" class="data row6 col17" >0.37</td>
+      <td id="T_043b4_row6_col18" class="data row6 col18" >3</td>
+    </tr>
+    <tr>
+      <th id="T_043b4_level0_row7" class="row_heading level0 row7" >lr</th>
+      <th id="T_043b4_level1_row7" class="row_heading level1 row7" >mean</th>
+      <td id="T_043b4_row7_col0" class="data row7 col0" ><b>0.00</b></td>
+      <td id="T_043b4_row7_col1" class="data row7 col1" >5.9</td>
+      <td id="T_043b4_row7_col2" class="data row7 col2" >3</td>
+      <td id="T_043b4_row7_col3" class="data row7 col3" >2.5</td>
+      <td id="T_043b4_row7_col4" class="data row7 col4" >1.9</td>
+      <td id="T_043b4_row7_col5" class="data row7 col5" >0.42</td>
+      <td id="T_043b4_row7_col6" class="data row7 col6" >2.1</td>
+      <td id="T_043b4_row7_col7" class="data row7 col7" >5.8</td>
+      <td id="T_043b4_row7_col8" class="data row7 col8" >3.1</td>
+      <td id="T_043b4_row7_col9" class="data row7 col9" >3</td>
+      <td id="T_043b4_row7_col10" class="data row7 col10" >1.8</td>
+      <td id="T_043b4_row7_col11" class="data row7 col11" >0.6</td>
+      <td id="T_043b4_row7_col12" class="data row7 col12" >2.3</td>
+      <td id="T_043b4_row7_col13" class="data row7 col13" >5.6</td>
+      <td id="T_043b4_row7_col14" class="data row7 col14" >3</td>
+      <td id="T_043b4_row7_col15" class="data row7 col15" >3</td>
+      <td id="T_043b4_row7_col16" class="data row7 col16" >1.3</td>
+      <td id="T_043b4_row7_col17" class="data row7 col17" >0.37</td>
+      <td id="T_043b4_row7_col18" class="data row7 col18" >2.5</td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
     <footer>
       <p>
         <a href="https://github.com/{TODO: owner/repo}">GitHub</a> ·
@@ -51,5 +2866,24 @@
       </p>
     </footer>
   </main>
+  <script>
+    var VALID_TABS = ["ET", "GPP", "NEE"];
+    function activateTab(t) {
+      document.querySelectorAll('[role="tab"]').forEach(function(b) {
+        var on = b.dataset.target === t;
+        b.setAttribute('aria-selected', on);
+        b.classList.toggle('active', on);
+      });
+      document.querySelectorAll('[role="tabpanel"]').forEach(function(p) {
+        p.hidden = p.dataset.tab !== t;
+      });
+      history.replaceState(null, '', '#' + t);
+    }
+    document.querySelectorAll('[role="tab"]').forEach(function(b) {
+      b.addEventListener('click', function() { activateTab(b.dataset.target); });
+    });
+    var hash = location.hash.slice(1);
+    activateTab(VALID_TABS.indexOf(hash) !== -1 ? hash : 'ET');
+  </script>
 </body>
 </html>

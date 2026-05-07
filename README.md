@@ -35,7 +35,7 @@ submissions/{model_name}/{setting}_{target}_{model_name}_val_{val_strategy}.csv
 | Field | Valid values |
 |---|---|
 | `model_name` | lowercase alphanumeric + hyphens/underscores (must match the parent folder) |
-| `setting` | `time-split`, `spatial-easy40`, `LST40` |
+| `setting` | `time-split`, `spatial-easy40`, `TA40` |
 | `target` | `GPP`, `ET`, `NEE` |
 | `val_strategy` | `mean`, `max`, `discrepancy` |
 
