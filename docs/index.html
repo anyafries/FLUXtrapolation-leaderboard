@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FLUXNET ML Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>FLUXNET ML Leaderboard</h1>
+  </header>
+  <main>
+    <p>
+      This leaderboard tracks machine-learning model performance on the FLUXNET
+      benchmark across three evaluation settings (temporal split, spatial split,
+      temperature-based split) and three carbon/water flux targets (GPP, ET, NEE).
+      Metrics are pre-computed by submitters and validated automatically on pull
+      request. See the
+      <a href="https://github.com/{TODO: owner/repo}">GitHub repository</a>
+      for submission instructions.
+    </p>
+    
+    <section>
+      <h2>ET</h2>
+      <ul>
+        <li><a href="leaderboard_ET.html">Median RMSE — ET</a></li>
+        <li><a href="leaderboard_q90_ET.html">90th-percentile RMSE — ET</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>GPP</h2>
+      <ul>
+        <li><a href="leaderboard_GPP.html">Median RMSE — GPP</a></li>
+        <li><a href="leaderboard_q90_GPP.html">90th-percentile RMSE — GPP</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>NEE</h2>
+      <ul>
+        <li><a href="leaderboard_NEE.html">Median RMSE — NEE</a></li>
+        <li><a href="leaderboard_q90_NEE.html">90th-percentile RMSE — NEE</a></li>
+      </ul>
+    </section>
+    <footer>
+      <p>
+        <a href="https://github.com/{TODO: owner/repo}">GitHub</a> ·
+        Submit your model via pull request
+      </p>
+    </footer>
+  </main>
+</body>
+</html>

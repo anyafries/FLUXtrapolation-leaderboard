@@ -1,0 +1,78 @@
+name: Validate submission
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Read-only token — fork PRs run in an unprivileged context
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas numpy
+
+      - name: Get changed files
+        id: changed
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "Changed files:"
+          echo "$CHANGED"
+
+      - name: Run validation
+        id: validate
+        run: |
+          CHANGED="${{ steps.changed.outputs.files }}"
+          if [ -z "$CHANGED" ]; then
+            echo "REPORT=## Submission validation: SKIPPED\n\nNo changed files detected." >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # Pass files as space-separated args; capture output and exit code separately
+          set +e
+          REPORT=$(python scripts/validate_submission.py $CHANGED --base-ref origin/${{ github.base_ref }} 2>&1)
+          EXIT_CODE=$?
+          set -e
+          # Store multi-line output safely
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT"
+          exit $EXIT_CODE
+
+      - name: Post validation result as PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.validate.outputs.report }}`;
+            const body = report || '_Validation output unavailable — check the Actions log._';
+            try {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            } catch (e) {
+              // Fork PRs from untrusted contributors cannot write comments via GITHUB_TOKEN.
+              // The validation result is still visible in the Actions log above.
+              core.warning(`Could not post PR comment (fork PR?): ${e.message}`);
+            }

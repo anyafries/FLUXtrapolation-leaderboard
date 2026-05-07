@@ -1,0 +1,48 @@
+name: Rebuild leaderboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "submissions/**"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build leaderboard
+        run: python scripts/build_leaderboard.py
+
+      - name: Check for changes in docs/
+        id: docs_changed
+        run: |
+          if git status --porcelain docs/ | grep -q .; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push updated docs
+        if: steps.docs_changed.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "Rebuild leaderboard [skip ci]"
+          git push
