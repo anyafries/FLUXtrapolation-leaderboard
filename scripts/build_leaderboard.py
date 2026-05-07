@@ -14,7 +14,6 @@ submitters provide pre-computed metric CSVs, no recomputation is needed.
 
 import os
 import sys
-import re
 import pandas as pd
 
 # Allow imports from project root
@@ -106,7 +105,7 @@ def load_all_submissions():
             if parsed is None:
                 logger.warning(f"Skipping unrecognised filename: {model_folder}/{filename}")
                 continue
-            setting, target, model_name, val_strategy = parsed
+            val_strategy = parsed[3]
             filepath = os.path.join(folder_path, filename)
             try:
                 df = pd.read_csv(filepath)
@@ -206,7 +205,7 @@ def main():
             settings_names=DISPLAY_NAMES,
             filename=median_path,
             wrap_html=True,
-            page_title=f"FLUXNET Leaderboard — {target} (median RMSE)",
+            page_title=f"{target} (median RMSE)",
             page_heading=f"{target} — median RMSE",
         )
 
@@ -219,7 +218,7 @@ def main():
             settings_names=DISPLAY_NAMES,
             filename=q90_path,
             wrap_html=True,
-            page_title=f"FLUXNET Leaderboard — {target} (90th-pct RMSE)",
+            page_title=f"{target} (90th-pct RMSE)",
             page_heading=f"{target} — 90th-percentile RMSE",
         )
 
