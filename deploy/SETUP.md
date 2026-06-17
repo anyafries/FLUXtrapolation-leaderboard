@@ -23,9 +23,9 @@ non-secret placeholders.
 
 ## Steps
 
-1. **Create the R2 bucket** `fluxtrapolation-incoming`.
+1. **Create the R2 bucket** `fluxtrapolation`.
 2. **Apply CORS** so the browser can PUT parts and read each part's `ETag`:
-   `wrangler r2 bucket cors put fluxtrapolation-incoming --rules ./deploy/r2-cors.json`
+   `$(npm config get prefix)/bin/wrangler r2 bucket cors put fluxtrapolation --rules ./deploy/r2-cors.json`
    (or paste `deploy/r2-cors.json` in the bucket's Settings → CORS). Update `AllowedOrigins` if your
    Pages origin differs.
 3. **Lifecycle rule** (keeps R2 free): expire incomplete multipart uploads after ~7 days, and expire

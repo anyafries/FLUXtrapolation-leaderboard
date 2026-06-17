@@ -1,5 +1,5 @@
 {
-  "name": "fluxtrapolation-intake",
+  "name": "fluxtrapolation",
   "version": "0.1.0",
   "private": true,
   "description": "Cloudflare Worker: presign R2 uploads + open submission PRs for the FLUXtrapolation leaderboard.",

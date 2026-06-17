@@ -191,7 +191,7 @@ async function gh(env, method, path, body) {
     headers: {
       Authorization: `Bearer ${env.GITHUB_TOKEN}`,
       Accept: "application/vnd.github+json",
-      "User-Agent": "fluxtrapolation-intake",
+      "User-Agent": "fluxtrapolation",
       "Content-Type": "application/json",
     },
     body: body ? JSON.stringify(body) : undefined,
