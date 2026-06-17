@@ -10,3 +10,4 @@ scikit-learn
 # to >=20 together and rebuild the truth table.
 pyarrow>=14,<20
 pyyaml
+boto3

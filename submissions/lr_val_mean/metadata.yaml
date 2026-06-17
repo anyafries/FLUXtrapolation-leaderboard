@@ -7,8 +7,9 @@ code_url: null
 paper_url: null
 owner: maintainer
 val_strategy: mean
-submitted_at: '2026-06-17T11:44:21+00:00'
+submitted_at: '2026-06-17T13:28:32+00:00'
 is_baseline: true
+status: scored
 files:
 - filename: time-split_GPP_lr_val_mean_predictions.csv
   setting: time-split

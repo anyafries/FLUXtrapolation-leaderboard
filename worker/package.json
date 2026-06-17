@@ -1,0 +1,16 @@
+{
+  "name": "fluxtrapolation-intake",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker: presign R2 uploads + open submission PRs for the FLUXtrapolation leaderboard.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}

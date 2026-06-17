@@ -45,7 +45,7 @@ REQUIRED_COLUMNS = [
     'mse', 'rmse', 'mae', 'nse', 'r2_score', 'bias', 'relative_mae', 'relative_bias'
 ]
 
-GITHUB_REPO_URL = "https://github.com/{TODO: owner/repo}"  # replace before publishing
+GITHUB_REPO_URL = "https://github.com/anyafries/FLUXtrapolation-leaderboard"  
 
 
 def parse_submission_filename(filename):
