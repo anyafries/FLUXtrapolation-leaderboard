@@ -15,7 +15,6 @@ import os
 import sys
 
 import pandas as pd
-import pyarrow.parquet as pq
 
 # Make the vendored eval pipeline importable (repo root holds utils/, eval.py).
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,6 +22,7 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 from utils.eval_utils import compute_metrics  # noqa: E402
+from server.truth import load_partition  # noqa: E402
 
 DEFAULT_TRUTH_PATH = os.path.join(_REPO_ROOT, "reference", "truth_table.parquet")
 
@@ -34,18 +34,8 @@ class CoverageError(ValueError):
 
 
 def load_truth(setting, target, truth_path=DEFAULT_TRUTH_PATH):
-    """Load the (site_id, time) -> y_true map for one (setting, target) via predicate pushdown."""
-    table = pq.read_table(
-        truth_path,
-        columns=["site_id", "time", "y_true"],
-        filters=[("setting", "=", setting), ("target", "=", target)],
-    )
-    df = table.to_pandas()
-    if df.empty:
-        raise CoverageError(f"Truth table has no rows for setting={setting!r} target={target!r}")
-    df["site_id"] = df["site_id"].astype(str)
-    df["time"] = pd.to_datetime(df["time"])
-    return df
+    """Load the (site_id, time) -> y_true map for one (setting, target)."""
+    return load_partition(setting, target, truth_path)
 
 
 def join_truth(pred_df, truth_df):
