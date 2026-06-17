@@ -99,7 +99,7 @@ async function createMultipart(env, body, req) {
   if (!VALID_STRATEGIES.includes(val_strategy)) return bad(env, "invalid val_strategy");
   const info = parseFilename(filename || "");
   if (!info || info.model !== model_id || info.strategy !== val_strategy)
-    return bad(env, `filename must be {setting}_{target}_${model_id}_val_${val_strategy}.csv`);
+    return bad(env, `filename must be {setting}_{target}_${model_id}_val_${val_strategy}_predictions.csv`);
 
   const hour = Math.floor(Date.now() / 3.6e6);
   if (!(await allow(env, `cr:${clientIp(req)}:${hour}`, +env.RL_CREATES_PER_HOUR, 3600)))
