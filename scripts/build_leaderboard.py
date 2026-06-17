@@ -104,6 +104,9 @@ def load_all_submissions():
         if not os.path.isdir(folder_path):
             continue
         for filename in sorted(os.listdir(folder_path)):
+            # metadata.yaml (and any non-CSV) lives beside the metric CSVs; not a metrics file.
+            if filename == 'metadata.yaml' or not filename.endswith('.csv'):
+                continue
             parsed = parse_submission_filename(filename)
             if parsed is None:
                 logger.warning(f"Skipping unrecognised filename: {model_folder}/{filename}")
