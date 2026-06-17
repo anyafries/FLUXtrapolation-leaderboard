@@ -3,5 +3,10 @@ pandas
 matplotlib
 seaborn
 scikit-learn
-pyarrow
+# pyarrow >=20 writes Parquet column-chunk SizeStatistics (rep/def-level histograms) that
+# readers <20 abort on ("Repetition level histogram size mismatch"), and there is no writer
+# toggle to suppress them. The truth table is written once and read by the Action + VM, so the
+# whole stack stays <20 to guarantee cross-version readability. To move up, bump every consumer
+# to >=20 together and rebuild the truth table.
+pyarrow>=14,<20
 pyyaml

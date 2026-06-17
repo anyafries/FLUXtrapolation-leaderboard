@@ -102,7 +102,21 @@ def load_one(raw_dir, setting, target):
     return df[["setting", "target", "site_id", "time", "y_true"]]
 
 
+def _check_pyarrow_version():
+    """pyarrow >=20 writes SizeStatistics histograms unreadable by <20 consumers (Action/VM).
+    Refuse to build a truth table that could crash older readers, unless explicitly overridden."""
+    major = int(pa.__version__.split(".")[0])
+    if major >= 20 and not os.environ.get("FLUX_ALLOW_PYARROW_GE20"):
+        raise SystemExit(
+            f"Refusing to build with pyarrow {pa.__version__}: files written by >=20 abort "
+            f"readers <20 ('Repetition level histogram size mismatch'). Build with pyarrow<20 "
+            f"(see requirements.txt), or set FLUX_ALLOW_PYARROW_GE20=1 only if every consumer "
+            f"(Action + VM) is also >=20."
+        )
+
+
 def build(raw_dir, out_path):
+    _check_pyarrow_version()
     out_dir = os.path.dirname(os.path.abspath(out_path))
     os.makedirs(out_dir, exist_ok=True)
 
@@ -115,12 +129,15 @@ def build(raw_dir, out_path):
         "total_rows": 0,
     }
 
-    # zstd + BYTE_STREAM_SPLIT on the float column: real-valued y_true compresses far better
-    # when its bytes are split into planes. Strings are dictionary-encoded automatically.
+    # Write a maximally portable file: plain zstd, NO page index / size statistics, and no
+    # BYTE_STREAM_SPLIT. Newer pyarrow (writer) emits rep/def-level histograms in the page
+    # index that older readers (e.g. 19.0.0) abort on ("Repetition level histogram size
+    # mismatch"). Partition reads filter on row-group statistics (one row group per
+    # (setting, target)), which are written regardless, so dropping the page index is free.
     writer = pq.ParquetWriter(
         out_path, TRUTH_SCHEMA,
-        compression="zstd", compression_level=9,
-        use_byte_stream_split=["y_true"],
+        compression="zstd",
+        write_page_index=False,
     )
     try:
         for setting in SETTINGS:
