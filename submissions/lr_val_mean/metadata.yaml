@@ -1,0 +1,66 @@
+model_id: lr
+display_name: Linear Regression (baseline)
+email: null
+description: Trusted linear-regression baseline. Canonical ground-truth + index source
+  for scoring (see reference/truth_table.parquet).
+code_url: null
+paper_url: null
+owner: maintainer
+val_strategy: mean
+submitted_at: '2026-06-17T11:44:21+00:00'
+is_baseline: true
+files:
+- filename: time-split_GPP_lr_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  sha256: dce1bedd0738b57197a3e9822ac321161fe8ae503d7d179d969842391c75a4aa
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/time-split_GPP_lr_val_mean_predictions.csv
+- filename: time-split_ET_lr_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  sha256: 4d37a1e3466de9bf4dbf1e1f20d82fb600ea33a716ce92b04a68d6df3cc79a02
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/time-split_ET_lr_val_mean_predictions.csv
+- filename: time-split_NEE_lr_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  sha256: c93e59dbb0bd969bb34660150204fe4ca7bf0225cc9249dcaf46cf741f84d9b8
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/time-split_NEE_lr_val_mean_predictions.csv
+- filename: spatial-easy40_GPP_lr_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  sha256: 46b177581ff3dfbaed5b6cea643d216d618540bbdea661d850f5ec907a423cf6
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/spatial-easy40_GPP_lr_val_mean_predictions.csv
+- filename: spatial-easy40_ET_lr_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  sha256: c047fc10c028a4e5e7182de3d83e4af803612f3f5fe071418f6faba948cbc679
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/spatial-easy40_ET_lr_val_mean_predictions.csv
+- filename: spatial-easy40_NEE_lr_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  sha256: 5b20dd7fd33d6bc5fc7dcc56a5366c58f94688cc0496c23a37f69008f01cfa8a
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/spatial-easy40_NEE_lr_val_mean_predictions.csv
+- filename: TA40_GPP_lr_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  sha256: 2f088de8e19afef7a4b9a6500ae708b27a1d6a826e1235b061e8d6d1768ffe9e
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/TA40_GPP_lr_val_mean_predictions.csv
+- filename: TA40_ET_lr_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  sha256: f313a48cb63752405a8570047f2e4753b9f5e6720955af532948429b3e53b438
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/TA40_ET_lr_val_mean_predictions.csv
+- filename: TA40_NEE_lr_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  sha256: 8d696b77f39ddded21efc0485427ee8d3afc3a2a08968b1da6daa6ae77c3cd59
+  archive_pointer: file:///srv/flux-archive/lr_val_mean/TA40_NEE_lr_val_mean_predictions.csv
