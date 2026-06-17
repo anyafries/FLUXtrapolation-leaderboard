@@ -1,7 +1,7 @@
 # FLUXNET ML Leaderboard
 
 Track and compare ML model performance on the [FLUXNET](https://fluxnet.org/) benchmark.
-**Live leaderboard → {TODO: fill in GitHub Pages URL, e.g. https://your-org.github.io/leaderboard}**
+**Live leaderboard → https://anyafries.github.io/FLUXtrapolation-leaderboard/#ET**
 
 ---
 

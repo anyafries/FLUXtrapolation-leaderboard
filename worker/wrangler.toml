@@ -6,15 +6,15 @@
 # Non-secret config lives in [vars]; secrets are set with `wrangler secret put NAME` (see deploy/SETUP.md):
 #   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, GITHUB_TOKEN
 
-name = "fluxtrapolation-intake"
+name = "fluxtrapolation"
 main = "src/index.js"
 compatibility_date = "2024-09-23"
 
 [vars]
 GITHUB_REPO = "anyafries/FLUXtrapolation-leaderboard"
 ALLOWED_ORIGIN = "https://anyafries.github.io"           # GitHub Pages origin (drop box host)
-R2_ENDPOINT = "https://REPLACE_ACCOUNT_ID.r2.cloudflarestorage.com"
-R2_BUCKET = "fluxtrapolation-incoming"
+R2_ENDPOINT = "https://523b6860f4b93775004745edbb39ff0c.r2.cloudflarestorage.com"
+R2_BUCKET = "fluxtrapolation"
 # Rate limit: spam backstop only.
 RL_SUBMISSIONS_PER_HOUR = "10"     # finalised submissions per IP per hour
 RL_SUBMISSIONS_PER_DAY = "50"      # finalised submissions globally per day
@@ -23,4 +23,4 @@ RL_CREATES_PER_HOUR = "200"        # multipart-create calls per IP per hour (9 p
 # KV: rate-limit counters + owner registry (model_id -> sha256(owner_token)).
 [[kv_namespaces]]
 binding = "RL"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "9b123808454644d8a03c9ae1a11b94c4"
