@@ -1,19 +1,32 @@
 name: Validate submission
 
+# Submission PRs are opened by the relay (Cloudflare Worker) from a branch IN THIS REPO, so
+# this workflow runs with repo secrets (R2 read creds, truth-table URL) and a write token —
+# enabling the sandboxed "download from R2 -> fully validate -> auto-merge" gate with no human
+# step. A direct fork PR gets a read-only token and no secrets, so the R2 download fails and it
+# is never merged: forks cannot bypass the relay. The PR may only add a single metadata.yaml
+# (enforced by server.intake); it carries pointers to the raw files in R2 — never code — and we
+# only ever run THIS repo's validator on data, never PR-supplied code.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - "submissions/**/metadata.yaml"
 
-# Read-only token — fork PRs run in an unprivileged context
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write          # auto-merge on pass
+  pull-requests: write      # post the result comment + merge
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR branch
+      - name: Checkout (base repo code; fetch history for the PR diff)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -24,55 +37,58 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pandas numpy
+        run: pip install -r requirements.txt
 
-      - name: Get changed files
+      # Cache the ~164 MB truth table across runs, keyed on its committed manifest sha,
+      # so a PR doesn't re-download it every time.
+      - name: Cache truth table
+        uses: actions/cache@v4
+        with:
+          path: .truth-cache
+          key: truth-${{ hashFiles('reference/truth_table_manifest.json') }}
+
+      - name: Determine changed files
         id: changed
         run: |
-          git fetch origin ${{ github.base_ref }}
-          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGED" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "Changed files:"
-          echo "$CHANGED"
+          git fetch origin "${{ github.base_ref }}"
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          echo "Changed files:"; echo "$CHANGED"
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"; echo "$CHANGED" >> "$GITHUB_OUTPUT"; echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Run validation
+      - name: Validate submission (sandbox: download from R2 + full validation)
         id: validate
+        env:
+          OBJECTSTORE_BACKEND: r2
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          TRUTH_TABLE_URL: ${{ secrets.TRUTH_TABLE_URL }}
+          FLUX_TRUTH_CACHE: ${{ github.workspace }}/.truth-cache
         run: |
-          CHANGED="${{ steps.changed.outputs.files }}"
-          if [ -z "$CHANGED" ]; then
-            echo "REPORT=## Submission validation: SKIPPED\n\nNo changed files detected." >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          # Pass files as space-separated args; capture output and exit code separately
           set +e
-          REPORT=$(python scripts/validate_submission.py $CHANGED --base-ref origin/${{ github.base_ref }} 2>&1)
-          EXIT_CODE=$?
-          set -e
-          # Store multi-line output safely
-          echo "report<<EOF" >> $GITHUB_OUTPUT
-          echo "$REPORT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "$REPORT"
-          exit $EXIT_CODE
+          python -m server.intake ${{ steps.changed.outputs.files }} \
+            --base-ref "origin/${{ github.base_ref }}" \
+            --json-out report.json > report.md 2>&1
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          cat report.md
 
-      - name: Post validation result as PR comment
+      - name: Comment result on PR
         if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const report = `${{ steps.validate.outputs.report }}`;
-            const body = report || '_Validation output unavailable — check the Actions log._';
-            try {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body,
-              });
-            } catch (e) {
-              // Fork PRs from untrusted contributors cannot write comments via GITHUB_TOKEN.
-              // The validation result is still visible in the Actions log above.
-              core.warning(`Could not post PR comment (fork PR?): ${e.message}`);
-            }
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -s report.md ] || echo "_Validation output unavailable — see the Actions log._" > report.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file report.md
+
+      - name: Auto-merge on pass
+        if: steps.validate.outputs.exit_code == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.number }}" --squash --delete-branch
+
+      - name: Fail the check if validation failed
+        if: steps.validate.outputs.exit_code != '0'
+        run: |
+          echo "Validation failed — not merging."; exit 1

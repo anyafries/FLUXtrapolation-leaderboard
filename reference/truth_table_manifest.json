@@ -1,0 +1,73 @@
+{
+  "truth_model": "lr",
+  "val_strategy": "mean",
+  "settings": [
+    "time-split",
+    "spatial-easy40",
+    "TA40"
+  ],
+  "targets": [
+    "GPP",
+    "ET",
+    "NEE"
+  ],
+  "combos": {
+    "time-split/GPP": {
+      "rows": 2981088,
+      "sites": 126,
+      "time_min": "2019-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "time-split/ET": {
+      "rows": 2981088,
+      "sites": 126,
+      "time_min": "2019-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "time-split/NEE": {
+      "rows": 2981088,
+      "sites": 126,
+      "time_min": "2019-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "spatial-easy40/GPP": {
+      "rows": 1665696,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "spatial-easy40/ET": {
+      "rows": 1665696,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "spatial-easy40/NEE": {
+      "rows": 1665696,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "TA40/GPP": {
+      "rows": 1481568,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "TA40/ET": {
+      "rows": 1481568,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    },
+    "TA40/NEE": {
+      "rows": 1481568,
+      "sites": 40,
+      "time_min": "2015-01-01 00:00:00",
+      "time_max": "2022-12-31 23:00:00"
+    }
+  },
+  "total_rows": 18385056,
+  "bytes": 164008347,
+  "sha256": "82670dd6011d8f037307cda5f841c63b47ecb255fd69c2d25ba5fa09905deb2f"
+}

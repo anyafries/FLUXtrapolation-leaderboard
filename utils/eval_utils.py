@@ -16,7 +16,8 @@ from utils.utils import (
     get_metrics_path,
     get_params_path,
     save_csv,
-    load_csv
+    load_csv,
+    get_predictions_path
 )
 
 logger = setup_logging(__name__)
@@ -138,6 +139,26 @@ def save_best_params(best_params, setting, target, model_name, val_strategy):
     with open(path, 'w') as f:
         json.dump(best_params, f, indent=4)
     logger.info(f"Saved best parameters to {path}")
+
+
+def load_predictions(setting, target, model_name, val_strategy):
+    """
+    Load predictions file for a given experiment.
+
+    Args:
+        setting: Experiment setting (e.g., 'spatial-easy', 'time-split')
+        target: Target variable (e.g., 'GPP', 'NEE')
+        model_name: Model name (e.g., 'lr', 'xgb')
+        val_strategy: Validation strategy used for model selection ('mean', 'max', 'discrepancy')
+
+    Returns:
+        pd.DataFrame with y_true, y_pred, and env columns
+    """
+    pred_path = get_predictions_path(setting, target, model_name, val_strategy)
+    df = load_csv(pred_path)
+    if df is None:
+        raise FileNotFoundError(f"Predictions file not found: {pred_path}")
+    return df
 
 
 # -----------------------------------------------------------------------

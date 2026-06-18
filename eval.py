@@ -11,8 +11,7 @@ Usage:
 import os
 import pandas as pd
 
-from dataloader import load_predictions
-from utils.eval_utils import load_metrics, compute_and_save_metrics
+from utils.eval_utils import load_metrics, compute_and_save_metrics, load_predictions
 from utils.plots import plot_metric_grid, plot_cdf_grid, create_html_leaderboard
 from utils.utils import setup_logging, find_available_experiments
 

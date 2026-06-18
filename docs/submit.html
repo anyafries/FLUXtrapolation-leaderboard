@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Submit a model — FLUXtrapolation Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://releases.transloadit.com/uppy/v4.13.3/uppy.min.css" rel="stylesheet">
+  <style>
+    form.meta { display: grid; gap: .6rem; max-width: 640px; margin-bottom: 1rem; }
+    form.meta label { font-weight: 600; font-size: .9rem; }
+    form.meta input, form.meta textarea, form.meta select {
+      width: 100%; padding: .4rem; font: inherit; box-sizing: border-box;
+    }
+    .hint { color: #666; font-size: .8rem; font-weight: 400; }
+    #result { margin-top: 1rem; padding: .8rem; border-radius: 6px; display: none; }
+    #result.ok { background: #e7f6ec; border: 1px solid #63BE7B; display: block; }
+    #result.err { background: #fdecec; border: 1px solid #e0a0a0; display: block; }
+    code.token { background: #fff; padding: .15rem .35rem; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Submit a model</h1>
+    <p>
+      Upload the <strong>9 raw prediction CSVs</strong> (3 settings × 3 targets) for one
+      <code>val_strategy</code>. Files go straight to transient storage; a bot opens a pull
+      request, validation runs automatically, and your scores appear on the
+      <a href="index.html">leaderboard</a> once they are computed.
+    </p>
+  </header>
+  <main>
+    <form class="meta" id="meta" onsubmit="return false">
+      <div>
+        <label>Display name</label>
+        <input id="display_name" placeholder="My Great Model" required>
+      </div>
+      <div>
+        <label>Model id <span class="hint">lowercase slug; permanent identity of your model</span></label>
+        <input id="model_id" pattern="[a-z0-9][a-z0-9_-]{0,48}" required>
+      </div>
+      <div>
+        <label>val_strategy</label>
+        <select id="val_strategy">
+          <option value="mean">mean</option>
+          <option value="max">max</option>
+          <option value="discrepancy">discrepancy</option>
+        </select>
+      </div>
+      <div>
+        <label>Email <span class="hint">for contact; not shown publicly</span></label>
+        <input id="email" type="email">
+      </div>
+      <div><label>Description</label><textarea id="description" rows="2"></textarea></div>
+      <div><label>Code URL</label><input id="code_url" type="url"></div>
+      <div><label>Paper URL</label><input id="paper_url" type="url"></div>
+      <div>
+        <label>Owner token <span class="hint">leave blank on first submission; paste it to update an existing model</span></label>
+        <input id="owner_token" autocomplete="off">
+      </div>
+    </form>
+
+    <p class="hint">
+      Each file must be named <code>{setting}_{target}_{model_id}_val_{val_strategy}_predictions.csv</code>
+      — settings: time-split, spatial-easy40, TA40; targets: GPP, ET, NEE.
+      Columns: <code>y_true, y_pred, env, site_id, time</code>.
+    </p>
+    <div id="uppy"></div>
+    <div id="result"></div>
+  </main>
+
+  <script src="https://releases.transloadit.com/uppy/v4.13.3/uppy.min.js"></script>
+  <script>
+    // Deploy step: set this to your Worker URL (see deploy/SETUP.md).
+    var WORKER_URL = "https://fluxtrapolation.fluxtrap.workers.dev";
+
+    var $ = function (id) { return document.getElementById(id); };
+    var slug = function (s) {
+      return s.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 49);
+    };
+    // Auto-fill model_id from display name until the user edits it directly.
+    var modelEdited = false;
+    $("model_id").addEventListener("input", function () { modelEdited = true; });
+    $("display_name").addEventListener("input", function () {
+      if (!modelEdited) $("model_id").value = slug($("display_name").value);
+    });
+
+    function meta() {
+      return {
+        model_id: $("model_id").value.trim(),
+        val_strategy: $("val_strategy").value,
+        display_name: $("display_name").value.trim(),
+        email: $("email").value.trim() || null,
+        description: $("description").value.trim() || null,
+        code_url: $("code_url").value.trim() || null,
+        paper_url: $("paper_url").value.trim() || null,
+        owner_token: $("owner_token").value.trim() || null,
+      };
+    }
+    async function post(path, body) {
+      var r = await fetch(WORKER_URL + path, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+      });
+      var data = await r.json();
+      if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+      return data;
+    }
+    function show(ok, html) {
+      var el = $("result"); el.className = ok ? "ok" : "err"; el.innerHTML = html;
+    }
+
+    var uppy = new Uppy.Uppy({
+      restrictions: { maxNumberOfFiles: 9, allowedFileTypes: [".csv"] },
+      autoProceed: false,
+    })
+      .use(Uppy.Dashboard, { inline: true, target: "#uppy", height: 360, note: "Exactly 9 CSV files" })
+      .use(Uppy.AwsS3, {
+        shouldUseMultipart: true,
+        createMultipartUpload: function (file) {
+          var m = meta();
+          return post("/api/multipart/create", {
+            model_id: m.model_id, val_strategy: m.val_strategy, filename: file.name,
+          });
+        },
+        signPart: function (file, opts) {
+          return post("/api/multipart/sign", {
+            key: opts.key, uploadId: opts.uploadId, partNumber: opts.partNumber,
+          });
+        },
+        completeMultipartUpload: function (file, opts) {
+          return post("/api/multipart/complete", {
+            key: opts.key, uploadId: opts.uploadId, parts: opts.parts,
+          });
+        },
+        abortMultipartUpload: function (file, opts) {
+          return post("/api/multipart/abort", { key: opts.key, uploadId: opts.uploadId });
+        },
+        listParts: function () { return []; }, // fresh uploads only; no resume across sessions
+      });
+
+    uppy.on("complete", async function (result) {
+      if (result.failed.length) { show(false, "Some files failed to upload — please retry."); return; }
+      if (result.successful.length !== 9) {
+        show(false, "Uploaded " + result.successful.length + " files; a submission needs all 9."); return;
+      }
+      try {
+        var res = await post("/api/submission/finalize", meta());
+        var html = 'Submission received — pull request opened: <a href="' + res.prUrl + '">' + res.prUrl + "</a>.";
+        if (res.ownerToken) {
+          html += '<br><strong>Save this owner token to update your model later:</strong> '
+            + '<code class="token">' + res.ownerToken + "</code>";
+        }
+        show(true, html);
+      } catch (e) {
+        show(false, "Finalize failed: " + e.message);
+      }
+    });
+  </script>
+</body>
+</html>
