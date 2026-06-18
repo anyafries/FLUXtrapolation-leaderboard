@@ -7,3 +7,12 @@ venv/
 .build/
 *.egg-info/
 .DS_Store
+submissions_raw/*
+submissions_metrics/*
+
+# Truth table is ~164MB (>50MB) — stored as an R2 object / release asset, fetched and
+# cached by the Action and the VM. The small manifest (with its sha256) IS committed.
+reference/truth_table.parquet
+
+worker/node_modules/*
+*.wrangler/*
