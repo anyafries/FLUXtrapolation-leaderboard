@@ -45,7 +45,7 @@ REQUIRED_COLUMNS = [
     'mse', 'rmse', 'mae', 'nse', 'r2_score', 'bias', 'relative_mae', 'relative_bias'
 ]
 
-GITHUB_REPO_URL = "https://github.com/{TODO: owner/repo}"  # replace before publishing
+GITHUB_REPO_URL = "https://github.com/anyafries/FLUXtrapolation-leaderboard"  
 
 
 def parse_submission_filename(filename):
@@ -104,6 +104,9 @@ def load_all_submissions():
         if not os.path.isdir(folder_path):
             continue
         for filename in sorted(os.listdir(folder_path)):
+            # metadata.yaml (and any non-CSV) lives beside the metric CSVs; not a metrics file.
+            if filename == 'metadata.yaml' or not filename.endswith('.csv'):
+                continue
             parsed = parse_submission_filename(filename)
             if parsed is None:
                 logger.warning(f"Skipping unrecognised filename: {model_folder}/{filename}")

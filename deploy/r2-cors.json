@@ -1,0 +1,9 @@
+[
+  {
+    "AllowedOrigins": ["https://anyafries.github.io"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
