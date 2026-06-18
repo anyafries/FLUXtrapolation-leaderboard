@@ -55,7 +55,7 @@ jobs:
           echo "Changed files:"; echo "$CHANGED"
           echo "files<<EOF" >> "$GITHUB_OUTPUT"; echo "$CHANGED" >> "$GITHUB_OUTPUT"; echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Validate submission (sandbox: download from R2 + full validation)
+      - name: "Validate submission (sandbox: download from R2 + full validation)"
         id: validate
         env:
           OBJECTSTORE_BACKEND: r2
