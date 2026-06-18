@@ -42,6 +42,10 @@ class ObjectStore(ABC):
     def exists(self, key):
         """True if `key` is present."""
 
+    @abstractmethod
+    def list_prefix(self, prefix):
+        """Return a sorted list of all keys under `prefix` (recursively)."""
+
 
 class R2ObjectStore(ObjectStore):
     """Cloudflare R2 via its S3-compatible API (boto3)."""
@@ -85,6 +89,13 @@ class R2ObjectStore(ObjectStore):
         except ClientError:
             return False
 
+    def list_prefix(self, prefix):
+        keys = []
+        paginator = self._s3().get_paginator("list_objects_v2")
+        for page in paginator.paginate(Bucket=self.bucket, Prefix=prefix):
+            keys.extend(obj["Key"] for obj in page.get("Contents", []))
+        return sorted(keys)
+
 
 class LocalObjectStore(ObjectStore):
     """Filesystem-backed store for tests/dev (keys are paths under R2_LOCAL_DIR)."""
@@ -112,6 +123,15 @@ class LocalObjectStore(ObjectStore):
 
     def exists(self, key):
         return os.path.exists(self._p(key))
+
+    def list_prefix(self, prefix):
+        base = self._p(prefix)
+        keys = []
+        for dirpath, _, filenames in os.walk(base):
+            for fn in filenames:
+                rel = os.path.relpath(os.path.join(dirpath, fn), self.root)
+                keys.append(rel.replace(os.sep, "/"))
+        return sorted(keys)
 
     def put(self, key, src_path):
         """Test/dev helper to seed the store (the browser does this via presigned PUT in prod)."""

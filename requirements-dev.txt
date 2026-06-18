@@ -1,3 +1,4 @@
 # Test-only dependencies (runtime deps are in requirements.txt).
 -r requirements.txt
 pytest
+boto3
