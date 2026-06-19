@@ -14,6 +14,7 @@ submitters provide pre-computed metric CSVs, no recomputation is needed.
 import os
 import sys
 import pandas as pd
+import yaml
 
 # Allow imports from project root
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -36,6 +37,23 @@ DISPLAY_NAMES = {
     "time-split": "temporal",
     "spatial-easy40": "spatial",
     "TA40": "temperature",
+}
+
+# Diagram + one-line description shown inside the table header under each scenario title.
+# Keyed by the DISPLAY_NAMES value (the label that appears in the level-0 header).
+SCENARIO_MEDIA = {
+    "temporal": {
+        "img": "figures/time_split.png",
+        "desc": "Train on years before 2018, validate on 2018, test on later years.",
+    },
+    "spatial": {
+        "img": "figures/site_split_space.png",
+        "desc": "Hold out 40 test sites; train and validate on the rest.",
+    },
+    "temperature": {
+        "img": "figures/site_split_ta.png",
+        "desc": "Hold out warmer southern sites; train and validate on northern ones.",
+    },
 }
 
 DROP_SCALES = {'daily', 'monthly'}
@@ -142,6 +160,37 @@ def load_all_submissions():
     return combined
 
 
+def load_display_map():
+    """Map (model_id, val_strategy) -> {'model': display_name, 'val': val_strategy_display}.
+
+    Read from each submission's metadata.yaml so the leaderboard can show submitter-chosen
+    labels instead of the raw model_id / val_strategy. Missing labels fall back to the raw id.
+    """
+    submissions_dir = os.path.abspath(SUBMISSIONS_DIR)
+    out = {}
+    if not os.path.isdir(submissions_dir):
+        return out
+    for folder in sorted(os.listdir(submissions_dir)):
+        meta_path = os.path.join(submissions_dir, folder, 'metadata.yaml')
+        if not os.path.isfile(meta_path):
+            continue
+        try:
+            with open(meta_path, encoding='utf-8') as f:
+                meta = yaml.safe_load(f) or {}
+        except Exception as e:
+            logger.warning(f"Could not read {meta_path}: {e}")
+            continue
+        model_id = meta.get('model_id')
+        val_strategy = meta.get('val_strategy')
+        if not model_id or not val_strategy:
+            continue
+        out[(model_id, val_strategy)] = {
+            'model': meta.get('display_name') or model_id,
+            'val': meta.get('val_strategy_display') or val_strategy,
+        }
+    return out
+
+
 def build_tabbed_index(tab_panels):
     """
     Build a single tabbed index.html.
@@ -204,7 +253,6 @@ def build_tabbed_index(tab_panels):
       <a class="navcard" href="{BENCHMARK_REPO_URL}" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
     </nav>
   </header>
-  <hr class="header-rule">
   <h2 class="page-title">Leaderboard</h2>
   <p class="page-desc">
     This leaderboard tracks machine-learning model performance on the
@@ -231,6 +279,10 @@ def build_tabbed_index(tab_panels):
     </div>
 {panels_html}
   </main>
+  <footer class="site-footer">
+    <p>For any issues, contact anya[dot]fries[at]stat[dot]math[dot]ethz[dot]ch</p>
+    <p>© Copyright 2026 Anya Fries. Hosted by GitHub Pages.</p>
+  </footer>
   <script>
     var VALID_TABS = {tabs_js};
     function activateTab(t) {{
@@ -292,6 +344,7 @@ def main():
     if results.empty:
         logger.error("No submissions found — nothing to build.")
         sys.exit(1)
+    display_map = load_display_map()
 
     docs_dir = os.path.abspath(DOCS_DIR)
     os.makedirs(docs_dir, exist_ok=True)
@@ -316,6 +369,8 @@ def main():
             metric='rmse',
             aggfunc='median',
             settings_names=DISPLAY_NAMES,
+            index_display=display_map,
+            scenario_media=SCENARIO_MEDIA,
             return_html=True,
         )
 
@@ -325,6 +380,8 @@ def main():
             metric='rmse',
             aggfunc=lambda x: x.quantile(0.9),
             settings_names=DISPLAY_NAMES,
+            index_display=display_map,
+            scenario_media=SCENARIO_MEDIA,
             return_html=True,
         )
 

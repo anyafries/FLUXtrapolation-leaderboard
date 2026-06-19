@@ -33,21 +33,22 @@ Proves: the drop box + resumable multipart for real (large) files.
 3. Confirm 9 objects under `incoming/bringup-test_val_mean/` in R2. Do **not** finalize yet.
 
 ### (c) PR opens with the right metadata.yaml
-Proves: finalize → ownership/KV → GitHub PR creation.
-1. Click through finalize (or call `/api/submission/finalize`). Expect a PR URL + (first time) an owner token.
-   **Save the token** — `bringup-test` is now a claimed model_id.
+Proves: finalize → ownership/KV → GitHub PR creation. The ownership key is the submitter's **email**.
+1. Click through finalize (or call `/api/submission/finalize`) with an `email`. Expect a PR URL.
+   `bringup-test` is now claimed by `sha256(email)` — to update it later, re-submit with the same email.
 2. Open the PR: it must add exactly `submissions/bringup-test_val_mean/metadata.yaml`, `status: pending`,
-   9 `files` entries with `r2_key`, `owner:` a sha256 hash (not the raw token).
-3. Re-finalize with the wrong owner token → expect HTTP 403 (ownership backstop).
+   9 `files` entries with `r2_key`, `owner:` a sha256 hash (the email is **not** stored in the repo).
+3. Re-finalize with a different email → expect HTTP 403 (ownership backstop).
 4. **Ownership gate at `create`** (the boundary that protects staged files): now that `bringup-test`
-   is claimed, a `create` with a blank/wrong token must be refused *before* any upload URL is issued:
+   is claimed, a `create` with a missing/wrong email must be refused *before* any upload URL is issued:
    ```js
    let r = await fetch(W+"/api/multipart/create",{method:"POST",headers:{"Content-Type":"application/json"},
      body:JSON.stringify({model_id:"bringup-test",val_strategy:"mean",
-       filename:"time-split_GPP_bringup-test_val_mean_predictions.csv"})});  // no owner_token
+       filename:"time-split_GPP_bringup-test_val_mean_predictions.csv",
+       email:"someone-else@example.com"})});  // wrong email for a claimed model
    console.log(r.status);  // must be 403; no new object appears in incoming/bringup-test_val_mean/
    ```
-   Repeat with the **correct** token → expect 200 + an `uploadId` (a legit owner can still update).
+   Repeat with the **original** email → expect 200 + an `uploadId` (a legit owner can still update).
 
 ### (d) Action validates + auto-merges
 Proves: the sandboxed gate end-to-end. Use **real** lr-style data so validation passes.

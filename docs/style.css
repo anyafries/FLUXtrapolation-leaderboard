@@ -47,15 +47,9 @@ body {
   color: var(--accent);
 }
 
-.header-rule {
-  border: none;
-  border-top: 1px solid #e0e0e0;
-  margin: 0.75rem 0 1.25rem;
-}
-
-/* Per-page heading below the rule (Leaderboard / Submit a model) */
+/* Per-page heading below the header banner (Leaderboard / Submit a model) */
 .page-title {
-  margin: 0 0 0.35rem;
+  margin: 1.25rem 0 0.35rem;
   font-size: 1.5rem;
   font-weight: 700;
 }
@@ -113,6 +107,11 @@ a {
   opacity: 0.55;
 }
 
+/* The current-page card stays solid white-on-accent (never fades to transparent) */
+.navcard.active:hover {
+  opacity: 1;
+}
+
 /* External-link marker on Paper / GitHub */
 .navcard .ext {
   font-size: 0.85em;
@@ -168,22 +167,22 @@ tbody tr:nth-child(even) td:not([style*="background"]) {
    background-clip: padding-box keeps the highlight from bleeding under the white scenario gaps. */
 tbody tr:hover > td,
 tbody tr:hover > th {
-  box-shadow: inset 0 2px 0 #8ab4f8, inset 0 -2px 0 #8ab4f8;
+  box-shadow: inset 0 2px 0 #c8dbf7, inset 0 -2px 0 #c8dbf7;
   background-clip: padding-box;
 }
 
 tbody tr:hover > th.row_heading {
-  background: #eaf2ff !important;
+  background: #eff4fc !important;
   background-clip: padding-box;
 }
 
 .hl-col {
-  box-shadow: inset 2px 0 0 #8ab4f8, inset -2px 0 0 #8ab4f8;
+  box-shadow: inset 2px 0 0 #c8dbf7, inset -2px 0 0 #c8dbf7;
   background-clip: padding-box;
 }
 
 th.col_heading.level1.hl-col {
-  background: #eaf2ff !important;
+  background: #eff4fc !important;
   background-clip: padding-box;
 }
 
@@ -260,8 +259,22 @@ thead tr > :nth-child(2) { z-index: 3; }
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.5rem 2.5rem;
-  border-bottom: 1px solid #d3d3d3;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 0;                /* stacking context for the baseline + active tab */
+}
+
+/* Orange baseline drawn IN FRONT of the tabs, so it covers the grey tab borders
+   rather than sitting behind them. The active tab (raised above) still breaks it. */
+.controls::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  z-index: 2;
 }
 
 .controls .tab-bar {
@@ -273,7 +286,7 @@ thead tr > :nth-child(2) { z-index: 3; }
 .tab-bar {
   display: flex;
   align-items: flex-end;
-  border-bottom: 1px solid #d3d3d3;
+  border-bottom: 1px solid var(--accent);
   margin-bottom: 1.5rem;
   gap: 0.4rem;
 }
@@ -309,10 +322,185 @@ thead tr > :nth-child(2) { z-index: 3; }
   border-bottom-color: #fff;     /* erase the baseline under the active tab */
   color: var(--accent-text);
   font-weight: 700;
+  position: relative;
+  z-index: 3;                    /* sit above the orange baseline so it breaks the line */
 }
 
 /* Tab panel spacing */
 [role="tabpanel"] h2 {
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
+}
+
+/* ---------------------------------------------------------------- Submit page */
+
+/* Metadata form */
+.submit-form {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 640px;
+  margin: 0 0 1.5rem;
+}
+
+.submit-form label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.submit-form input,
+.submit-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.submit-form input:focus,
+.submit-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 82, 0, 0.15);
+}
+
+.hint {
+  color: #777;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* Read-out of the model_id / val_strategy inferred from the uploaded filenames */
+.inferred {
+  max-width: 640px;
+  margin: 0.25rem 0 1rem;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.inferred code {
+  background: #f2f2f2;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+}
+
+.inferred.err {
+  color: #b00020;
+}
+
+/* Primary submit button. Always clickable: grey when something's missing (clicking explains
+   what), green once email + code URL + the 9 valid files are all present. */
+.btn-submit {
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: #b5b5b5;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn-submit.ready {
+  background: #2e9e5b;
+}
+
+.btn-submit:hover {
+  opacity: 0.85;
+}
+
+/* Transient state while the upload is in flight */
+.btn-submit:disabled {
+  background: #ccc;
+  cursor: progress;
+  opacity: 1;
+}
+
+/* Submission result banner */
+.result {
+  max-width: 640px;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  display: none;
+}
+
+.result.ok {
+  background: #e7f6ec;
+  border: 1px solid #63BE7B;
+  display: block;
+}
+
+.result.err {
+  background: #fdecec;
+  border: 1px solid #e0a0a0;
+  display: block;
+}
+
+/* Distribution-shift scenario explainer below the leaderboard tables */
+.settings-info {
+  margin-top: 2.5rem;
+}
+
+.setting-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+  max-width: 1100px;
+}
+
+.setting-card {
+  margin: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.setting-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+
+.setting-card figcaption {
+  padding: 0.75rem 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #444;
+}
+
+.setting-card figcaption strong {
+  font-size: 0.95rem;
+}
+
+.setting-tag {
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  background: #f2f2f2;
+  font-size: 0.78rem;
+  color: #555;
+}
+
+/* Tiny site footer — full-width band flush to the bottom of the page */
+.site-footer {
+  margin: 3rem -2rem -3rem;       /* bleed over the body padding to the page edges */
+  padding: 1rem 2rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.site-footer p {
+  margin: 0.15rem 0;
+  max-width: none;
+  color: #777;
 }

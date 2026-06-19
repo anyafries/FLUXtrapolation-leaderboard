@@ -5,7 +5,7 @@
 //   POST /api/multipart/sign     -> { url }                 (presigned PUT for one part)
 //   POST /api/multipart/complete -> { location }            (finish a file)
 //   POST /api/multipart/abort    -> {}                      (cancel a file)
-//   POST /api/submission/finalize-> { prUrl, ownerToken? }  (verify 9 files, open the PR)
+//   POST /api/submission/finalize-> { prUrl }               (verify 9 files, open the PR)
 //
 // Security model: the browser uploads directly to R2 via presigned URLs (never through the
 // Worker). The Worker holds R2 creds + a fine-grained GitHub token and is the ONLY way a
@@ -83,20 +83,24 @@ const incomingKey = (modelId, strategy, filename) =>
 
 const clientIp = (req) => req.headers.get("CF-Connecting-IP") || "unknown";
 
-// A usable owner token: a non-empty trimmed string, or null. Never hash null/blank.
-function cleanToken(t) {
-  return typeof t === "string" && t.trim() ? t.trim() : null;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// The submitter's email is the ownership key. Normalize it (trim + lowercase) so the same
+// address always hashes the same. Returns null for blank/non-string. Never hash null/blank.
+// The RAW email is never written to the public repo — only sha256(email), as `owner`.
+function cleanEmail(e) {
+  return typeof e === "string" && e.trim() ? e.trim().toLowerCase() : null;
 }
 
 // Read-only ownership gate, shared by create (pre-upload) and finalize (backstop).
-// Unclaimed model_id -> allowed. Claimed model_id -> allowed only if a non-blank token
-// hashes to the stored value. Blank/missing/wrong token -> not ok. Never writes KV;
-// registration happens once, at finalize.
-async function ownerOk(env, modelId, token) {
+// Unclaimed model_id -> allowed. Claimed model_id -> allowed only if the email hashes to the
+// stored value. Blank/missing/wrong email -> not ok. Never writes KV; registration happens
+// once, at finalize.
+async function ownerOk(env, modelId, email) {
   const recorded = await env.RL.get(`owner:${modelId}`);
   if (!recorded) return { ok: true, recorded: null };
-  const tok = cleanToken(token);
-  if (!tok || (await sha256hex(tok)) !== recorded) return { ok: false, recorded };
+  const em = cleanEmail(email);
+  if (!em || (await sha256hex(em)) !== recorded) return { ok: false, recorded };
   return { ok: true, recorded };
 }
 
@@ -111,17 +115,18 @@ async function allow(env, key, limit, ttl) {
 // ----------------------------------------------------------------------------- multipart
 
 async function createMultipart(env, body, req) {
-  const { model_id, val_strategy, filename, owner_token } = body;
+  const { model_id, val_strategy, filename, email } = body;
   if (!MODEL_ID_RE.test(model_id || "")) return bad(env, "invalid model_id");
   if (!VALID_STRATEGIES.includes(val_strategy)) return bad(env, "invalid val_strategy");
+  if (!EMAIL_RE.test(cleanEmail(email) || "")) return bad(env, "a valid email is required");
   const info = parseFilename(filename || "");
   if (!info || info.model !== model_id || info.strategy !== val_strategy)
     return bad(env, `filename must be {setting}_{target}_${model_id}_val_${val_strategy}_predictions.csv`);
 
   // Ownership gate BEFORE issuing any upload URL: an outsider must never be able to
   // overwrite an already-claimed model's staged R2 files. (Re-checked at finalize.)
-  if (!(await ownerOk(env, model_id, owner_token)).ok)
-    return bad(env, "model_id is owned by another submitter; provide the matching owner token", 403);
+  if (!(await ownerOk(env, model_id, email)).ok)
+    return bad(env, "model_id is owned by another submitter; submit with the email you used originally", 403);
 
   const hour = Math.floor(Date.now() / 3.6e6);
   if (!(await allow(env, `cr:${clientIp(req)}:${hour}`, +env.RL_CREATES_PER_HOUR, 3600)))
@@ -193,6 +198,7 @@ function buildMetadataYaml(m) {
     `paper_url: ${yamlString(m.paper_url)}`,
     `owner: ${yamlString(m.owner)}`,
     `val_strategy: ${yamlString(m.val_strategy)}`,
+    `val_strategy_display: ${yamlString(m.val_strategy_display)}`,
     `submitted_at: ${yamlString(m.submitted_at)}`,
     `is_baseline: false`,
     `status: pending`,
@@ -257,9 +263,10 @@ async function openPr(env, modelId, strategy, yamlText) {
 }
 
 async function finalize(env, body, req) {
-  const { model_id, val_strategy, owner_token } = body;
+  const { model_id, val_strategy, email } = body;
   if (!MODEL_ID_RE.test(model_id || "")) return bad(env, "invalid model_id");
   if (!VALID_STRATEGIES.includes(val_strategy)) return bad(env, "invalid val_strategy");
+  if (!EMAIL_RE.test(cleanEmail(email) || "")) return bad(env, "a valid email is required");
 
   const hour = Math.floor(Date.now() / 3.6e6);
   const day = Math.floor(Date.now() / 8.64e7);
@@ -286,34 +293,34 @@ async function finalize(env, body, req) {
   // register on first submission. This is the single, race-free place we WRITE the
   // KV record (one finalize call, vs. Uppy's parallel creates on eventually-consistent KV).
   const ownerKey = `owner:${model_id}`;
-  const gate = await ownerOk(env, model_id, owner_token);
+  const gate = await ownerOk(env, model_id, email);
   if (!gate.ok)
-    return bad(env, "model_id is owned by another submitter; owner token does not match", 403);
-  let issuedToken = null;
+    return bad(env, "model_id is owned by another submitter; submit with the email you used originally", 403);
   let ownerHash = gate.recorded;
   if (!ownerHash) {
-    const tok = cleanToken(owner_token);
-    const token = tok || crypto.randomUUID();
-    ownerHash = await sha256hex(token);
+    ownerHash = await sha256hex(cleanEmail(email));
     await env.RL.put(ownerKey, ownerHash); // no TTL: permanent ownership record
-    if (!tok) issuedToken = token; // return generated token once
   }
+  // Stash the raw email privately (KV) so the maintainer can contact the submitter.
+  // It is NEVER committed to the public repo — only its hash, as `owner`.
+  await env.RL.put(`email:${model_id}`, cleanEmail(email));
 
   const yamlText = buildMetadataYaml({
     model_id,
     display_name: body.display_name,
-    email: body.email,
+    email: null,                         // contact email is private (KV), never public
     description: body.description,
     code_url: body.code_url,
-    paper_url: body.paper_url,
+    paper_url: null,                     // folded into the "description" / comments field
     owner: ownerHash,
     val_strategy,
+    val_strategy_display: body.val_strategy_display,
     submitted_at: new Date().toISOString().replace(/\.\d+Z$/, "+00:00"),
     files: files.sort((a, b) => a.filename.localeCompare(b.filename)),
   });
 
   const prUrl = await openPr(env, model_id, val_strategy, yamlText);
-  return json(env, { prUrl, ownerToken: issuedToken });
+  return json(env, { prUrl });
 }
 
 // ----------------------------------------------------------------------------- router
@@ -343,4 +350,4 @@ export default {
 };
 
 // Exported for unit tests (test/ownership.test.mjs); not part of the Worker runtime surface.
-export { createMultipart, finalize, ownerOk, cleanToken, sha256hex, parseFilename };
+export { createMultipart, finalize, ownerOk, cleanEmail, sha256hex, parseFilename };

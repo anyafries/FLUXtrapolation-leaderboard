@@ -527,12 +527,33 @@ def create_html_leaderboard(
     page_title=None,
     page_heading=None,
     return_html=False,
+    index_display=None,
 ):
     # --- 1. Data Preparation ---
     pivot_df, overall_scores, skill_scores_df = get_pivot_df_with_scores(
         df, target, metric, aggfunc, lower_is_better,
         scale_order, model_order, settings_order, baseline_model
     )
+
+    # Relabel the row index to submitter-chosen display names. Done AFTER scoring/ordering so
+    # the skill-score baseline and model order stay keyed on the real model_id / val_strategy.
+    # index_display maps (model_id, val_strategy) -> {'model': label, 'val': label}.
+    if index_display:
+        def _relabel(key):
+            mid = key[0] if isinstance(key, tuple) else key
+            strat = key[1] if isinstance(key, tuple) and len(key) > 1 else None
+            disp = index_display.get((mid, strat), index_display.get((mid,), {}))
+            model_label = disp.get('model') or mid
+            if isinstance(key, tuple):
+                return (model_label, disp.get('val') or strat) if len(key) > 1 else (model_label,)
+            return model_label
+        new_index = [_relabel(k) for k in pivot_df.index]
+        if isinstance(pivot_df.index, pd.MultiIndex):
+            pivot_df.index = pd.MultiIndex.from_tuples(new_index, names=pivot_df.index.names)
+        else:
+            pivot_df.index = pd.Index(new_index, name=pivot_df.index.name)
+        if skill_scores_df is not None:
+            skill_scores_df.index = pivot_df.index
 
     if settings_names is not None:
         renamed_cols = [(settings_names.get(s, s), sc) for s, sc in pivot_df.columns]
@@ -579,8 +600,11 @@ def create_html_leaderboard(
             ('height', '110px'),
             ('vertical-align', 'bottom'),
             ('padding', '5px'),
-            ('min-width', '24px')
+            ('min-width', '24px'),
+            ('font-weight', 'normal')   # scale labels are not bold ...
         ]},
+        # ... except the Skill score header (col0), which stays bold like its values.
+        {'selector': 'th.col_heading.level1.col0', 'props': [('font-weight', 'bold')]},
         {'selector': 'th.col_heading.level1 span', 'props': [
             ('writing-mode', 'vertical-rl'),
             ('transform', 'rotate(180deg)'),

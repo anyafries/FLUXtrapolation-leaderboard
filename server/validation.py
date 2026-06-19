@@ -16,7 +16,8 @@ Five checks (all run; the report lists every failure at once):
                         sub-rows changes scores while leaving coarse counts unchanged.
   4. ytrue_integrity  — submitted y_true matches the lr truth within tolerance on (site_id,time).
                         Scoring always uses lr's values; this just rejects wrong-data uploads.
-  5. ownership        — if the model_id already exists, the submitter's owner token must match.
+  5. ownership        — if the model_id already exists, the recorded owner hash (sha256 of the
+                        submitter's email) must match the one in the new metadata.
 
 Truth-table access goes through server.truth (fetch+cache+verify sha256; partition-only load).
 
@@ -291,14 +292,17 @@ def _check_integrity(df, truth_df, setting, target, config, c):
 
 
 def _check_ownership(model_id, owner_token, recorded_owner):
-    """CHECK 5. New model_id claims ownership; existing requires matching owner token."""
+    """CHECK 5. New model_id claims ownership; updating an existing one requires the recorded
+    owner hash (sha256 of the submitter's email) to match. `owner_token` is that hash, not a
+    raw secret."""
     c = CheckResult("ownership")
     if recorded_owner is None:
         if not owner_token:
-            c.warn(f"new model_id `{model_id}` with no owner token recorded")
+            c.warn(f"new model_id `{model_id}` with no owner recorded")
         return c
     if owner_token != recorded_owner:
-        c.fail(f"model_id `{model_id}` is owned by another submitter; owner token does not match")
+        c.fail(f"model_id `{model_id}` is owned by another submitter; "
+               f"re-submit with the email you used originally")
     return c
 
 
