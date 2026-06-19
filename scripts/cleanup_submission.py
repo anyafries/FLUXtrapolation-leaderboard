@@ -4,7 +4,8 @@ Maintainer cleanup: fully remove one submission (model_id + val_strategy).
 
 Removes, in order:
   1. R2 transient objects under  incoming/{model_id}_val_{strategy}/   (server.objectstore)
-  2. the Cloudflare KV ownership key  owner:{model_id}                 (via wrangler: local + remote)
+  2. the Cloudflare KV ownership key  owner:{model_id}                 (wrangler --namespace-id;
+     deleted then re-listed to CONFIRM it's gone, on remote (authoritative) + local (dev state))
   3. the repo folder  submissions/{model_id}_val_{strategy}/           (git rm, or rmtree if untracked)
 
 DRY RUN by default: it prints exactly what it WOULD delete and changes nothing.
@@ -84,9 +85,59 @@ def _git_tracked(relpath):
     return bool(out.strip())
 
 
+def _kv_namespace_id(override=None):
+    """The RL KV namespace id: --kv-namespace-id if given, else parsed from worker/wrangler.toml.
+
+    We invoke wrangler with --namespace-id (not --binding): the binding form does not reliably
+    resolve when run non-interactively, so the id is passed explicitly.
+    """
+    if override:
+        return override
+    try:
+        text = open(os.path.join(WORKER_DIR, "wrangler.toml")).read()
+    except OSError:
+        return None
+    # Single [[kv_namespaces]] block (binding = "RL"); grab its id = "...".
+    m = re.search(r"\[\[kv_namespaces\]\].*?\bid\s*=\s*\"([^\"]+)\"", text, re.S)
+    return m.group(1) if m else None
+
+
+def _kv_list_names(stdout):
+    """Parse the JSON array printed by `wrangler kv key list` into a list of key names.
+
+    Tolerant of a leading banner some wrangler builds print before the array."""
+    import json
+    s = (stdout or "").strip()
+    start, end = s.find("["), s.rfind("]")
+    if start == -1 or end == -1 or end < start:
+        return []
+    try:
+        return [e.get("name") for e in json.loads(s[start:end + 1]) if isinstance(e, dict)]
+    except ValueError:
+        return []
+
+
+def _kv_delete_and_verify(wrangler, nsid, key, target):
+    """Delete `key` from the KV namespace at `target` (--remote/--local), then RE-LIST to confirm
+    it is actually gone (delete is idempotent on wrangler 4.x, so exit code alone proves nothing).
+
+    Returns (ok, detail). ok is True only when the re-list succeeds AND no longer contains `key`.
+    No stdin: `kv key delete` on wrangler 4.x does not prompt and has no --force flag.
+    """
+    dele = _run([wrangler, "kv", "key", "delete", key, "--namespace-id", nsid, target], cwd=WORKER_DIR)
+    lst = _run([wrangler, "kv", "key", "list", "--namespace-id", nsid, "--prefix", key, target], cwd=WORKER_DIR)
+    if lst.returncode != 0:
+        why = (lst.stderr or lst.stdout or "").strip().splitlines()
+        return False, (f"delete exit={dele.returncode}; could NOT verify (list exit={lst.returncode}: "
+                       f"{why[-1] if why else '?'})")
+    if key in _kv_list_names(lst.stdout):
+        return False, f"delete exit={dele.returncode}; key STILL PRESENT after delete"
+    return True, f"verified gone (delete exit={dele.returncode})"
+
+
 # --------------------------------------------------------------------------- planning
 
-def gather(model_id, val_strategy):
+def gather(model_id, val_strategy, kv_namespace_id=None):
     """Collect everything we'd touch, without changing anything."""
     folder_rel = f"submissions/{model_id}_val_{val_strategy}"
     folder_abs = os.path.join(_REPO_ROOT, folder_rel)
@@ -104,6 +155,7 @@ def gather(model_id, val_strategy):
         "r2_keys": [],
         "r2_error": None,
         "kv_key": f"owner:{model_id}",
+        "kv_namespace_id": _kv_namespace_id(kv_namespace_id),
         "metadata": None,
         "archive_pointers": [],
         "siblings": [],
@@ -168,7 +220,13 @@ def print_plan(plan, keep_owner):
     if keep_owner:
         print("    SKIPPED (--keep-owner): the model_id stays claimed.")
     else:
-        print("    will delete from BOTH local (wrangler dev state) and remote (production) KV.")
+        nsid = plan["kv_namespace_id"]
+        if nsid:
+            print(f"    delete + verify-gone on remote (authoritative) and local (dev state), namespace {nsid}:")
+            print(f"      wrangler kv key delete {plan['kv_key']} --namespace-id {nsid} --remote   (then re-list to confirm)")
+            print(f"      wrangler kv key delete {plan['kv_key']} --namespace-id {nsid} --local")
+        else:
+            print("    !! KV namespace id not found in worker/wrangler.toml — pass --kv-namespace-id <id>.")
         if plan["siblings"]:
             print("    !! WARNING: other val_strategy folders for this model_id remain:")
             for sib in plan["siblings"]:
@@ -203,6 +261,7 @@ def print_plan(plan, keep_owner):
 
 def execute(plan, keep_owner, wrangler):
     print(">>> --confirm given: DELETING.\n")
+    rc = 0
 
     # 1) R2
     if plan["r2_error"]:
@@ -216,28 +275,34 @@ def execute(plan, keep_owner, wrangler):
     if not plan["r2_keys"]:
         print("[1] R2: nothing to delete.")
 
-    # 2) KV — delete the per-model ownership claim from BOTH the local (wrangler dev) state and
-    #    the remote (production) namespace, so a key created during bring-up testing or by the
-    #    deployed Worker is gone either way. Each target is handled independently (one missing or
-    #    failing must not stop the other); `input="y\n"` answers wrangler's confirmation prompt.
+    # 2) KV — delete the per-model ownership claim and RE-LIST to confirm it's gone. Remote is
+    #    authoritative (the deployed Worker writes here): if it can't be confirmed gone, fail
+    #    loudly (rc=1). Local is the wrangler-dev state: best-effort, warn only.
+    nsid = plan["kv_namespace_id"]
     if keep_owner:
         print(f"[2] KV: skipped (--keep-owner); {plan['kv_key']} left in place.")
     elif wrangler is None:
-        print("[2] KV: wrangler not found — could not delete "
-              f"{plan['kv_key']}. Install/locate wrangler or use --wrangler PATH, then delete it "
-              "manually (or via the Cloudflare dashboard).")
+        print(f"[2] KV: !! wrangler not found — could NOT delete {plan['kv_key']}; the model_id is "
+              "still claimed. Use --wrangler PATH, or delete it via the Cloudflare dashboard.")
+        rc = 1
+    elif not nsid:
+        print(f"[2] KV: !! namespace id not found in worker/wrangler.toml (pass --kv-namespace-id). "
+              f"Could NOT delete {plan['kv_key']}; the model_id is still claimed.")
+        rc = 1
     else:
-        for target in ("--local", "--remote"):
-            cmd = [wrangler, "kv", "key", "delete", plan["kv_key"], "--binding", "RL", target]
-            print(f"[2] KV: $ {' '.join(cmd)}   (cwd={WORKER_DIR})")
-            res = _run(cmd, cwd=WORKER_DIR, input="y\n")
-            sys.stdout.write(res.stdout)
-            sys.stderr.write(res.stderr)
-            if res.returncode != 0:
-                print(f"[2] KV ({target}): wrangler exited {res.returncode}; "
-                      "delete it manually if it still exists.")
-            else:
-                print(f"[2] KV deleted ({target}): {plan['kv_key']}")
+        ok, detail = _kv_delete_and_verify(wrangler, nsid, plan["kv_key"], "--remote")
+        if ok:
+            print(f"[2] KV remote: deleted {plan['kv_key']} — {detail}")
+        else:
+            print(f"[2] KV remote: !! {plan['kv_key']} NOT confirmed gone — {detail}")
+            print("    Check `wrangler login` / account access, then delete it manually.")
+            rc = 1
+        ok_l, detail_l = _kv_delete_and_verify(wrangler, nsid, plan["kv_key"], "--local")
+        if ok_l:
+            print(f"[2] KV local:  deleted {plan['kv_key']} — {detail_l}")
+        else:
+            print(f"[2] KV local:  (warning) not confirmed gone in dev state — {detail_l} "
+                  "(usually harmless if you never ran `wrangler dev`).")
 
     # 3) repo folder
     if not plan["folder_exists"]:
@@ -249,8 +314,8 @@ def execute(plan, keep_owner, wrangler):
         if res.returncode == 0:
             print(f"[3] folder: git-removed {plan['folder_rel']}/ (staged — commit to finish).")
         else:
-            print(f"[3] folder: git rm exited {res.returncode}.")
-            return 1
+            print(f"[3] folder: !! git rm exited {res.returncode}.")
+            rc = 1
     else:
         shutil.rmtree(plan["folder_abs"])
         print(f"[3] folder: rmtree'd untracked {plan['folder_rel']}/")
@@ -258,8 +323,8 @@ def execute(plan, keep_owner, wrangler):
     if plan["archive_pointers"] and not keep_owner:
         print("\n[archive] Reminder: the keep-forever archive copy was NOT removed "
               "(see TODO(Phase 4)).")
-    print("\nDone.")
-    return 0
+    print("\nDone." if rc == 0 else "\nDone WITH ERRORS — see the !! lines above.")
+    return rc
 
 
 # --------------------------------------------------------------------------- cli
@@ -274,12 +339,14 @@ def main(argv=None):
                     help="do NOT delete owner:{model_id} (keep the model_id claimed)")
     ap.add_argument("--wrangler", default=None,
                     help="path to the wrangler binary (default: PATH, then npm prefix)")
+    ap.add_argument("--kv-namespace-id", default=None,
+                    help="RL KV namespace id (default: parsed from worker/wrangler.toml)")
     args = ap.parse_args(argv)
 
     if not MODEL_ID_RE.match(args.model_id):
         ap.error(f"invalid --model-id {args.model_id!r} (lowercase slug: {MODEL_ID_RE.pattern})")
 
-    plan = gather(args.model_id, args.val_strategy)
+    plan = gather(args.model_id, args.val_strategy, args.kv_namespace_id)
     print_plan(plan, args.keep_owner)
 
     if not args.confirm:
