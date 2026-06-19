@@ -12,3 +12,4 @@ scikit-learn
 pyarrow>=14,<20
 pyyaml
 boto3
+jinja2
