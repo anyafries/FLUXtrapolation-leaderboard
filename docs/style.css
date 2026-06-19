@@ -430,9 +430,17 @@ thead tr > :nth-child(2) { z-index: 3; }
   display: none;
 }
 
+/* ok = success (green); warn = deliberate rejection you can act on (amber);
+   err = something broke, retrying is reasonable (red). */
 .result.ok {
   background: #e7f6ec;
   border: 1px solid #63BE7B;
+  display: block;
+}
+
+.result.warn {
+  background: #fff7e0;
+  border: 1px solid #e0c25a;
   display: block;
 }
 
@@ -440,6 +448,17 @@ thead tr > :nth-child(2) { z-index: 3; }
   background: #fdecec;
   border: 1px solid #e0a0a0;
   display: block;
+}
+
+.result .ico {
+  font-weight: 700;
+  margin-right: 0.4rem;
+}
+
+/* Field flagged by an actionable error (e.g. email needs to match the original submitter) */
+.submit-form input.flag {
+  border-color: #e0a000;
+  background: #fffbe9;
 }
 
 /* Distribution-shift scenario explainer below the leaderboard tables */

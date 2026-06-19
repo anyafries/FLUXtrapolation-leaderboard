@@ -49,6 +49,14 @@ Proves: finalize → ownership/KV → GitHub PR creation. The ownership key is t
    console.log(r.status);  // must be 403; no new object appears in incoming/bringup-test_val_mean/
    ```
    Repeat with the **original** email → expect 200 + an `uploadId` (a legit owner can still update).
+5. **Drop-box error UX** (the rejection must read as a rejection): in the drop box, drop the 9
+   `bringup-test` files but enter a **different email** than the original, then Submit. Expect the
+   result box to turn **amber (⚠)** and show *“This model name is already registered to another
+   submitter… submit again with the same email…”* — **not** the red “Upload failed — please retry.”
+   The email field should be highlighted/focused, and DevTools console should log
+   `… /api/multipart/create -> 403 code=owner_mismatch …`. Then enter the **original** email and
+   Submit again → it proceeds. (A 429 rate-limit should likewise show amber with a “wait and try
+   later” message; a real network drop is the only case that shows the red “please retry”.)
 
 ### (d) Action validates + auto-merges
 Proves: the sandboxed gate end-to-end. Use **real** lr-style data so validation passes.

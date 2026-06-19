@@ -16,7 +16,7 @@ const TARGETS = ["GPP", "ET", "NEE"];
 
 // --- fakes ------------------------------------------------------------------
 
-function fakeEnv(seed = {}) {
+function fakeEnv(seed = {}, overrides = {}) {
   const store = new Map(Object.entries(seed));
   const writes = []; // every RL.put, for "written once" assertions
   return {
@@ -36,6 +36,7 @@ function fakeEnv(seed = {}) {
     GITHUB_REPO: "owner/repo",
     GITHUB_TOKEN: "gh-token",
     ALLOWED_ORIGIN: "*",
+    ...overrides,
   };
 }
 
@@ -99,8 +100,10 @@ test("create on an existing model with the WRONG email -> 403, no R2 write", asy
   const env = fakeEnv({ "owner:m1": await sha256hex("right@example.com") });
   const f = installFetch();
   try {
-    const { status } = await callCreate(env, { model_id: "m1", val_strategy: "mean", filename: fn("m1"), email: "wrong@example.com" });
+    const { status, body } = await callCreate(env, { model_id: "m1", val_strategy: "mean", filename: fn("m1"), email: "wrong@example.com" });
     assert.equal(status, 403);
+    assert.equal(body.code, "owner_mismatch", "structured code so the UI can branch");
+    assert.ok(body.error && body.error.length > 0, "human-readable message present");
     assert.equal(f.r2Writes(), 0, "no presigned upload should be created");
     assert.equal(env._writes.length, 0, "no KV write on a rejected create");
   } finally { f.restore(); }
@@ -111,8 +114,9 @@ test("create with a MISSING or invalid email -> 400, no R2 write", async () => {
   const f = installFetch();
   try {
     for (const email of ["", "   ", null, undefined, "notanemail"]) {
-      const { status } = await callCreate(env, { model_id: "m1", val_strategy: "mean", filename: fn("m1"), email });
+      const { status, body } = await callCreate(env, { model_id: "m1", val_strategy: "mean", filename: fn("m1"), email });
       assert.equal(status, 400, `invalid email ${JSON.stringify(email)} must be rejected`);
+      assert.equal(body.code, "invalid_email", `invalid email ${JSON.stringify(email)} -> invalid_email code`);
     }
     assert.equal(f.r2Writes(), 0, "no presigned upload for any invalid-email attempt");
   } finally { f.restore(); }
@@ -164,9 +168,35 @@ test("finalize with a missing email -> 400, no PR", async () => {
   const env = fakeEnv();
   const f = installFetch({ listModel: "m2" });
   try {
-    const { status } = await callFinalize(env, { model_id: "m2", val_strategy: "mean", display_name: "M2" });
+    const { status, body } = await callFinalize(env, { model_id: "m2", val_strategy: "mean", display_name: "M2" });
     assert.equal(status, 400);
+    assert.equal(body.code, "invalid_email");
     assert.equal(f.prCreated(), false, "no PR opened without a valid email");
+  } finally { f.restore(); }
+});
+
+// --- structured error contract (codes the drop box branches on) ------------
+
+test("create errors carry a stable code + message: invalid_filename (400) and rate_limited (429)", async () => {
+  // Bad filename -> 400 invalid_filename, before any R2 work.
+  let env = fakeEnv();
+  let f = installFetch();
+  try {
+    const { status, body } = await callCreate(env, { model_id: "newbie", val_strategy: "mean", filename: "not-a-valid-name.csv", email: "new@example.com" });
+    assert.equal(status, 400);
+    assert.equal(body.code, "invalid_filename");
+    assert.ok(body.error.includes("_predictions.csv"), "message tells the user the expected name");
+    assert.equal(f.r2Writes(), 0);
+  } finally { f.restore(); }
+
+  // Rate limit exhausted -> 429 rate_limited.
+  env = fakeEnv({}, { RL_CREATES_PER_HOUR: "0" });
+  f = installFetch();
+  try {
+    const { status, body } = await callCreate(env, { model_id: "newbie", val_strategy: "mean", filename: fn("newbie"), email: "new@example.com" });
+    assert.equal(status, 429);
+    assert.equal(body.code, "rate_limited");
+    assert.equal(f.r2Writes(), 0, "no upload started once rate-limited");
   } finally { f.restore(); }
 });
 
@@ -175,8 +205,9 @@ test("finalize backstop: wrong email on an existing model -> 403, no PR, no over
   const env = fakeEnv({ "owner:m2": recorded });
   const f = installFetch({ listModel: "m2" });
   try {
-    const { status } = await callFinalize(env, { model_id: "m2", val_strategy: "mean", display_name: "M2", email: "wrong@example.com" });
+    const { status, body } = await callFinalize(env, { model_id: "m2", val_strategy: "mean", display_name: "M2", email: "wrong@example.com" });
     assert.equal(status, 403);
+    assert.equal(body.code, "owner_mismatch", "finalize backstop returns the same structured code");
     assert.equal(f.prCreated(), false, "no PR opened for a rejected finalize");
     assert.equal(env._store.get("owner:m2"), recorded, "ownership record untouched");
   } finally { f.restore(); }

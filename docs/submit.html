@@ -174,16 +174,76 @@
         code_url: $("code_url").value.trim() || null,
       };
     }
+    // POST to the Worker. On failure, throw an Error annotated with { status, code, error, kind }
+    // so callers can branch on WHY it failed, and log the real reason to the console for debugging.
     async function post(path, body) {
-      var r = await fetch(WORKER_URL + path, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-      });
-      var data = await r.json();
-      if (!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+      var r;
+      try {
+        r = await fetch(WORKER_URL + path, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+        });
+      } catch (netErr) {
+        console.error("[submit] " + path + " — network error:", netErr);
+        var ne = new Error("Could not reach the server (" + netErr.message + ")");
+        ne.kind = "network";
+        throw ne;
+      }
+      var data = {};
+      try { data = await r.json(); } catch (_) { /* empty/non-JSON body */ }
+      if (!r.ok) {
+        var e = new Error(data.error || ("HTTP " + r.status));
+        e.status = r.status;
+        e.code = data.code || null;
+        e.error = data.error || null;
+        e.kind = "worker";
+        console.error("[submit] " + path + " -> " + r.status
+          + " code=" + (e.code || "?") + " error=" + (e.error || ""));
+        throw e;
+      }
       return data;
     }
-    function show(ok, html) {
-      var el = $("result"); el.className = "result " + (ok ? "ok" : "err"); el.innerHTML = html;
+    // Three visual states: ok (success), warn (deliberate rejection you can act on), err (broke).
+    var ICON = { ok: "✓", warn: "⚠", err: "✕" };
+    function show(kind, html) {
+      var el = $("result");
+      el.className = "result " + kind;
+      el.innerHTML = '<span class="ico">' + (ICON[kind] || "") + "</span>" + html;
+    }
+    function clearResult() { var el = $("result"); el.className = "result"; el.innerHTML = ""; }
+    function flagEmailField() { $("email").classList.add("flag"); $("email").focus(); }
+    $("email").addEventListener("input", function () { this.classList.remove("flag"); });
+
+    // Turn a thrown error into the right message + visual state. Distinguishes a deliberate
+    // REJECTION (403 ownership / 429 rate limit / 4xx validation — amber, actionable, no "retry")
+    // from a genuine FAILURE (network / 5xx — red, retrying is reasonable). `context` is
+    // "upload" or "finalize" for slightly tailored wording.
+    function describeError(e, context) {
+      var status = e && e.status, code = e && e.code;
+      if (code === "owner_mismatch" || status === 403) {
+        flagEmailField();
+        show("warn", (e && e.error ? e.error
+              : "This model name is already registered to another submitter.")
+          + " <br>To update it, submit again with the <strong>same email</strong> you used the "
+          + 'first time. <span class="hint">A different email won’t work.</span>');
+        return;
+      }
+      if (code === "rate_limited" || status === 429) {
+        show("warn", (e && e.error) || "You’ve hit the submission limit. Please wait and try again later.");
+        return;
+      }
+      if (status && status >= 400 && status < 500) {
+        // Validation / shape error the submitter can fix (bad filename, incomplete set, …).
+        show("warn", "Submission rejected: " + ((e && e.error) || ("HTTP " + status))
+          + (context === "upload" ? ' <span class="hint">Fix the file(s) and upload again.</span>' : ""));
+        return;
+      }
+      if (e && e.kind === "network") {
+        show("err", "Network problem reaching the server — check your connection and retry.");
+        return;
+      }
+      // 5xx / unknown — something broke; retrying is reasonable.
+      show("err", (context === "finalize" ? "Finalize failed: " : "Upload failed: ")
+        + ((e && (e.error || e.message)) || "unexpected server error") + " — please retry.");
     }
 
     var uppy = new Uppy.Uppy({
@@ -223,27 +283,50 @@
     $("submit-btn").addEventListener("click", function () {
       var r = readiness();
       if (!r.ok) {
-        show(false, "Not ready to submit yet — please " + r.reasons.join(", ") + ".");
+        show("warn", "Not ready to submit yet — please " + r.reasons.join(", ") + ".");
         return;
       }
-      $("result").className = "result";   // clear any earlier message
+      clearResult();
       $("submit-btn").disabled = true;    // transient: prevent double-submit during upload
       uppy.upload();
     });
 
+    // The upload phase calls create/sign/complete per file; a failure there (e.g. a 403 owner
+    // mismatch on every create) surfaces via `upload-error`. Capture the most informative one so
+    // `complete` can explain it — instead of collapsing everything into "please retry".
+    var lastUploadError = null;
+    uppy.on("upload", function () { lastUploadError = null; clearResult(); });
+    uppy.on("upload-error", function (file, error, response) {
+      var status = (error && error.status) || (response && response.status) || null;
+      var code = error && error.code;
+      console.error("[submit] upload-error", file && file.name, "status=", status, "code=", code, error);
+      var rec = { status: status, code: code, error: (error && (error.error || error.message)) || null,
+                  kind: error && error.kind };
+      // A global rejection (403/429) is the headline; otherwise keep the latest seen.
+      if (!lastUploadError || status === 403 || status === 429) lastUploadError = rec;
+    });
+
     uppy.on("complete", async function (result) {
-      if (result.failed.length) { show(false, "Some files failed to upload — please retry."); $("submit-btn").disabled = false; refresh(); return; }
+      if (result.failed && result.failed.length) {
+        // A 403/429 here is a deliberate rejection, NOT a failed upload — describeError styles it
+        // amber and drops the "retry" wording where retrying is futile.
+        describeError(lastUploadError || {}, "upload");
+        $("submit-btn").disabled = false; refresh();
+        return;
+      }
       if (result.successful.length !== 9) {
-        show(false, "Uploaded " + result.successful.length + " files; a submission needs all 9."); $("submit-btn").disabled = false; refresh(); return;
+        show("warn", "Uploaded " + result.successful.length
+          + " file(s); a submission needs all 9 (3 settings × 3 targets).");
+        $("submit-btn").disabled = false; refresh();
+        return;
       }
       try {
         var res = await post("/api/submission/finalize", meta());
-        show(true, 'Submission received — pull request opened: <a href="' + res.prUrl + '">' + res.prUrl + '</a>.'
-          + '<br>Your scores should appear on the leaderboard within about 30 minutes.');
+        show("ok", 'Submission received — pull request opened: <a href="' + res.prUrl + '">' + res.prUrl + '</a>.'
+          + '<br>Your scores should appear on the leaderboard in less than 30 minutes.');
       } catch (e) {
-        show(false, "Finalize failed: " + e.message);
-        $("submit-btn").disabled = false;
-        refresh();
+        describeError(e, "finalize");
+        $("submit-btn").disabled = false; refresh();
       }
     });
 

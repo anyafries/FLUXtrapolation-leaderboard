@@ -20,6 +20,12 @@ const VALID_STRATEGIES = ["mean", "max", "discrepancy"];
 const MODEL_ID_RE = /^[a-z0-9][a-z0-9_-]{0,48}$/; // lowercase slug
 const MAX_PART_SIZE = 64 * 1024 * 1024; // informational; Uppy sets part size client-side
 
+// Shown to a submitter who hits a claimed model_id with a wrong/blank email. The drop box
+// keys off the `owner_mismatch` code (403) to render this without an unhelpful "retry" prompt.
+const OWNER_MISMATCH_MSG =
+  "This model name is already registered to another submitter. To update it, submit again with " +
+  "the same email you used on your first submission.";
+
 // ----------------------------------------------------------------------------- helpers
 
 function cors(env) {
@@ -35,7 +41,9 @@ const json = (env, data, status = 200) =>
     status,
     headers: { "Content-Type": "application/json", ...cors(env) },
   });
-const bad = (env, msg, status = 400) => json(env, { error: msg }, status);
+// Every error response carries a machine-stable `code` (for the UI to branch on) plus a
+// human-readable `error` string. Keep codes stable; they are part of the Worker's contract.
+const bad = (env, code, msg, status = 400) => json(env, { code, error: msg }, status);
 
 function r2(env) {
   return new AwsClient({
@@ -116,33 +124,37 @@ async function allow(env, key, limit, ttl) {
 
 async function createMultipart(env, body, req) {
   const { model_id, val_strategy, filename, email } = body;
-  if (!MODEL_ID_RE.test(model_id || "")) return bad(env, "invalid model_id");
-  if (!VALID_STRATEGIES.includes(val_strategy)) return bad(env, "invalid val_strategy");
-  if (!EMAIL_RE.test(cleanEmail(email) || "")) return bad(env, "a valid email is required");
+  if (!MODEL_ID_RE.test(model_id || ""))
+    return bad(env, "invalid_model_id", "model_id must be a lowercase slug (a–z, 0–9, _ or -).");
+  if (!VALID_STRATEGIES.includes(val_strategy))
+    return bad(env, "invalid_val_strategy", "val_strategy must be one of: mean, max, discrepancy.");
+  if (!EMAIL_RE.test(cleanEmail(email) || ""))
+    return bad(env, "invalid_email", "A valid contact email is required.");
   const info = parseFilename(filename || "");
   if (!info || info.model !== model_id || info.strategy !== val_strategy)
-    return bad(env, `filename must be {setting}_{target}_${model_id}_val_${val_strategy}_predictions.csv`);
+    return bad(env, "invalid_filename",
+      `Each file must be named {setting}_{target}_${model_id}_val_${val_strategy}_predictions.csv.`);
 
   // Ownership gate BEFORE issuing any upload URL: an outsider must never be able to
   // overwrite an already-claimed model's staged R2 files. (Re-checked at finalize.)
   if (!(await ownerOk(env, model_id, email)).ok)
-    return bad(env, "model_id is owned by another submitter; submit with the email you used originally", 403);
+    return bad(env, "owner_mismatch", OWNER_MISMATCH_MSG, 403);
 
   const hour = Math.floor(Date.now() / 3.6e6);
   if (!(await allow(env, `cr:${clientIp(req)}:${hour}`, +env.RL_CREATES_PER_HOUR, 3600)))
-    return bad(env, "rate limit: too many upload starts this hour", 429);
+    return bad(env, "rate_limited", "Too many upload starts from your network this hour. Please wait and try again later.", 429);
 
   const key = incomingKey(model_id, val_strategy, filename);
   const resp = await r2(env).fetch(objUrl(env, key, "uploads"), { method: "POST" });
-  if (!resp.ok) return bad(env, `R2 createMultipart failed: ${resp.status}`, 502);
+  if (!resp.ok) return bad(env, "r2_error", `Could not start the upload (storage error ${resp.status}).`, 502);
   const uploadId = xmlTag(await resp.text(), "UploadId");
-  if (!uploadId) return bad(env, "R2 returned no UploadId", 502);
+  if (!uploadId) return bad(env, "r2_error", "Could not start the upload (storage returned no UploadId).", 502);
   return json(env, { key, uploadId });
 }
 
 async function signPart(env, body) {
   const { key, uploadId, partNumber } = body;
-  if (!key || !uploadId || !partNumber) return bad(env, "key, uploadId, partNumber required");
+  if (!key || !uploadId || !partNumber) return bad(env, "bad_request", "key, uploadId, partNumber required.");
   const signed = await r2(env).sign(
     objUrl(env, key, `partNumber=${partNumber}&uploadId=${encodeURIComponent(uploadId)}`),
     { method: "PUT", aws: { signQuery: true } }
@@ -152,7 +164,7 @@ async function signPart(env, body) {
 
 async function completeMultipart(env, body) {
   const { key, uploadId, parts } = body;
-  if (!key || !uploadId || !Array.isArray(parts)) return bad(env, "key, uploadId, parts required");
+  if (!key || !uploadId || !Array.isArray(parts)) return bad(env, "bad_request", "key, uploadId, parts required.");
   const xml =
     "<CompleteMultipartUpload>" +
     parts
@@ -164,13 +176,13 @@ async function completeMultipart(env, body) {
     method: "POST",
     body: xml,
   });
-  if (!resp.ok) return bad(env, `R2 complete failed: ${resp.status}`, 502);
+  if (!resp.ok) return bad(env, "r2_error", `Could not finish the upload (storage error ${resp.status}).`, 502);
   return json(env, { location: objUrl(env, key) });
 }
 
 async function abortMultipart(env, body) {
   const { key, uploadId } = body;
-  if (!key || !uploadId) return bad(env, "key, uploadId required");
+  if (!key || !uploadId) return bad(env, "bad_request", "key, uploadId required.");
   await r2(env).fetch(objUrl(env, key, `uploadId=${encodeURIComponent(uploadId)}`), { method: "DELETE" });
   return json(env, {});
 }
@@ -264,19 +276,27 @@ async function openPr(env, modelId, strategy, yamlText) {
 
 async function finalize(env, body, req) {
   const { model_id, val_strategy, email } = body;
-  if (!MODEL_ID_RE.test(model_id || "")) return bad(env, "invalid model_id");
-  if (!VALID_STRATEGIES.includes(val_strategy)) return bad(env, "invalid val_strategy");
-  if (!EMAIL_RE.test(cleanEmail(email) || "")) return bad(env, "a valid email is required");
+  if (!MODEL_ID_RE.test(model_id || ""))
+    return bad(env, "invalid_model_id", "model_id must be a lowercase slug (a–z, 0–9, _ or -).");
+  if (!VALID_STRATEGIES.includes(val_strategy))
+    return bad(env, "invalid_val_strategy", "val_strategy must be one of: mean, max, discrepancy.");
+  if (!EMAIL_RE.test(cleanEmail(email) || ""))
+    return bad(env, "invalid_email", "A valid contact email is required.");
 
   const hour = Math.floor(Date.now() / 3.6e6);
   const day = Math.floor(Date.now() / 8.64e7);
   if (!(await allow(env, `fz:${clientIp(req)}:${hour}`, +env.RL_SUBMISSIONS_PER_HOUR, 3600)))
-    return bad(env, "rate limit: too many submissions this hour", 429);
+    return bad(env, "rate_limited", "Too many submissions from your network this hour. Please wait and try again later.", 429);
   if (!(await allow(env, `fzg:${day}`, +env.RL_SUBMISSIONS_PER_DAY, 86400)))
-    return bad(env, "rate limit: global daily submission cap reached", 429);
+    return bad(env, "rate_limited", "The daily submission limit has been reached. Please try again tomorrow.", 429);
 
   // Verify exactly the 9 (setting,target) files are present in R2.
-  const keys = await listIncoming(env, model_id, val_strategy);
+  let keys;
+  try {
+    keys = await listIncoming(env, model_id, val_strategy);
+  } catch (_) {
+    return bad(env, "r2_error", "Could not read the uploaded files from storage. Please retry.", 502);
+  }
   const files = [];
   const combos = new Set();
   for (const key of keys) {
@@ -287,7 +307,8 @@ async function finalize(env, body, req) {
   }
   const expected = VALID_SETTINGS.flatMap((s) => VALID_TARGETS.map((t) => `${s}/${t}`));
   const missing = expected.filter((c) => !combos.has(c));
-  if (missing.length) return bad(env, `incomplete upload; missing: ${missing.join(", ")}`);
+  if (missing.length)
+    return bad(env, "incomplete_upload", `Incomplete submission — these setting/target files are missing: ${missing.join(", ")}.`);
 
   // Ownership backstop: the create step already gated this, but re-check here and
   // register on first submission. This is the single, race-free place we WRITE the
@@ -295,7 +316,7 @@ async function finalize(env, body, req) {
   const ownerKey = `owner:${model_id}`;
   const gate = await ownerOk(env, model_id, email);
   if (!gate.ok)
-    return bad(env, "model_id is owned by another submitter; submit with the email you used originally", 403);
+    return bad(env, "owner_mismatch", OWNER_MISMATCH_MSG, 403);
   let ownerHash = gate.recorded;
   if (!ownerHash) {
     ownerHash = await sha256hex(cleanEmail(email));
@@ -319,7 +340,12 @@ async function finalize(env, body, req) {
     files: files.sort((a, b) => a.filename.localeCompare(b.filename)),
   });
 
-  const prUrl = await openPr(env, model_id, val_strategy, yamlText);
+  let prUrl;
+  try {
+    prUrl = await openPr(env, model_id, val_strategy, yamlText);
+  } catch (_) {
+    return bad(env, "github_error", "Your files uploaded, but opening the submission pull request failed. Please retry.", 502);
+  }
   return json(env, { prUrl });
 }
 
@@ -338,13 +364,13 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: cors(env) });
     const { pathname } = new URL(request.url);
     const handler = ROUTES[pathname];
-    if (!handler) return bad(env, "not found", 404);
-    if (request.method !== "POST") return bad(env, "POST required", 405);
+    if (!handler) return bad(env, "not_found", "not found", 404);
+    if (request.method !== "POST") return bad(env, "method_not_allowed", "POST required", 405);
     try {
       const body = await request.json();
       return await handler(env, body, request);
     } catch (e) {
-      return bad(env, `error: ${e.message}`, 500);
+      return bad(env, "server_error", `Unexpected server error: ${e.message}`, 500);
     }
   },
 };
