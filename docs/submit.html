@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Submit a model — FLUXtrapolation Leaderboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%A4%B4</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
   <link href="https://releases.transloadit.com/uppy/v4.13.3/uppy.min.css" rel="stylesheet">
   <style>
@@ -20,15 +23,23 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Submit a model</h1>
-    <p>
-      Upload the <strong>9 raw prediction CSVs</strong> (3 settings × 3 targets) for one
-      <code>val_strategy</code>. Files go straight to transient storage; a bot opens a pull
-      request, validation runs automatically, and your scores appear on the
-      <a href="index.html">leaderboard</a> once they are computed.
-    </p>
+  <header class="site-header">
+    <h1 class="site-title"><span class="flux">FLUX</span>trapolation benchmark</h1>
+    <nav class="nav-cards">
+      <a class="navcard" href="index.html">Leaderboard</a>
+      <a class="navcard active" href="submit.html">Submit result</a>
+      <a class="navcard" href="https://arxiv.org/abs/2605.19812" target="_blank" rel="noopener">Paper <span class="ext" aria-hidden="true">↗</span></a>
+      <a class="navcard" href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
+    </nav>
   </header>
+  <hr class="header-rule">
+  <h2 class="page-title">Submit a model</h2>
+  <p class="page-desc">
+    Upload the <strong>9 raw prediction CSVs</strong> (3 settings × 3 targets) for one
+    <code>val_strategy</code>. Files go straight to transient storage; a bot opens a pull
+    request, validation runs automatically, and your scores appear on the
+    <a href="index.html">leaderboard</a> once they are computed.
+  </p>
   <main>
     <form class="meta" id="meta" onsubmit="return false">
       <div>

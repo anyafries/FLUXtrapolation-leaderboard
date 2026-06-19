@@ -3,806 +3,835 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FLUXtrapolation Leaderboard</title>
+  <title>FLUXtrapolation Benchmark</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%A4%B4</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>FLUXtrapolation Leaderboard</h1>
-    <p>
-      This leaderboard tracks machine-learning model performance on the FLUXtrapolation
-      benchmark across three evaluation settings (temporal split, spatial split,
-      temperature-based split) and three carbon/water flux targets (GPP, ET, NEE).
-      See the <a href="https://github.com/anyafries/FLUXtrapolation-leaderboard">GitHub repository</a>
-      for submission instructions.
-    </p>
+  <header class="site-header">
+    <h1 class="site-title"><span class="flux">FLUX</span>trapolation benchmark</h1>
+    <nav class="nav-cards">
+      <a class="navcard active" href="index.html">Leaderboard</a>
+      <a class="navcard" href="submit.html">Submit result</a>
+      <a class="navcard" href="https://arxiv.org/abs/2605.19812" target="_blank" rel="noopener">Paper <span class="ext" aria-hidden="true">↗</span></a>
+      <a class="navcard" href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
+    </nav>
   </header>
+  <hr class="header-rule">
+  <h2 class="page-title">Leaderboard</h2>
+  <p class="page-desc">
+    This leaderboard tracks machine-learning model performance on the
+    FLUXtrapolation benchmark.
+  </p>
   <main>
-    <div role="tablist" class="tab-bar">
+    <p class="metric-note">
+      Each cell is the column metric — <strong>RMSE</strong> for the scenario/scale columns
+      (lower is better) — coloured by relative performance within that column: darker green is the
+      best value, fading to white at 1.2× the best. The <strong>Skill score</strong> column is
+      relative to the lr (linear-regression) baseline: <strong>0</strong> = on par
+      with lr, <strong>1</strong> = best possible (zero error); negative means worse than lr.
+    </p>
+    <div class="controls">
+      <div role="tablist" class="tab-bar" aria-label="Flux target">
+        <span class="tab-label" aria-hidden="true">Evaluate flux:</span>
       <button role="tab" data-target="ET" aria-selected="true" class="active">ET</button>
       <button role="tab" data-target="GPP" aria-selected="false">GPP</button>
       <button role="tab" data-target="NEE" aria-selected="false">NEE</button>
+      </div>
+      <div class="tab-bar agg-bar" role="group" aria-label="RMSE aggregation">
+        <span class="tab-label" aria-hidden="true">RMSE:</span>
+        <button class="agg-btn active" data-agg="q90">90th percentile</button>
+        <button class="agg-btn" data-agg="median">Median</button>
+      </div>
     </div>
     <div role="tabpanel" data-tab="ET">
-      <h2>Median RMSE</h2>
-      <style type="text/css">
-#T_98146 table {
+      <div class="agg-panel" data-agg="q90">
+        <h2>90th-percentile RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_c0c36 table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_98146 th {
+#T_c0c36 th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_98146  td {
+#T_c0c36  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_98146 th.col_heading.level1 {
-  height: 80px;
+#T_c0c36 th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_98146 th.col_heading.level1 span {
+#T_c0c36 th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_98146 th.col_heading.level0 {
+#T_c0c36 th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_98146 th.row_heading {
+#T_c0c36 th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_98146_row0_col0 {
+#T_c0c36 th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_c0c36 td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0c36  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0c36  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0c36  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0c36 td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_c0c36  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_c0c36_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_98146_row0_col1, #T_98146_row0_col2, #T_98146_row0_col3, #T_98146_row0_col4, #T_98146_row0_col5, #T_98146_row0_col6, #T_98146_row0_col7, #T_98146_row0_col8, #T_98146_row0_col9, #T_98146_row0_col10, #T_98146_row0_col11, #T_98146_row0_col12, #T_98146_row0_col13, #T_98146_row0_col14, #T_98146_row0_col15, #T_98146_row0_col16, #T_98146_row0_col17, #T_98146_row0_col18 {
+#T_c0c36_row0_col1, #T_c0c36_row0_col2, #T_c0c36_row0_col3, #T_c0c36_row0_col4, #T_c0c36_row0_col5, #T_c0c36_row0_col6, #T_c0c36_row0_col7, #T_c0c36_row0_col8, #T_c0c36_row0_col9, #T_c0c36_row0_col10, #T_c0c36_row0_col11, #T_c0c36_row0_col12, #T_c0c36_row0_col13, #T_c0c36_row0_col14, #T_c0c36_row0_col15, #T_c0c36_row0_col16, #T_c0c36_row0_col17, #T_c0c36_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_98146">
+<table id="T_c0c36">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_98146_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_98146_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_98146_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_98146_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_c0c36_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_c0c36_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_c0c36_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_c0c36_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_98146_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_98146_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_98146_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_98146_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_98146_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_98146_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_98146_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_98146_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_98146_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_98146_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_98146_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_98146_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_98146_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_98146_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_98146_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_98146_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_98146_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_98146_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_98146_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_c0c36_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_c0c36_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_c0c36_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_c0c36_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_c0c36_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_c0c36_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_c0c36_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_c0c36_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_c0c36_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_c0c36_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_c0c36_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_c0c36_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_c0c36_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_c0c36_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_c0c36_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_c0c36_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_c0c36_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_c0c36_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_c0c36_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_98146_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_98146_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_98146_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_98146_row0_col1" class="data row0 col1" >0.06</td>
-      <td id="T_98146_row0_col2" class="data row0 col2" >0.028</td>
-      <td id="T_98146_row0_col3" class="data row0 col3" >0.026</td>
-      <td id="T_98146_row0_col4" class="data row0 col4" >0.019</td>
-      <td id="T_98146_row0_col5" class="data row0 col5" >0.0025</td>
-      <td id="T_98146_row0_col6" class="data row0 col6" >0.012</td>
-      <td id="T_98146_row0_col7" class="data row0 col7" >0.061</td>
-      <td id="T_98146_row0_col8" class="data row0 col8" >0.029</td>
-      <td id="T_98146_row0_col9" class="data row0 col9" >0.026</td>
-      <td id="T_98146_row0_col10" class="data row0 col10" >0.021</td>
-      <td id="T_98146_row0_col11" class="data row0 col11" >0.0048</td>
-      <td id="T_98146_row0_col12" class="data row0 col12" >0.014</td>
-      <td id="T_98146_row0_col13" class="data row0 col13" >0.075</td>
-      <td id="T_98146_row0_col14" class="data row0 col14" >0.031</td>
-      <td id="T_98146_row0_col15" class="data row0 col15" >0.025</td>
-      <td id="T_98146_row0_col16" class="data row0 col16" >0.023</td>
-      <td id="T_98146_row0_col17" class="data row0 col17" >0.0043</td>
-      <td id="T_98146_row0_col18" class="data row0 col18" >0.015</td>
+      <th id="T_c0c36_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_c0c36_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_c0c36_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_c0c36_row0_col1" class="data row0 col1" >0.0813</td>
+      <td id="T_c0c36_row0_col2" class="data row0 col2" >0.0428</td>
+      <td id="T_c0c36_row0_col3" class="data row0 col3" >0.0416</td>
+      <td id="T_c0c36_row0_col4" class="data row0 col4" >0.0257</td>
+      <td id="T_c0c36_row0_col5" class="data row0 col5" >0.0076</td>
+      <td id="T_c0c36_row0_col6" class="data row0 col6" >0.0289</td>
+      <td id="T_c0c36_row0_col7" class="data row0 col7" >0.0861</td>
+      <td id="T_c0c36_row0_col8" class="data row0 col8" >0.0553</td>
+      <td id="T_c0c36_row0_col9" class="data row0 col9" >0.0540</td>
+      <td id="T_c0c36_row0_col10" class="data row0 col10" >0.0277</td>
+      <td id="T_c0c36_row0_col11" class="data row0 col11" >0.0094</td>
+      <td id="T_c0c36_row0_col12" class="data row0 col12" >0.0389</td>
+      <td id="T_c0c36_row0_col13" class="data row0 col13" >0.1028</td>
+      <td id="T_c0c36_row0_col14" class="data row0 col14" >0.0478</td>
+      <td id="T_c0c36_row0_col15" class="data row0 col15" >0.0433</td>
+      <td id="T_c0c36_row0_col16" class="data row0 col16" >0.0280</td>
+      <td id="T_c0c36_row0_col17" class="data row0 col17" >0.0088</td>
+      <td id="T_c0c36_row0_col18" class="data row0 col18" >0.0376</td>
     </tr>
   </tbody>
 </table>
-
-      <h2>90th-percentile RMSE</h2>
-      <style type="text/css">
-#T_0cd96 table {
+</div>
+      </div>
+      <div class="agg-panel" data-agg="median" hidden>
+        <h2>Median RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_81464 table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_0cd96 th {
+#T_81464 th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_0cd96  td {
+#T_81464  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_0cd96 th.col_heading.level1 {
-  height: 80px;
+#T_81464 th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_0cd96 th.col_heading.level1 span {
+#T_81464 th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_0cd96 th.col_heading.level0 {
+#T_81464 th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_0cd96 th.row_heading {
+#T_81464 th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_0cd96_row0_col0 {
+#T_81464 th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_81464 td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_81464  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_81464  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_81464  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_81464 td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_81464  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_81464_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_0cd96_row0_col1, #T_0cd96_row0_col2, #T_0cd96_row0_col3, #T_0cd96_row0_col4, #T_0cd96_row0_col5, #T_0cd96_row0_col6, #T_0cd96_row0_col7, #T_0cd96_row0_col8, #T_0cd96_row0_col9, #T_0cd96_row0_col10, #T_0cd96_row0_col11, #T_0cd96_row0_col12, #T_0cd96_row0_col13, #T_0cd96_row0_col14, #T_0cd96_row0_col15, #T_0cd96_row0_col16, #T_0cd96_row0_col17, #T_0cd96_row0_col18 {
+#T_81464_row0_col1, #T_81464_row0_col2, #T_81464_row0_col3, #T_81464_row0_col4, #T_81464_row0_col5, #T_81464_row0_col6, #T_81464_row0_col7, #T_81464_row0_col8, #T_81464_row0_col9, #T_81464_row0_col10, #T_81464_row0_col11, #T_81464_row0_col12, #T_81464_row0_col13, #T_81464_row0_col14, #T_81464_row0_col15, #T_81464_row0_col16, #T_81464_row0_col17, #T_81464_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_0cd96">
+<table id="T_81464">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_0cd96_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_0cd96_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_0cd96_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_0cd96_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_81464_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_81464_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_81464_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_81464_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_0cd96_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_0cd96_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_0cd96_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_0cd96_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_0cd96_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_0cd96_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_0cd96_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_0cd96_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_0cd96_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_0cd96_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_0cd96_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_0cd96_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_0cd96_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_0cd96_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_0cd96_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_0cd96_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_0cd96_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_0cd96_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_0cd96_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_81464_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_81464_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_81464_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_81464_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_81464_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_81464_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_81464_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_81464_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_81464_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_81464_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_81464_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_81464_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_81464_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_81464_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_81464_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_81464_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_81464_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_81464_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_81464_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_0cd96_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_0cd96_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_0cd96_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_0cd96_row0_col1" class="data row0 col1" >0.081</td>
-      <td id="T_0cd96_row0_col2" class="data row0 col2" >0.043</td>
-      <td id="T_0cd96_row0_col3" class="data row0 col3" >0.042</td>
-      <td id="T_0cd96_row0_col4" class="data row0 col4" >0.026</td>
-      <td id="T_0cd96_row0_col5" class="data row0 col5" >0.0076</td>
-      <td id="T_0cd96_row0_col6" class="data row0 col6" >0.029</td>
-      <td id="T_0cd96_row0_col7" class="data row0 col7" >0.086</td>
-      <td id="T_0cd96_row0_col8" class="data row0 col8" >0.055</td>
-      <td id="T_0cd96_row0_col9" class="data row0 col9" >0.054</td>
-      <td id="T_0cd96_row0_col10" class="data row0 col10" >0.028</td>
-      <td id="T_0cd96_row0_col11" class="data row0 col11" >0.0094</td>
-      <td id="T_0cd96_row0_col12" class="data row0 col12" >0.039</td>
-      <td id="T_0cd96_row0_col13" class="data row0 col13" >0.1</td>
-      <td id="T_0cd96_row0_col14" class="data row0 col14" >0.048</td>
-      <td id="T_0cd96_row0_col15" class="data row0 col15" >0.043</td>
-      <td id="T_0cd96_row0_col16" class="data row0 col16" >0.028</td>
-      <td id="T_0cd96_row0_col17" class="data row0 col17" >0.0088</td>
-      <td id="T_0cd96_row0_col18" class="data row0 col18" >0.038</td>
+      <th id="T_81464_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_81464_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_81464_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_81464_row0_col1" class="data row0 col1" >0.0601</td>
+      <td id="T_81464_row0_col2" class="data row0 col2" >0.0281</td>
+      <td id="T_81464_row0_col3" class="data row0 col3" >0.0260</td>
+      <td id="T_81464_row0_col4" class="data row0 col4" >0.0191</td>
+      <td id="T_81464_row0_col5" class="data row0 col5" >0.0025</td>
+      <td id="T_81464_row0_col6" class="data row0 col6" >0.0118</td>
+      <td id="T_81464_row0_col7" class="data row0 col7" >0.0608</td>
+      <td id="T_81464_row0_col8" class="data row0 col8" >0.0294</td>
+      <td id="T_81464_row0_col9" class="data row0 col9" >0.0261</td>
+      <td id="T_81464_row0_col10" class="data row0 col10" >0.0207</td>
+      <td id="T_81464_row0_col11" class="data row0 col11" >0.0048</td>
+      <td id="T_81464_row0_col12" class="data row0 col12" >0.0144</td>
+      <td id="T_81464_row0_col13" class="data row0 col13" >0.0750</td>
+      <td id="T_81464_row0_col14" class="data row0 col14" >0.0314</td>
+      <td id="T_81464_row0_col15" class="data row0 col15" >0.0253</td>
+      <td id="T_81464_row0_col16" class="data row0 col16" >0.0233</td>
+      <td id="T_81464_row0_col17" class="data row0 col17" >0.0043</td>
+      <td id="T_81464_row0_col18" class="data row0 col18" >0.0153</td>
     </tr>
   </tbody>
 </table>
-
+</div>
+      </div>
     </div>
     <div role="tabpanel" data-tab="GPP" hidden>
-      <h2>Median RMSE</h2>
-      <style type="text/css">
-#T_7103c table {
+      <div class="agg-panel" data-agg="q90">
+        <h2>90th-percentile RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_0771a table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_7103c th {
+#T_0771a th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_7103c  td {
+#T_0771a  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_7103c th.col_heading.level1 {
-  height: 80px;
+#T_0771a th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_7103c th.col_heading.level1 span {
+#T_0771a th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_7103c th.col_heading.level0 {
+#T_0771a th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_7103c th.row_heading {
+#T_0771a th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_7103c_row0_col0 {
+#T_0771a th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_0771a td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_0771a  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_0771a  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_0771a  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_0771a td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_0771a  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_0771a_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_7103c_row0_col1, #T_7103c_row0_col2, #T_7103c_row0_col3, #T_7103c_row0_col4, #T_7103c_row0_col5, #T_7103c_row0_col6, #T_7103c_row0_col7, #T_7103c_row0_col8, #T_7103c_row0_col9, #T_7103c_row0_col10, #T_7103c_row0_col11, #T_7103c_row0_col12, #T_7103c_row0_col13, #T_7103c_row0_col14, #T_7103c_row0_col15, #T_7103c_row0_col16, #T_7103c_row0_col17, #T_7103c_row0_col18 {
+#T_0771a_row0_col1, #T_0771a_row0_col2, #T_0771a_row0_col3, #T_0771a_row0_col4, #T_0771a_row0_col5, #T_0771a_row0_col6, #T_0771a_row0_col7, #T_0771a_row0_col8, #T_0771a_row0_col9, #T_0771a_row0_col10, #T_0771a_row0_col11, #T_0771a_row0_col12, #T_0771a_row0_col13, #T_0771a_row0_col14, #T_0771a_row0_col15, #T_0771a_row0_col16, #T_0771a_row0_col17, #T_0771a_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_7103c">
+<table id="T_0771a">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_7103c_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_7103c_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_7103c_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_7103c_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_0771a_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_0771a_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_0771a_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_0771a_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_7103c_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_7103c_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_7103c_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_7103c_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_7103c_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_7103c_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_7103c_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_7103c_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_7103c_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_7103c_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_7103c_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_7103c_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_7103c_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_7103c_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_7103c_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_7103c_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_7103c_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_7103c_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_7103c_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_0771a_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_0771a_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_0771a_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_0771a_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_0771a_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_0771a_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_0771a_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_0771a_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_0771a_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_0771a_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_0771a_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_0771a_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_0771a_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_0771a_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_0771a_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_0771a_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_0771a_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_0771a_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_0771a_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_7103c_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_7103c_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_7103c_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_7103c_row0_col1" class="data row0 col1" >4.3</td>
-      <td id="T_7103c_row0_col2" class="data row0 col2" >2.1</td>
-      <td id="T_7103c_row0_col3" class="data row0 col3" >1.9</td>
-      <td id="T_7103c_row0_col4" class="data row0 col4" >1.1</td>
-      <td id="T_7103c_row0_col5" class="data row0 col5" >0.2</td>
-      <td id="T_7103c_row0_col6" class="data row0 col6" >0.89</td>
-      <td id="T_7103c_row0_col7" class="data row0 col7" >4.5</td>
-      <td id="T_7103c_row0_col8" class="data row0 col8" >2.1</td>
-      <td id="T_7103c_row0_col9" class="data row0 col9" >1.7</td>
-      <td id="T_7103c_row0_col10" class="data row0 col10" >1.4</td>
-      <td id="T_7103c_row0_col11" class="data row0 col11" >0.4</td>
-      <td id="T_7103c_row0_col12" class="data row0 col12" >0.82</td>
-      <td id="T_7103c_row0_col13" class="data row0 col13" >4.6</td>
-      <td id="T_7103c_row0_col14" class="data row0 col14" >1.9</td>
-      <td id="T_7103c_row0_col15" class="data row0 col15" >1.5</td>
-      <td id="T_7103c_row0_col16" class="data row0 col16" >0.86</td>
-      <td id="T_7103c_row0_col17" class="data row0 col17" >0.2</td>
-      <td id="T_7103c_row0_col18" class="data row0 col18" >1.2</td>
+      <th id="T_0771a_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_0771a_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_0771a_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_0771a_row0_col1" class="data row0 col1" >6.28</td>
+      <td id="T_0771a_row0_col2" class="data row0 col2" >3.45</td>
+      <td id="T_0771a_row0_col3" class="data row0 col3" >2.89</td>
+      <td id="T_0771a_row0_col4" class="data row0 col4" >2.22</td>
+      <td id="T_0771a_row0_col5" class="data row0 col5" >0.69</td>
+      <td id="T_0771a_row0_col6" class="data row0 col6" >2.50</td>
+      <td id="T_0771a_row0_col7" class="data row0 col7" >5.98</td>
+      <td id="T_0771a_row0_col8" class="data row0 col8" >3.50</td>
+      <td id="T_0771a_row0_col9" class="data row0 col9" >2.99</td>
+      <td id="T_0771a_row0_col10" class="data row0 col10" >2.22</td>
+      <td id="T_0771a_row0_col11" class="data row0 col11" >0.87</td>
+      <td id="T_0771a_row0_col12" class="data row0 col12" >2.45</td>
+      <td id="T_0771a_row0_col13" class="data row0 col13" >6.12</td>
+      <td id="T_0771a_row0_col14" class="data row0 col14" >3.63</td>
+      <td id="T_0771a_row0_col15" class="data row0 col15" >3.33</td>
+      <td id="T_0771a_row0_col16" class="data row0 col16" >1.49</td>
+      <td id="T_0771a_row0_col17" class="data row0 col17" >0.60</td>
+      <td id="T_0771a_row0_col18" class="data row0 col18" >2.80</td>
     </tr>
   </tbody>
 </table>
-
-      <h2>90th-percentile RMSE</h2>
-      <style type="text/css">
-#T_7f6c9 table {
+</div>
+      </div>
+      <div class="agg-panel" data-agg="median" hidden>
+        <h2>Median RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_22726 table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_7f6c9 th {
+#T_22726 th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_7f6c9  td {
+#T_22726  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_7f6c9 th.col_heading.level1 {
-  height: 80px;
+#T_22726 th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_7f6c9 th.col_heading.level1 span {
+#T_22726 th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_7f6c9 th.col_heading.level0 {
+#T_22726 th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_7f6c9 th.row_heading {
+#T_22726 th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_7f6c9_row0_col0 {
+#T_22726 th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_22726 td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_22726  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_22726  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_22726  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_22726 td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_22726  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_22726_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_7f6c9_row0_col1, #T_7f6c9_row0_col2, #T_7f6c9_row0_col3, #T_7f6c9_row0_col4, #T_7f6c9_row0_col5, #T_7f6c9_row0_col6, #T_7f6c9_row0_col7, #T_7f6c9_row0_col8, #T_7f6c9_row0_col9, #T_7f6c9_row0_col10, #T_7f6c9_row0_col11, #T_7f6c9_row0_col12, #T_7f6c9_row0_col13, #T_7f6c9_row0_col14, #T_7f6c9_row0_col15, #T_7f6c9_row0_col16, #T_7f6c9_row0_col17, #T_7f6c9_row0_col18 {
+#T_22726_row0_col1, #T_22726_row0_col2, #T_22726_row0_col3, #T_22726_row0_col4, #T_22726_row0_col5, #T_22726_row0_col6, #T_22726_row0_col7, #T_22726_row0_col8, #T_22726_row0_col9, #T_22726_row0_col10, #T_22726_row0_col11, #T_22726_row0_col12, #T_22726_row0_col13, #T_22726_row0_col14, #T_22726_row0_col15, #T_22726_row0_col16, #T_22726_row0_col17, #T_22726_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_7f6c9">
+<table id="T_22726">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_7f6c9_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_7f6c9_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_7f6c9_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_7f6c9_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_22726_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_22726_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_22726_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_22726_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_7f6c9_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_7f6c9_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_7f6c9_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_7f6c9_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_7f6c9_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_7f6c9_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_7f6c9_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_7f6c9_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_7f6c9_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_7f6c9_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_7f6c9_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_7f6c9_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_7f6c9_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_7f6c9_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_7f6c9_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_7f6c9_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_7f6c9_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_7f6c9_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_7f6c9_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_22726_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_22726_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_22726_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_22726_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_22726_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_22726_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_22726_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_22726_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_22726_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_22726_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_22726_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_22726_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_22726_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_22726_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_22726_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_22726_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_22726_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_22726_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_22726_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_7f6c9_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_7f6c9_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_7f6c9_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_7f6c9_row0_col1" class="data row0 col1" >6.3</td>
-      <td id="T_7f6c9_row0_col2" class="data row0 col2" >3.5</td>
-      <td id="T_7f6c9_row0_col3" class="data row0 col3" >2.9</td>
-      <td id="T_7f6c9_row0_col4" class="data row0 col4" >2.2</td>
-      <td id="T_7f6c9_row0_col5" class="data row0 col5" >0.69</td>
-      <td id="T_7f6c9_row0_col6" class="data row0 col6" >2.5</td>
-      <td id="T_7f6c9_row0_col7" class="data row0 col7" >6</td>
-      <td id="T_7f6c9_row0_col8" class="data row0 col8" >3.5</td>
-      <td id="T_7f6c9_row0_col9" class="data row0 col9" >3</td>
-      <td id="T_7f6c9_row0_col10" class="data row0 col10" >2.2</td>
-      <td id="T_7f6c9_row0_col11" class="data row0 col11" >0.87</td>
-      <td id="T_7f6c9_row0_col12" class="data row0 col12" >2.4</td>
-      <td id="T_7f6c9_row0_col13" class="data row0 col13" >6.1</td>
-      <td id="T_7f6c9_row0_col14" class="data row0 col14" >3.6</td>
-      <td id="T_7f6c9_row0_col15" class="data row0 col15" >3.3</td>
-      <td id="T_7f6c9_row0_col16" class="data row0 col16" >1.5</td>
-      <td id="T_7f6c9_row0_col17" class="data row0 col17" >0.6</td>
-      <td id="T_7f6c9_row0_col18" class="data row0 col18" >2.8</td>
+      <th id="T_22726_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_22726_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_22726_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_22726_row0_col1" class="data row0 col1" >4.33</td>
+      <td id="T_22726_row0_col2" class="data row0 col2" >2.09</td>
+      <td id="T_22726_row0_col3" class="data row0 col3" >1.92</td>
+      <td id="T_22726_row0_col4" class="data row0 col4" >1.09</td>
+      <td id="T_22726_row0_col5" class="data row0 col5" >0.20</td>
+      <td id="T_22726_row0_col6" class="data row0 col6" >0.89</td>
+      <td id="T_22726_row0_col7" class="data row0 col7" >4.46</td>
+      <td id="T_22726_row0_col8" class="data row0 col8" >2.13</td>
+      <td id="T_22726_row0_col9" class="data row0 col9" >1.73</td>
+      <td id="T_22726_row0_col10" class="data row0 col10" >1.43</td>
+      <td id="T_22726_row0_col11" class="data row0 col11" >0.40</td>
+      <td id="T_22726_row0_col12" class="data row0 col12" >0.82</td>
+      <td id="T_22726_row0_col13" class="data row0 col13" >4.63</td>
+      <td id="T_22726_row0_col14" class="data row0 col14" >1.91</td>
+      <td id="T_22726_row0_col15" class="data row0 col15" >1.52</td>
+      <td id="T_22726_row0_col16" class="data row0 col16" >0.86</td>
+      <td id="T_22726_row0_col17" class="data row0 col17" >0.20</td>
+      <td id="T_22726_row0_col18" class="data row0 col18" >1.21</td>
     </tr>
   </tbody>
 </table>
-
+</div>
+      </div>
     </div>
     <div role="tabpanel" data-tab="NEE" hidden>
-      <h2>Median RMSE</h2>
-      <style type="text/css">
-#T_e7656 table {
+      <div class="agg-panel" data-agg="q90">
+        <h2>90th-percentile RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_c0783 table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_e7656 th {
+#T_c0783 th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_e7656  td {
+#T_c0783  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_e7656 th.col_heading.level1 {
-  height: 80px;
+#T_c0783 th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_e7656 th.col_heading.level1 span {
+#T_c0783 th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_e7656 th.col_heading.level0 {
+#T_c0783 th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_e7656 th.row_heading {
+#T_c0783 th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_e7656_row0_col0 {
+#T_c0783 th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_c0783 td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0783  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0783  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0783  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_c0783 td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_c0783  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_c0783_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_e7656_row0_col1, #T_e7656_row0_col2, #T_e7656_row0_col3, #T_e7656_row0_col4, #T_e7656_row0_col5, #T_e7656_row0_col6, #T_e7656_row0_col7, #T_e7656_row0_col8, #T_e7656_row0_col9, #T_e7656_row0_col10, #T_e7656_row0_col11, #T_e7656_row0_col12, #T_e7656_row0_col13, #T_e7656_row0_col14, #T_e7656_row0_col15, #T_e7656_row0_col16, #T_e7656_row0_col17, #T_e7656_row0_col18 {
+#T_c0783_row0_col1, #T_c0783_row0_col2, #T_c0783_row0_col3, #T_c0783_row0_col4, #T_c0783_row0_col5, #T_c0783_row0_col6, #T_c0783_row0_col7, #T_c0783_row0_col8, #T_c0783_row0_col9, #T_c0783_row0_col10, #T_c0783_row0_col11, #T_c0783_row0_col12, #T_c0783_row0_col13, #T_c0783_row0_col14, #T_c0783_row0_col15, #T_c0783_row0_col16, #T_c0783_row0_col17, #T_c0783_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_e7656">
+<table id="T_c0783">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_e7656_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_e7656_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_e7656_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_e7656_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_c0783_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_c0783_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_c0783_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_c0783_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_e7656_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_e7656_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_e7656_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_e7656_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_e7656_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_e7656_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_e7656_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_e7656_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_e7656_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_e7656_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_e7656_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_e7656_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_e7656_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_e7656_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_e7656_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_e7656_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_e7656_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_e7656_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_e7656_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_c0783_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_c0783_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_c0783_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_c0783_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_c0783_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_c0783_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_c0783_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_c0783_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_c0783_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_c0783_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_c0783_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_c0783_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_c0783_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_c0783_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_c0783_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_c0783_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_c0783_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_c0783_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_c0783_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_e7656_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_e7656_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_e7656_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_e7656_row0_col1" class="data row0 col1" >4</td>
-      <td id="T_e7656_row0_col2" class="data row0 col2" >1.7</td>
-      <td id="T_e7656_row0_col3" class="data row0 col3" >1.6</td>
-      <td id="T_e7656_row0_col4" class="data row0 col4" >0.93</td>
-      <td id="T_e7656_row0_col5" class="data row0 col5" >0.16</td>
-      <td id="T_e7656_row0_col6" class="data row0 col6" >0.9</td>
-      <td id="T_e7656_row0_col7" class="data row0 col7" >4.1</td>
-      <td id="T_e7656_row0_col8" class="data row0 col8" >1.6</td>
-      <td id="T_e7656_row0_col9" class="data row0 col9" >1.4</td>
-      <td id="T_e7656_row0_col10" class="data row0 col10" >1.2</td>
-      <td id="T_e7656_row0_col11" class="data row0 col11" >0.22</td>
-      <td id="T_e7656_row0_col12" class="data row0 col12" >0.68</td>
-      <td id="T_e7656_row0_col13" class="data row0 col13" >4.5</td>
-      <td id="T_e7656_row0_col14" class="data row0 col14" >1.8</td>
-      <td id="T_e7656_row0_col15" class="data row0 col15" >1.7</td>
-      <td id="T_e7656_row0_col16" class="data row0 col16" >0.81</td>
-      <td id="T_e7656_row0_col17" class="data row0 col17" >0.13</td>
-      <td id="T_e7656_row0_col18" class="data row0 col18" >1.4</td>
+      <th id="T_c0783_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_c0783_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_c0783_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_c0783_row0_col1" class="data row0 col1" >5.94</td>
+      <td id="T_c0783_row0_col2" class="data row0 col2" >2.99</td>
+      <td id="T_c0783_row0_col3" class="data row0 col3" >2.49</td>
+      <td id="T_c0783_row0_col4" class="data row0 col4" >1.87</td>
+      <td id="T_c0783_row0_col5" class="data row0 col5" >0.42</td>
+      <td id="T_c0783_row0_col6" class="data row0 col6" >2.08</td>
+      <td id="T_c0783_row0_col7" class="data row0 col7" >5.75</td>
+      <td id="T_c0783_row0_col8" class="data row0 col8" >3.07</td>
+      <td id="T_c0783_row0_col9" class="data row0 col9" >2.96</td>
+      <td id="T_c0783_row0_col10" class="data row0 col10" >1.79</td>
+      <td id="T_c0783_row0_col11" class="data row0 col11" >0.60</td>
+      <td id="T_c0783_row0_col12" class="data row0 col12" >2.35</td>
+      <td id="T_c0783_row0_col13" class="data row0 col13" >5.63</td>
+      <td id="T_c0783_row0_col14" class="data row0 col14" >3.03</td>
+      <td id="T_c0783_row0_col15" class="data row0 col15" >2.96</td>
+      <td id="T_c0783_row0_col16" class="data row0 col16" >1.32</td>
+      <td id="T_c0783_row0_col17" class="data row0 col17" >0.37</td>
+      <td id="T_c0783_row0_col18" class="data row0 col18" >2.50</td>
     </tr>
   </tbody>
 </table>
-
-      <h2>90th-percentile RMSE</h2>
-      <style type="text/css">
-#T_82320 table {
+</div>
+      </div>
+      <div class="agg-panel" data-agg="median" hidden>
+        <h2>Median RMSE</h2>
+        <div class="table-scroll"><style type="text/css">
+#T_698bc table {
   border-collapse: collapse;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-#T_82320 th {
+#T_698bc th {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_82320  td {
+#T_698bc  td {
   border: 1px solid #d3d3d3;
   padding: 8px;
 }
-#T_82320 th.col_heading.level1 {
-  height: 80px;
+#T_698bc th.col_heading.level1 {
+  height: 110px;
   vertical-align: bottom;
   padding: 5px;
-  min-width: 25px;
+  min-width: 24px;
 }
-#T_82320 th.col_heading.level1 span {
+#T_698bc th.col_heading.level1 span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: left;
   display: inline-block;
 }
-#T_82320 th.col_heading.level0 {
+#T_698bc th.col_heading.level0 {
   background-color: #ececec;
   font-weight: bold;
 }
-#T_82320 th.row_heading {
+#T_698bc th.row_heading {
   background-color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
-#T_82320_row0_col0 {
+#T_698bc th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-weight: bold;
+}
+#T_698bc td.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_698bc  th.col7 {
+  border-left: 8px solid #ffffff;
+}
+#T_698bc  td.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_698bc  th.col13 {
+  border-left: 8px solid #ffffff;
+}
+#T_698bc td.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_698bc  th.col1 {
+  border-left: 2px solid #d3d3d3;
+}
+#T_698bc_row0_col0 {
   background-color: #f8f9fa;
 }
-#T_82320_row0_col1, #T_82320_row0_col2, #T_82320_row0_col3, #T_82320_row0_col4, #T_82320_row0_col5, #T_82320_row0_col6, #T_82320_row0_col7, #T_82320_row0_col8, #T_82320_row0_col9, #T_82320_row0_col10, #T_82320_row0_col11, #T_82320_row0_col12, #T_82320_row0_col13, #T_82320_row0_col14, #T_82320_row0_col15, #T_82320_row0_col16, #T_82320_row0_col17, #T_82320_row0_col18 {
+#T_698bc_row0_col1, #T_698bc_row0_col2, #T_698bc_row0_col3, #T_698bc_row0_col4, #T_698bc_row0_col5, #T_698bc_row0_col6, #T_698bc_row0_col7, #T_698bc_row0_col8, #T_698bc_row0_col9, #T_698bc_row0_col10, #T_698bc_row0_col11, #T_698bc_row0_col12, #T_698bc_row0_col13, #T_698bc_row0_col14, #T_698bc_row0_col15, #T_698bc_row0_col16, #T_698bc_row0_col17, #T_698bc_row0_col18 {
   background-color: #63BE7B;
   color: #1a1a1a;
 }
 </style>
-<table id="T_82320">
+<table id="T_698bc">
   <thead>
     <tr>
       <th class="blank" >&nbsp;</th>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_82320_level0_col0" class="col_heading level0 col0" >Summary</th>
-      <th id="T_82320_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
-      <th id="T_82320_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
-      <th id="T_82320_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
+      <th id="T_698bc_level0_col0" class="col_heading level0 col0" >Summary</th>
+      <th id="T_698bc_level0_col1" class="col_heading level0 col1" colspan="6">temporal</th>
+      <th id="T_698bc_level0_col7" class="col_heading level0 col7" colspan="6">spatial</th>
+      <th id="T_698bc_level0_col13" class="col_heading level0 col13" colspan="6">temperature</th>
     </tr>
     <tr>
-      <th class="blank" >&nbsp;</th>
-      <th class="blank level1" >&nbsp;</th>
-      <th id="T_82320_level1_col0" class="col_heading level1 col0" >Skill score ↑</th>
-      <th id="T_82320_level1_col1" class="col_heading level1 col1" >hourly</th>
-      <th id="T_82320_level1_col2" class="col_heading level1 col2" >weekly</th>
-      <th id="T_82320_level1_col3" class="col_heading level1 col3" >seasonal</th>
-      <th id="T_82320_level1_col4" class="col_heading level1 col4" >anom</th>
-      <th id="T_82320_level1_col5" class="col_heading level1 col5" >iav</th>
-      <th id="T_82320_level1_col6" class="col_heading level1 col6" >site-mean</th>
-      <th id="T_82320_level1_col7" class="col_heading level1 col7" >hourly</th>
-      <th id="T_82320_level1_col8" class="col_heading level1 col8" >weekly</th>
-      <th id="T_82320_level1_col9" class="col_heading level1 col9" >seasonal</th>
-      <th id="T_82320_level1_col10" class="col_heading level1 col10" >anom</th>
-      <th id="T_82320_level1_col11" class="col_heading level1 col11" >iav</th>
-      <th id="T_82320_level1_col12" class="col_heading level1 col12" >site-mean</th>
-      <th id="T_82320_level1_col13" class="col_heading level1 col13" >hourly</th>
-      <th id="T_82320_level1_col14" class="col_heading level1 col14" >weekly</th>
-      <th id="T_82320_level1_col15" class="col_heading level1 col15" >seasonal</th>
-      <th id="T_82320_level1_col16" class="col_heading level1 col16" >anom</th>
-      <th id="T_82320_level1_col17" class="col_heading level1 col17" >iav</th>
-      <th id="T_82320_level1_col18" class="col_heading level1 col18" >site-mean</th>
-    </tr>
-    <tr>
-      <th class="index_name level0" >model</th>
-      <th class="index_name level1" >val_strategy</th>
-      <th class="blank col0" >&nbsp;</th>
-      <th class="blank col1" >&nbsp;</th>
-      <th class="blank col2" >&nbsp;</th>
-      <th class="blank col3" >&nbsp;</th>
-      <th class="blank col4" >&nbsp;</th>
-      <th class="blank col5" >&nbsp;</th>
-      <th class="blank col6" >&nbsp;</th>
-      <th class="blank col7" >&nbsp;</th>
-      <th class="blank col8" >&nbsp;</th>
-      <th class="blank col9" >&nbsp;</th>
-      <th class="blank col10" >&nbsp;</th>
-      <th class="blank col11" >&nbsp;</th>
-      <th class="blank col12" >&nbsp;</th>
-      <th class="blank col13" >&nbsp;</th>
-      <th class="blank col14" >&nbsp;</th>
-      <th class="blank col15" >&nbsp;</th>
-      <th class="blank col16" >&nbsp;</th>
-      <th class="blank col17" >&nbsp;</th>
-      <th class="blank col18" >&nbsp;</th>
+      <th class="index_name level0" >Model</th>
+      <th class="index_name level1" >Validation</th>
+      <th id="T_698bc_level1_col0" class="col_heading level1 col0" ><span>Skill score ↑</span></th>
+      <th id="T_698bc_level1_col1" class="col_heading level1 col1" ><span>hourly</span></th>
+      <th id="T_698bc_level1_col2" class="col_heading level1 col2" ><span>weekly</span></th>
+      <th id="T_698bc_level1_col3" class="col_heading level1 col3" ><span>seasonal</span></th>
+      <th id="T_698bc_level1_col4" class="col_heading level1 col4" ><span>anom</span></th>
+      <th id="T_698bc_level1_col5" class="col_heading level1 col5" ><span>iav</span></th>
+      <th id="T_698bc_level1_col6" class="col_heading level1 col6" ><span>site-mean</span></th>
+      <th id="T_698bc_level1_col7" class="col_heading level1 col7" ><span>hourly</span></th>
+      <th id="T_698bc_level1_col8" class="col_heading level1 col8" ><span>weekly</span></th>
+      <th id="T_698bc_level1_col9" class="col_heading level1 col9" ><span>seasonal</span></th>
+      <th id="T_698bc_level1_col10" class="col_heading level1 col10" ><span>anom</span></th>
+      <th id="T_698bc_level1_col11" class="col_heading level1 col11" ><span>iav</span></th>
+      <th id="T_698bc_level1_col12" class="col_heading level1 col12" ><span>site-mean</span></th>
+      <th id="T_698bc_level1_col13" class="col_heading level1 col13" ><span>hourly</span></th>
+      <th id="T_698bc_level1_col14" class="col_heading level1 col14" ><span>weekly</span></th>
+      <th id="T_698bc_level1_col15" class="col_heading level1 col15" ><span>seasonal</span></th>
+      <th id="T_698bc_level1_col16" class="col_heading level1 col16" ><span>anom</span></th>
+      <th id="T_698bc_level1_col17" class="col_heading level1 col17" ><span>iav</span></th>
+      <th id="T_698bc_level1_col18" class="col_heading level1 col18" ><span>site-mean</span></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_82320_level0_row0" class="row_heading level0 row0" >lr</th>
-      <th id="T_82320_level1_row0" class="row_heading level1 row0" >mean</th>
-      <td id="T_82320_row0_col0" class="data row0 col0" ><b>0.00</b></td>
-      <td id="T_82320_row0_col1" class="data row0 col1" >5.9</td>
-      <td id="T_82320_row0_col2" class="data row0 col2" >3</td>
-      <td id="T_82320_row0_col3" class="data row0 col3" >2.5</td>
-      <td id="T_82320_row0_col4" class="data row0 col4" >1.9</td>
-      <td id="T_82320_row0_col5" class="data row0 col5" >0.42</td>
-      <td id="T_82320_row0_col6" class="data row0 col6" >2.1</td>
-      <td id="T_82320_row0_col7" class="data row0 col7" >5.8</td>
-      <td id="T_82320_row0_col8" class="data row0 col8" >3.1</td>
-      <td id="T_82320_row0_col9" class="data row0 col9" >3</td>
-      <td id="T_82320_row0_col10" class="data row0 col10" >1.8</td>
-      <td id="T_82320_row0_col11" class="data row0 col11" >0.6</td>
-      <td id="T_82320_row0_col12" class="data row0 col12" >2.3</td>
-      <td id="T_82320_row0_col13" class="data row0 col13" >5.6</td>
-      <td id="T_82320_row0_col14" class="data row0 col14" >3</td>
-      <td id="T_82320_row0_col15" class="data row0 col15" >3</td>
-      <td id="T_82320_row0_col16" class="data row0 col16" >1.3</td>
-      <td id="T_82320_row0_col17" class="data row0 col17" >0.37</td>
-      <td id="T_82320_row0_col18" class="data row0 col18" >2.5</td>
+      <th id="T_698bc_level0_row0" class="row_heading level0 row0" >lr</th>
+      <th id="T_698bc_level1_row0" class="row_heading level1 row0" >mean</th>
+      <td id="T_698bc_row0_col0" class="data row0 col0" ><b>0.00</b></td>
+      <td id="T_698bc_row0_col1" class="data row0 col1" >4.02</td>
+      <td id="T_698bc_row0_col2" class="data row0 col2" >1.69</td>
+      <td id="T_698bc_row0_col3" class="data row0 col3" >1.57</td>
+      <td id="T_698bc_row0_col4" class="data row0 col4" >0.93</td>
+      <td id="T_698bc_row0_col5" class="data row0 col5" >0.16</td>
+      <td id="T_698bc_row0_col6" class="data row0 col6" >0.90</td>
+      <td id="T_698bc_row0_col7" class="data row0 col7" >4.09</td>
+      <td id="T_698bc_row0_col8" class="data row0 col8" >1.63</td>
+      <td id="T_698bc_row0_col9" class="data row0 col9" >1.44</td>
+      <td id="T_698bc_row0_col10" class="data row0 col10" >1.20</td>
+      <td id="T_698bc_row0_col11" class="data row0 col11" >0.22</td>
+      <td id="T_698bc_row0_col12" class="data row0 col12" >0.68</td>
+      <td id="T_698bc_row0_col13" class="data row0 col13" >4.50</td>
+      <td id="T_698bc_row0_col14" class="data row0 col14" >1.78</td>
+      <td id="T_698bc_row0_col15" class="data row0 col15" >1.70</td>
+      <td id="T_698bc_row0_col16" class="data row0 col16" >0.81</td>
+      <td id="T_698bc_row0_col17" class="data row0 col17" >0.13</td>
+      <td id="T_698bc_row0_col18" class="data row0 col18" >1.44</td>
     </tr>
   </tbody>
 </table>
-
+</div>
+      </div>
     </div>
-    <footer>
-      <p>
-        <a href="https://github.com/anyafries/FLUXtrapolation-leaderboard">GitHub</a> ·
-        Submit your model via pull request
-      </p>
-    </footer>
   </main>
   <script>
     var VALID_TABS = ["ET", "GPP", "NEE"];
@@ -822,6 +851,39 @@
     });
     var hash = location.hash.slice(1);
     activateTab(VALID_TABS.indexOf(hash) !== -1 ? hash : 'ET');
+
+    // RMSE aggregation toggle (Median vs 90th percentile); 90th is the default.
+    function activateAgg(a) {
+      document.querySelectorAll('.agg-btn').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.agg === a);
+      });
+      document.querySelectorAll('.agg-panel').forEach(function (p) {
+        p.hidden = p.dataset.agg !== a;
+      });
+    }
+    document.querySelectorAll('.agg-btn').forEach(function (b) {
+      b.addEventListener('click', function () { activateAgg(b.dataset.agg); });
+    });
+    activateAgg('q90');
+
+    // Column hover highlight (rows are handled in CSS via tr:hover).
+    document.querySelectorAll('table').forEach(function (table) {
+      function clearCols() {
+        table.querySelectorAll('.hl-col').forEach(function (c) { c.classList.remove('hl-col'); });
+      }
+      table.addEventListener('mouseover', function (e) {
+        var cell = e.target.closest('td, th');
+        if (!cell) return;
+        clearCols();
+        var m = cell.className.match(/(?:^|\s)(col\d+)(?:\s|$)/);
+        if (m) {
+          table.querySelectorAll('.' + m[1]).forEach(function (c) {
+            if (!c.classList.contains('level0')) c.classList.add('hl-col');
+          });
+        }
+      });
+      table.addEventListener('mouseleave', clearCols);
+    });
   </script>
 </body>
 </html>

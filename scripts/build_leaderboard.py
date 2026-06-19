@@ -45,7 +45,10 @@ REQUIRED_COLUMNS = [
     'mse', 'rmse', 'mae', 'nse', 'r2_score', 'bias', 'relative_mae', 'relative_bias'
 ]
 
-GITHUB_REPO_URL = "https://github.com/anyafries/FLUXtrapolation-leaderboard"  
+GITHUB_REPO_URL = "https://github.com/anyafries/FLUXtrapolation-leaderboard"
+PAPER_URL = "https://arxiv.org/abs/2605.19812"
+BENCHMARK_REPO_URL = "https://github.com/anyafries/FLUXtrapolation"
+SUBMIT_URL = "submit.html"
 
 
 def parse_submission_filename(filename):
@@ -165,10 +168,14 @@ def build_tabbed_index(tab_panels):
         q90_html = tab_panels[target]['q90']
         panels.append(
             f'    <div role="tabpanel" data-tab="{target}"{hidden_attr}>\n'
-            f'      <h2>Median RMSE</h2>\n'
-            f'      {median_html}\n'
-            f'      <h2>90th-percentile RMSE</h2>\n'
-            f'      {q90_html}\n'
+            f'      <div class="agg-panel" data-agg="q90">\n'
+            f'        <h2>90th-percentile RMSE</h2>\n'
+            f'        <div class="table-scroll">{q90_html}</div>\n'
+            f'      </div>\n'
+            f'      <div class="agg-panel" data-agg="median" hidden>\n'
+            f'        <h2>Median RMSE</h2>\n'
+            f'        <div class="table-scroll">{median_html}</div>\n'
+            f'      </div>\n'
             f'    </div>'
         )
 
@@ -181,31 +188,48 @@ def build_tabbed_index(tab_panels):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FLUXtrapolation Leaderboard</title>
+  <title>FLUXtrapolation Benchmark</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%A4%B4</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>FLUXtrapolation Leaderboard</h1>
-    <p>
-      This leaderboard tracks machine-learning model performance on the FLUXtrapolation
-      benchmark across three evaluation settings (temporal split, spatial split,
-      temperature-based split) and three carbon/water flux targets (GPP, ET, NEE).
-      See the <a href="{GITHUB_REPO_URL}">GitHub repository</a>
-      for submission instructions.
-    </p>
+  <header class="site-header">
+    <h1 class="site-title"><span class="flux">FLUX</span>trapolation benchmark</h1>
+    <nav class="nav-cards">
+      <a class="navcard active" href="index.html">Leaderboard</a>
+      <a class="navcard" href="{SUBMIT_URL}">Submit result</a>
+      <a class="navcard" href="{PAPER_URL}" target="_blank" rel="noopener">Paper <span class="ext" aria-hidden="true">↗</span></a>
+      <a class="navcard" href="{BENCHMARK_REPO_URL}" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
+    </nav>
   </header>
+  <hr class="header-rule">
+  <h2 class="page-title">Leaderboard</h2>
+  <p class="page-desc">
+    This leaderboard tracks machine-learning model performance on the
+    FLUXtrapolation benchmark.
+  </p>
   <main>
-    <div role="tablist" class="tab-bar">
+    <p class="metric-note">
+      Each cell is the column metric — <strong>RMSE</strong> for the scenario/scale columns
+      (lower is better) — coloured by relative performance within that column: darker green is the
+      best value, fading to white at 1.2× the best. The <strong>Skill score</strong> column is
+      relative to the lr (linear-regression) baseline: <strong>0</strong> = on par
+      with lr, <strong>1</strong> = best possible (zero error); negative means worse than lr.
+    </p>
+    <div class="controls">
+      <div role="tablist" class="tab-bar" aria-label="Flux target">
+        <span class="tab-label" aria-hidden="true">Evaluate flux:</span>
 {buttons_html}
+      </div>
+      <div class="tab-bar agg-bar" role="group" aria-label="RMSE aggregation">
+        <span class="tab-label" aria-hidden="true">RMSE:</span>
+        <button class="agg-btn active" data-agg="q90">90th percentile</button>
+        <button class="agg-btn" data-agg="median">Median</button>
+      </div>
     </div>
 {panels_html}
-    <footer>
-      <p>
-        <a href="{GITHUB_REPO_URL}">GitHub</a> ·
-        Submit your model via pull request
-      </p>
-    </footer>
   </main>
   <script>
     var VALID_TABS = {tabs_js};
@@ -225,6 +249,39 @@ def build_tabbed_index(tab_panels):
     }});
     var hash = location.hash.slice(1);
     activateTab(VALID_TABS.indexOf(hash) !== -1 ? hash : '{first_tab}');
+
+    // RMSE aggregation toggle (Median vs 90th percentile); 90th is the default.
+    function activateAgg(a) {{
+      document.querySelectorAll('.agg-btn').forEach(function (b) {{
+        b.classList.toggle('active', b.dataset.agg === a);
+      }});
+      document.querySelectorAll('.agg-panel').forEach(function (p) {{
+        p.hidden = p.dataset.agg !== a;
+      }});
+    }}
+    document.querySelectorAll('.agg-btn').forEach(function (b) {{
+      b.addEventListener('click', function () {{ activateAgg(b.dataset.agg); }});
+    }});
+    activateAgg('q90');
+
+    // Column hover highlight (rows are handled in CSS via tr:hover).
+    document.querySelectorAll('table').forEach(function (table) {{
+      function clearCols() {{
+        table.querySelectorAll('.hl-col').forEach(function (c) {{ c.classList.remove('hl-col'); }});
+      }}
+      table.addEventListener('mouseover', function (e) {{
+        var cell = e.target.closest('td, th');
+        if (!cell) return;
+        clearCols();
+        var m = cell.className.match(/(?:^|\s)(col\d+)(?:\s|$)/);
+        if (m) {{
+          table.querySelectorAll('.' + m[1]).forEach(function (c) {{
+            if (!c.classList.contains('level0')) c.classList.add('hl-col');
+          }});
+        }}
+      }});
+      table.addEventListener('mouseleave', clearCols);
+    }});
   </script>
 </body>
 </html>"""

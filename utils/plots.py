@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import os
+import re
 import pandas as pd
 import seaborn as sns
 
@@ -475,6 +476,39 @@ HTML_PAGE_TEMPLATE = """\
 </html>"""
 
 
+def _merge_index_names_into_header(html):
+    """
+    Pandas renders the index names (Model, Validation) on their own trailing header
+    row. Lift them into the rotated scale-label row and drop that extra row, so the
+    labels line up at the same height as the scale headers.
+    """
+    m = re.search(
+        r'<th class="index_name level0" >(.*?)</th>\s*'
+        r'<th class="index_name level1" >(.*?)</th>',
+        html,
+    )
+    if not m:
+        return html
+    name0, name1 = m.group(1), m.group(2)
+    # Drop the standalone index-name row.
+    html = re.sub(
+        r'\s*<tr>\s*<th class="index_name level0" >.*?</tr>',
+        '',
+        html,
+        count=1,
+        flags=re.S,
+    )
+    # Place the names in the first two (blank) cells of the scale-label row.
+    html = re.sub(
+        r'<th class="blank" >&nbsp;</th>\s*<th class="blank level1" >&nbsp;</th>',
+        f'<th class="index_name level0" >{name0}</th>\n      '
+        f'<th class="index_name level1" >{name1}</th>',
+        html,
+        count=1,
+    )
+    return html
+
+
 def create_html_leaderboard(
     df,
     target,
@@ -509,7 +543,16 @@ def create_html_leaderboard(
     if overall_scores is not None:
         pivot_df.insert(0, ('Summary', 'Skill score ↑'), overall_scores)
 
+    # Friendly row-index labels shown in the table header.
+    DISPLAY_INDEX_NAMES = {'model': 'Model', 'val_strategy': 'Validation'}
+    pivot_df.index = pivot_df.index.set_names(
+        [DISPLAY_INDEX_NAMES.get(n, n) for n in pivot_df.index.names]
+    )
+
     display_df = pd.DataFrame(index=pivot_df.index, columns=pivot_df.columns)
+
+    # Fixed decimals: ET values are small (4), GPP/NEE larger (2).
+    value_decimals = 4 if target == 'ET' else 2
 
     for col in pivot_df.columns:
         for row in pivot_df.index:
@@ -522,21 +565,21 @@ def create_html_leaderboard(
                 ss = skill_scores_df.loc[row, col]
                 display_df.loc[row, col] = f"{ss:.2f}" if pd.notna(ss) else "-"
             else:
-                display_df.loc[row, col] = format_sig_figs(val, n=2)
+                display_df.loc[row, col] = f"{val:.{value_decimals}f}"
 
     # --- 2. Styling ---
     table_styles = [
         {'selector': 'table', 'props': [
             ('border-collapse', 'collapse'),
-            ('font-family', 'Arial, Helvetica, sans-serif'),
+            ('font-family', '"Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'),
             ('font-size', '12px')
         ]},
         {'selector': 'th, td', 'props': [('border', '1px solid #d3d3d3'), ('padding', '8px')]},
         {'selector': 'th.col_heading.level1', 'props': [
-            ('height', '80px'),
+            ('height', '110px'),
             ('vertical-align', 'bottom'),
             ('padding', '5px'),
-            ('min-width', '25px')
+            ('min-width', '24px')
         ]},
         {'selector': 'th.col_heading.level1 span', 'props': [
             ('writing-mode', 'vertical-rl'),
@@ -545,7 +588,14 @@ def create_html_leaderboard(
             ('display', 'inline-block')
         ]},
         {'selector': 'th.col_heading.level0', 'props': [('background-color', '#ececec'), ('font-weight', 'bold')]},
-        {'selector': 'th.row_heading', 'props': [('background-color', '#ffffff'), ('text-align', 'left'), ('font-weight', 'bold')]}
+        {'selector': 'th.row_heading', 'props': [('background-color', '#ffffff'), ('text-align', 'left'), ('font-weight', 'bold')]},
+        {'selector': 'th.index_name', 'props': [('vertical-align', 'bottom'), ('text-align', 'left'), ('font-weight', 'bold')]},
+        # White gap between the temporal / spatial / temperature scenario blocks.
+        {'selector': 'td.col7, th.col7, td.col13, th.col13',
+         'props': [('border-left', '8px solid #ffffff')]},
+        # Grey divider setting the Skill score (summary) column apart from the scenarios.
+        {'selector': 'td.col1, th.col1',
+         'props': [('border-left', '2px solid #d3d3d3')]},
     ]
 
     def style_from_original(df_dummy):
@@ -567,9 +617,12 @@ def create_html_leaderboard(
         display_df.style
         .set_table_styles(table_styles)
         .apply(style_from_original, axis=None)
+        # Wrap the scale headers in a <span> so the vertical writing-mode rule applies to them.
+        .format_index(lambda v: f"<span>{v}</span>", axis="columns", level=1)
     )
 
     table_html = styler.to_html()
+    table_html = _merge_index_names_into_header(table_html)
 
     if return_html:
         return table_html

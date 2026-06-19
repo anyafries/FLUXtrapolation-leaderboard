@@ -1,111 +1,166 @@
-# FLUXNET ML Leaderboard
+# FLUXtrapolation Leaderboard
 
-Track and compare ML model performance on the [FLUXNET](https://fluxnet.org/) benchmark.
-**Live leaderboard → https://anyafries.github.io/FLUXtrapolation-leaderboard/#ET**
+ML model performance on the [FLUXNET](https://fluxnet.org/) **FLUXtrapolation** benchmark
+(temporal / spatial / temperature splits × GPP / ET / NEE).
 
----
-
-## How to submit
-
-No local clone required — everything is done through GitHub's web UI.
-
-1. **Fork this repo** — click "Fork" in the top-right corner of the GitHub page.
-2. **Navigate to `submissions/`** in your fork.
-3. **Create a folder** named after your model (lowercase, alphanumeric, hyphens/underscores — e.g. `my-model`).
-4. **Upload your 9 CSV files** — click "Add file" → "Upload files" and drag them in.
-   Each file must follow the naming and format described below.
-5. **Commit** to a branch in your fork, then **open a pull request** back to this repo's `main`.
-6. A validation bot will check your files and post a pass/fail comment.
-7. Once the checks pass, a maintainer will merge your PR and the leaderboard updates automatically.
+**Live:** https://anyafries.github.io/FLUXtrapolation-leaderboard/#ET
 
 ---
 
-## File naming and format
+## Run locally
 
-A submission is exactly **9 metric CSV files**: every combination of **3 settings × 3 targets**, for one `val_strategy`.
+```bash
+# 1. Environment (first time only)
+python -m venv venv_leaderboard
+source venv_leaderboard/bin/activate
+pip install -r requirements.txt          # includes jinja2, needed by the pandas Styler
 
-### Folder layout
+# 2. Build docs/index.html from submissions/
+python scripts/build_leaderboard.py
+
+# 3. Preview — serve docs/ so relative links + the favicon resolve like the deployed site
+python -m http.server 8000 --directory docs
+#   → http://localhost:8000/   (submit page at /submit.html)
+```
+
+- **CSS-only tweaks** to [docs/style.css](docs/style.css) just need a browser refresh — no rebuild.
+- **Markup/data changes** (header, tabs, new submissions) need `build_leaderboard.py` re-run.
+- Run the test suite with `pytest` (covers intake, validation, scoring, truth).
+
+---
+
+## Repo structure
 
 ```
-submissions/{model_name}/{setting}_{target}_{model_name}_val_{val_strategy}.csv
+docs/                     # the static GitHub Pages site (deployed from /docs on main)
+  index.html              #   GENERATED leaderboard — do not edit by hand; rebuild instead
+  submit.html             #   upload UI (Uppy drop box → Cloudflare Worker)
+  style.css               #   hand-edited stylesheet (shared by both pages)
+
+scripts/                  # maintainer / CI entrypoints
+  build_leaderboard.py    #   submissions/*/*.csv → docs/index.html
+  score_submissions.py    #   score every `pending` submission (CI: score-and-publish)
+  build_truth_table.py    #   lr raw predictions → reference/truth_table.parquet (+ manifest)
+  build_baseline_lr.py    #   register the lr baseline as a normal submission
+  cleanup_submission.py   #   maintainer removal of one submission (R2 + KV + repo); dry-run default
+
+server/                   # Python package imported by the GitHub Actions
+  intake.py               #   validate-pr entrypoint: validate the metadata-only PR
+  validation.py           #   structural + numeric validation of a submission
+  scoring.py              #   adapter that scores raw predictions via eval.py
+  truth.py                #   download + manifest-sha verify of the canonical truth table
+  objectstore.py          #   R2 / filesystem abstraction (incoming keys)
+  metadata.py             #   metadata.yaml schema + status lifecycle (pending → scored)
+  archive.py              #   long-term archive abstraction (manual/scheduled sweep)
+
+worker/                   # Cloudflare Worker — the intake relay
+  src/index.js            #   presign R2 uploads, rate-limit (KV), open the submission PR
+  wrangler.toml           #   non-secret config (repo, R2 endpoint, rate limits, KV binding)
+
+utils/
+  plots.py                #   create_html_leaderboard() + matplotlib result plots
+  aggregation.py          #   temporal aggregation (weekly/seasonal/anom/iav/site-mean)
+  eval_utils.py           #   metric definitions (rmse, mae, nse, …)
+  utils.py                #   logging helpers
+
+eval.py                   # load/compare experiments; compute metrics from predictions
+reference/                # truth_table.parquet (~164 MB) + committed manifest (cache key)
+submissions/              # merged submissions: {model_id}_val_{strategy}/{metadata.yaml + 9 CSVs}
+submissions_raw/          # raw lr predictions (source for the truth table)
+submissions_metrics/      # preserved MVP metrics (regression check for the lr baseline)
+tests/                    # pytest suite for the server package
+deploy/                   # SETUP.md, BRINGUP.md, r2-cors.json
+.github/workflows/        # validate-pr.yml, score-and-publish.yml
 ```
 
-### Naming rules
+---
 
-| Field | Valid values |
+## Architecture
+
+The leaderboard is a **static site** (`docs/`, served by GitHub Pages) plus a **serverless
+intake pipeline** that turns an upload into a merged, scored submission with no VM and no manual
+step on the happy path.
+
+### Submission flow
+
+```
+ submit.html ── 9 raw CSVs ──► R2 (incoming/)          [browser → presigned PUT, never via Worker]
+      │                            ▲
+      └── finalize ──► Worker ─────┘  opens same-repo PR adding
+                                       submissions/{id}_val_{strategy}/metadata.yaml  (R2 pointers only)
+                                              │
+                          validate-pr.yml ◄───┘  download raw from R2 → full validation
+                                              │   → comment result → AUTO-MERGE on pass
+                                              ▼
+                          push to main ──► score-and-publish.yml
+                                              │   score pending (join lr truth + eval.py)
+                                              │   write 9 metric CSVs, flip metadata → scored
+                                              │   rebuild docs/, commit "[skip ci]"
+                                              ▼
+                                       GitHub Pages redeploys docs/
+```
+
+1. **Upload.** `docs/submit.html` uploads the 9 raw prediction CSVs straight to **Cloudflare R2**
+   via presigned multipart URLs. The **Worker** ([worker/src/index.js](worker/src/index.js)) only
+   presigns and rate-limits (KV) — file bytes never pass through it.
+2. **PR.** On finalize, the Worker opens a PR **in this repo** adding a single
+   `submissions/{model_id}_val_{strategy}/metadata.yaml` that points at the R2 keys. It never
+   commits prediction data or code. Opening from a same-repo branch is what lets the validation
+   Action see the secrets + write token it needs.
+3. **Validate + merge.** [validate-pr.yml](.github/workflows/validate-pr.yml) downloads the raw
+   files from R2, runs the repo's validator on the *data* (never PR-supplied code), comments
+   pass/fail, and **squash-auto-merges** on pass. Fork PRs get a read-only token and no secrets,
+   so they can't bypass the relay.
+4. **Score + publish.** Merging is a push to `main`, which triggers
+   [score-and-publish.yml](.github/workflows/score-and-publish.yml): it scores every `pending`
+   submission, rebuilds `docs/`, and commits the metrics + `docs/` + `scored` status back. The
+   `[skip ci]` in that commit message is the loop guard (its own commit also touches a
+   `metadata.yaml`).
+
+### Truth model
+
+The trusted **`lr` baseline's raw predictions** define ground truth. `build_truth_table.py` writes
+`reference/truth_table.parquet` keyed by `(setting, target, site_id, time) → y_true`, plus a JSON
+manifest whose content hash is the CI cache key. At scoring time a submitter's `y_true` is
+**discarded** — only their `y_pred` is scored against the canonical truth via `eval.py`. The truth
+table also defines the **required index** (the rows a complete submission must cover).
+
+> Pin note: `pyarrow` is held `<20` across all consumers because ≥20 writes column-chunk size
+> statistics that older readers reject. Bump every consumer together if you move it.
+
+---
+
+## Submission format (reference)
+
+A submission is **9 metric CSVs** = 3 settings × 3 targets, for one `val_strategy`, sitting beside
+the `metadata.yaml` the relay adds:
+
+```
+submissions/{model_id}_val_{val_strategy}/
+  metadata.yaml
+  {setting}_{target}_{model_id}_val_{val_strategy}.csv      # × 9
+```
+
+| field | valid values |
 |---|---|
-| `model_name` | lowercase alphanumeric + hyphens/underscores (must match the parent folder) |
 | `setting` | `time-split`, `spatial-easy40`, `TA40` |
 | `target` | `GPP`, `ET`, `NEE` |
 | `val_strategy` | `mean`, `max`, `discrepancy` |
 
-### CSV columns (exact order required)
+CSV columns (exact order):
+`target,setting,model,scale,env,n_samples,mse,rmse,mae,nse,r2_score,bias,relative_mae,relative_bias`
 
-```
-target,setting,model,scale,env,n_samples,mse,rmse,mae,nse,r2_score,bias,relative_mae,relative_bias
-```
-
-- The `model` column must contain exactly your `model_name` in every row.
-- The `setting` and `target` columns must match the filename.
-- `n_samples`, `mse`, `rmse`, and `mae` must not have NaN values.
-
-### Updating an existing submission
-
-You may later add a second set of 9 files for a different `val_strategy` (e.g., first submit `mean`, then `max`).
-To update files already on `main`, open a new PR modifying any subset of your 9 files for that `val_strategy`.
+The leaderboard shows **RMSE** by temporal scale (hourly → iav) and a **Skill score** summary
+relative to the `lr` baseline (higher = better).
 
 ---
 
-## What gets evaluated
+## Ops
 
-The leaderboard displays **RMSE** (Root Mean Squared Error) aggregated by:
-
-- **Temporal scale** — hourly, weekly, seasonal, inter-annual variability (IAV), anomalies
-- **Evaluation setting** — temporal split, spatial split, temperature-based split
-- **Target variable** — GPP (Gross Primary Productivity), ET (Evapotranspiration), NEE (Net Ecosystem Exchange)
-
-A **Skill Score** column summarises performance relative to the `lr` baseline across all settings and scales (higher = better).
-
-> **Note:** The MVP trusts submitters' metric numbers. The validation bot checks column names, value types, and file completeness, but does not recompute metrics from raw predictions.
-
----
-
-## Local development (for maintainers)
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Regenerate docs/ from submissions/
-python scripts/build_leaderboard.py
-
-# Open docs/index.html in a browser to preview
-open docs/index.html          # macOS
-xdg-open docs/index.html      # Linux
-
-# Validate a set of CSV files manually
-python scripts/validate_submission.py submissions/lr/*.csv
-```
-
----
-
-## Maintainer setup
-
-### Enable GitHub Pages
-
-Do this **once** after creating the repo:
-
-1. Go to **Settings → Pages**.
-2. Under **Source**, select **"Deploy from a branch"**.
-3. Branch: `main`, Folder: `/docs`.
-4. Click **Save**.
-
-The site will be live at `https://{your-org}.github.io/{repo-name}` within a minute.
-
-### Fork PR comment permissions
-
-The `validate-pr` workflow uses `pull_request` (not `pull_request_target`) for security.
-This means it runs with a read-only token for fork PRs, so the bot comment may not appear
-for external contributors — the result is still visible in the Actions log.
-If you want comments on fork PRs, add a separate `pull_request_target` workflow that reads
-the saved report artifact and posts it; this is out of scope for the MVP.
+- **Rebuild the truth table:** `python scripts/build_truth_table.py` (after changing the `lr` raw set),
+  then `python scripts/build_baseline_lr.py` to re-register + regression-check the baseline.
+- **Remove a submission:** `python scripts/cleanup_submission.py` (dry-run by default; clears R2,
+  KV owner key, and the repo folder).
+- **Deploy / first-time setup:** see [deploy/SETUP.md](deploy/SETUP.md) and
+  [deploy/BRINGUP.md](deploy/BRINGUP.md). Worker secrets via `wrangler secret put`; Pages serves
+  `/docs` on `main`.

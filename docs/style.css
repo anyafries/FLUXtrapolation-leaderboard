@@ -1,64 +1,148 @@
-/* FLUXNET Leaderboard — minimal stylesheet */
+/* FLUXtrapolation Leaderboard — stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap');
+
+:root {
+  /* Accent (FLUX wordmark, nav-card borders/fill, active tab) — everywhere but the table heatmap */
+  --accent: #FF5200;
+  /* Darker shade for small text-on-white (links, active tab label) where #FF5200 lacks contrast */
+  --accent-text: #D94600;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-               Helvetica, Arial, sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: #1a1a1a;
   background: #fff;
   margin: 0;
-  padding: 0 1rem 3rem;
-  max-width: none;
+  padding: 1.5rem 2rem 3rem;
 }
 
-header {
-  padding: 1.5rem 0 1rem;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 1.5rem;
+/* Shared top header: brand title left, nav cards right, on one blue banner row */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  background: #d5e3f9;
+  margin: -1.5rem -2rem 0;   /* bleed over the body padding to a full-width banner */
+  padding: 1rem 2rem;
 }
 
-header a {
-  font-size: 0.9rem;
-  color: #555;
-  text-decoration: none;
-}
-
-header a:hover {
-  text-decoration: underline;
-}
-
-h1 {
-  margin: 0.5rem 0 0;
+.site-title {
+  margin: 0;
   font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.flux {
+  color: var(--accent);
+}
+
+.header-rule {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0.75rem 0 1.25rem;
+}
+
+/* Per-page heading below the rule (Leaderboard / Submit a model) */
+.page-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.page-desc {
+  margin: 0 0 0.5rem;
+  color: #333;
 }
 
 h2 {
   font-size: 1.2rem;
+  font-weight: 600;
   margin-top: 2rem;
 }
 
 p {
   max-width: 70ch;
+  margin: 0;
+  color: #333;
 }
 
 a {
-  color: #0060df;
+  color: var(--accent-text);
 }
 
-/* Table container — allows horizontal scrolling on narrow screens */
-main {
+/* Headline action cards — top-right site nav (on every page) */
+.nav-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.navcard {
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+/* Current page — filled in */
+.navcard.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Hover — semi-transparent so it reads as a distinct state */
+.navcard:hover {
+  opacity: 0.55;
+}
+
+/* External-link marker on Paper / GitHub */
+.navcard .ext {
+  font-size: 0.85em;
+  margin-left: 0.15rem;
+}
+
+/* Explanatory note above the flux tabs */
+.metric-note {
+  max-width: 90ch;
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.metric-note code {
+  background: #f2f2f2;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+/* Each table scrolls horizontally on its own, so the tabs and notes stay put */
+.table-scroll {
   overflow-x: auto;
 }
 
 /* Preserve inline color styles emitted by pandas Styler */
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: auto;             /* only as wide as the content needs */
   font-size: 13px;
 }
 
@@ -66,7 +150,7 @@ thead {
   position: sticky;
   top: 0;
   background: #fff;
-  z-index: 1;
+  z-index: 2;
 }
 
 th, td {
@@ -80,8 +164,32 @@ tbody tr:nth-child(even) td:not([style*="background"]) {
   background-color: #f9f9f9;
 }
 
-tbody tr:hover td {
-  outline: 1px solid #aaa;
+/* Row + column hover tracking. Row is pure CSS; column is toggled via .hl-col by script.
+   background-clip: padding-box keeps the highlight from bleeding under the white scenario gaps. */
+tbody tr:hover > td,
+tbody tr:hover > th {
+  box-shadow: inset 0 2px 0 #8ab4f8, inset 0 -2px 0 #8ab4f8;
+  background-clip: padding-box;
+}
+
+tbody tr:hover > th.row_heading {
+  background: #eaf2ff !important;
+  background-clip: padding-box;
+}
+
+.hl-col {
+  box-shadow: inset 2px 0 0 #8ab4f8, inset -2px 0 0 #8ab4f8;
+  background-clip: padding-box;
+}
+
+th.col_heading.level1.hl-col {
+  background: #eaf2ff !important;
+  background-clip: padding-box;
+}
+
+/* Intersection of hovered row and column — full blue box */
+tbody tr:hover > .hl-col {
+  box-shadow: inset 0 0 0 2px #8ab4f8;
 }
 
 /* Index / row-header column */
@@ -113,45 +221,94 @@ th.col_heading.level1 span {
   display: inline-block;
 }
 
-footer {
-  margin-top: 3rem;
-  font-size: 0.85rem;
-  color: #666;
-  border-top: 1px solid #e0e0e0;
-  padding-top: 1rem;
+/* Freeze the two row-label columns (Model, Validation) during horizontal scroll */
+thead tr > :nth-child(1),
+tbody tr > :nth-child(1) {
+  position: sticky;
+  left: 0;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #fff;
 }
 
-/* Tab bar */
+thead tr > :nth-child(2),
+tbody tr > :nth-child(2) {
+  position: sticky;
+  left: 120px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #fff;
+  box-shadow: 2px 0 0 #d3d3d3;   /* divider that survives border-collapse + sticky */
+}
+
+/* Stacking: frozen header corner on top (3), header (2), frozen body cells (1) */
+tbody tr > :nth-child(1),
+tbody tr > :nth-child(2) { z-index: 1; }
+
+thead tr > :nth-child(1),
+thead tr > :nth-child(2) { z-index: 3; }
+
+/* Flux + RMSE control row — two tab groups sharing one baseline */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 2.5rem;
+  border-bottom: 1px solid #d3d3d3;
+  margin-bottom: 1.5rem;
+}
+
+.controls .tab-bar {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Tab bar — folder-style boxes per flux */
 .tab-bar {
   display: flex;
-  border-bottom: 2px solid #e0e0e0;
+  align-items: flex-end;
+  border-bottom: 1px solid #d3d3d3;
   margin-bottom: 1.5rem;
-  gap: 0;
+  gap: 0.4rem;
+}
+
+.tab-bar .tab-label {
+  font-weight: 600;
+  color: #1a1a1a;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
 }
 
 .tab-bar button {
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
+  background: #f7f7f7;
+  border: 1px solid #d3d3d3;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: -1px;           /* sit on the baseline so the active tab can merge with it */
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
   font-family: inherit;
   cursor: pointer;
   color: #555;
-  border-radius: 4px 4px 0 0;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
 .tab-bar button:hover {
   color: #111;
-  background: #f5f5f5;
+  background: #f0f0f0;
 }
 
 .tab-bar button.active {
-  color: #0060df;
-  border-bottom-color: #0060df;
-  font-weight: 600;
+  background: #fff;
+  border-color: var(--accent);
+  border-bottom-color: #fff;     /* erase the baseline under the active tab */
+  color: var(--accent-text);
+  font-weight: 700;
 }
 
 /* Tab panel spacing */
