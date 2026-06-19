@@ -1,50 +1,66 @@
-model_id: "coral"
-display_name: "coral"
+model_id: coral
+display_name: coral
 email: null
 description: null
 code_url: null
 paper_url: null
-owner: "c3d5d683a1faa3f1dd8db0823c661c0e94f5db6aa8c0165c55472b805fac6563"
-val_strategy: "mean"
-submitted_at: "2026-06-19T07:57:55+00:00"
+owner: c3d5d683a1faa3f1dd8db0823c661c0e94f5db6aa8c0165c55472b805fac6563
+val_strategy: mean
+submitted_at: '2026-06-19T07:57:55+00:00'
 is_baseline: false
-status: pending
+status: scored
 files:
-- filename: "spatial-easy40_ET_coral_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "ET"
-  r2_key: "incoming/coral_val_mean/spatial-easy40_ET_coral_val_mean_predictions.csv"
-- filename: "spatial-easy40_GPP_coral_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "GPP"
-  r2_key: "incoming/coral_val_mean/spatial-easy40_GPP_coral_val_mean_predictions.csv"
-- filename: "spatial-easy40_NEE_coral_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "NEE"
-  r2_key: "incoming/coral_val_mean/spatial-easy40_NEE_coral_val_mean_predictions.csv"
-- filename: "TA40_ET_coral_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "ET"
-  r2_key: "incoming/coral_val_mean/TA40_ET_coral_val_mean_predictions.csv"
-- filename: "TA40_GPP_coral_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "GPP"
-  r2_key: "incoming/coral_val_mean/TA40_GPP_coral_val_mean_predictions.csv"
-- filename: "TA40_NEE_coral_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "NEE"
-  r2_key: "incoming/coral_val_mean/TA40_NEE_coral_val_mean_predictions.csv"
-- filename: "time-split_ET_coral_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "ET"
-  r2_key: "incoming/coral_val_mean/time-split_ET_coral_val_mean_predictions.csv"
-- filename: "time-split_GPP_coral_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "GPP"
-  r2_key: "incoming/coral_val_mean/time-split_GPP_coral_val_mean_predictions.csv"
-- filename: "time-split_NEE_coral_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "NEE"
-  r2_key: "incoming/coral_val_mean/time-split_NEE_coral_val_mean_predictions.csv"
-
-
+- filename: spatial-easy40_ET_coral_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  r2_key: incoming/coral_val_mean/spatial-easy40_ET_coral_val_mean_predictions.csv
+  sha256: 79ee5250cbd1e24d46711502887cc18c6b5c6d6752003fa8abb0d68a1ce856e1
+- filename: spatial-easy40_GPP_coral_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  r2_key: incoming/coral_val_mean/spatial-easy40_GPP_coral_val_mean_predictions.csv
+  sha256: a3ab8e403a7f5e8c11ebe5804acf2df4c6dc51c46568aaf492e27a7b0264ed93
+- filename: spatial-easy40_NEE_coral_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  r2_key: incoming/coral_val_mean/spatial-easy40_NEE_coral_val_mean_predictions.csv
+  sha256: 2611ad665529ddad888c43caf7c9724063b04af07c98836cf6544bbceaf5dceb
+- filename: TA40_ET_coral_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  r2_key: incoming/coral_val_mean/TA40_ET_coral_val_mean_predictions.csv
+  sha256: 59f4d3bd1ec4328c2cf3726e2bcaec14be0eb68908a3fd904e07da93a79ed1d7
+- filename: TA40_GPP_coral_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  r2_key: incoming/coral_val_mean/TA40_GPP_coral_val_mean_predictions.csv
+  sha256: 3c527b22944c638bdaebb097d6cc05da0ea427fe9884c1f832395026221e74ec
+- filename: TA40_NEE_coral_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  r2_key: incoming/coral_val_mean/TA40_NEE_coral_val_mean_predictions.csv
+  sha256: a6df3cc20546be79c15743297a696df1610510b18dae90ba0e9d1ea8816d6bf8
+- filename: time-split_ET_coral_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  r2_key: incoming/coral_val_mean/time-split_ET_coral_val_mean_predictions.csv
+  sha256: ab7859200fcda19f1b035b44f15412c68dcbd276f9926e9b07fb2611b94ae967
+- filename: time-split_GPP_coral_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  r2_key: incoming/coral_val_mean/time-split_GPP_coral_val_mean_predictions.csv
+  sha256: 9adef639d1c3b6ad7b5363924db11b76c5bd7847a66f7458767045091dc82d0f
+- filename: time-split_NEE_coral_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  r2_key: incoming/coral_val_mean/time-split_NEE_coral_val_mean_predictions.csv
+  sha256: 3bbba9760e63c35ea155be497ffe7df50e76ba33b934d3d7a3e0975d24523250

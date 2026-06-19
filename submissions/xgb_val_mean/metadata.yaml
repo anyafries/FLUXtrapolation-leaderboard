@@ -1,48 +1,66 @@
-model_id: "xgb"
-display_name: "xgb"
+model_id: xgb
+display_name: xgb
 email: null
 description: null
 code_url: null
 paper_url: null
-owner: "855ce88cacd091bbdc976be9eebc292705b9330209229a710f27ac279425d43a"
-val_strategy: "mean"
-submitted_at: "2026-06-18T14:44:07+00:00"
+owner: 855ce88cacd091bbdc976be9eebc292705b9330209229a710f27ac279425d43a
+val_strategy: mean
+submitted_at: '2026-06-18T14:44:07+00:00'
 is_baseline: false
-status: pending
+status: scored
 files:
-- filename: "spatial-easy40_ET_xgb_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "ET"
-  r2_key: "incoming/xgb_val_mean/spatial-easy40_ET_xgb_val_mean_predictions.csv"
-- filename: "spatial-easy40_GPP_xgb_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "GPP"
-  r2_key: "incoming/xgb_val_mean/spatial-easy40_GPP_xgb_val_mean_predictions.csv"
-- filename: "spatial-easy40_NEE_xgb_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "NEE"
-  r2_key: "incoming/xgb_val_mean/spatial-easy40_NEE_xgb_val_mean_predictions.csv"
-- filename: "TA40_ET_xgb_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "ET"
-  r2_key: "incoming/xgb_val_mean/TA40_ET_xgb_val_mean_predictions.csv"
-- filename: "TA40_GPP_xgb_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "GPP"
-  r2_key: "incoming/xgb_val_mean/TA40_GPP_xgb_val_mean_predictions.csv"
-- filename: "TA40_NEE_xgb_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "NEE"
-  r2_key: "incoming/xgb_val_mean/TA40_NEE_xgb_val_mean_predictions.csv"
-- filename: "time-split_ET_xgb_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "ET"
-  r2_key: "incoming/xgb_val_mean/time-split_ET_xgb_val_mean_predictions.csv"
-- filename: "time-split_GPP_xgb_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "GPP"
-  r2_key: "incoming/xgb_val_mean/time-split_GPP_xgb_val_mean_predictions.csv"
-- filename: "time-split_NEE_xgb_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "NEE"
-  r2_key: "incoming/xgb_val_mean/time-split_NEE_xgb_val_mean_predictions.csv"
+- filename: spatial-easy40_ET_xgb_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  r2_key: incoming/xgb_val_mean/spatial-easy40_ET_xgb_val_mean_predictions.csv
+  sha256: 5b0651e9f09bd19b7b7b547112ca2d99ea597a480ec14b8ae26afc23d90e2ac3
+- filename: spatial-easy40_GPP_xgb_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  r2_key: incoming/xgb_val_mean/spatial-easy40_GPP_xgb_val_mean_predictions.csv
+  sha256: b3b800d6c6bed2667cb54c04fbbf78d788ffac90a666366aabff5c274553c9be
+- filename: spatial-easy40_NEE_xgb_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  r2_key: incoming/xgb_val_mean/spatial-easy40_NEE_xgb_val_mean_predictions.csv
+  sha256: 04faaa7ca4a41966c3aae1a17dd0d4661b07c9e8d436be2be3277fda96f67d88
+- filename: TA40_ET_xgb_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  r2_key: incoming/xgb_val_mean/TA40_ET_xgb_val_mean_predictions.csv
+  sha256: 753c7bb1cb4bd8bed285e9adf1c19aa828051300bbd024131886f509c02b81e1
+- filename: TA40_GPP_xgb_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  r2_key: incoming/xgb_val_mean/TA40_GPP_xgb_val_mean_predictions.csv
+  sha256: 1753688fcc45d1657a9467c7cdf0e3773d866d168210f8a8024068e250145c24
+- filename: TA40_NEE_xgb_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  r2_key: incoming/xgb_val_mean/TA40_NEE_xgb_val_mean_predictions.csv
+  sha256: 7029db8f4d6223c307870222b8a139f601b22e5be04be087c9c07f782f7e23bb
+- filename: time-split_ET_xgb_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  r2_key: incoming/xgb_val_mean/time-split_ET_xgb_val_mean_predictions.csv
+  sha256: 2a34b79492cc377615f1c198c6c76991e415487a54e8015895168f280205322f
+- filename: time-split_GPP_xgb_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  r2_key: incoming/xgb_val_mean/time-split_GPP_xgb_val_mean_predictions.csv
+  sha256: 7c9c21b75b9974854d3cbaddac567b26d8da4ff8dea773b08d13bb8b7b255244
+- filename: time-split_NEE_xgb_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  r2_key: incoming/xgb_val_mean/time-split_NEE_xgb_val_mean_predictions.csv
+  sha256: 7e6d37d1f721d5657123c9aaba25ee942ae2ec1186659925923f78acd074c1c2
