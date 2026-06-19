@@ -7,10 +7,13 @@ It has two stages, distinguished by `status`:
   status: pending   — written by the relay (Worker) at intake. The 9 raw files live in the
                       transient R2 dock; each file entry carries its `r2_key`. No metric CSVs
                       committed yet. This is what the validate-pr Action checks before merge.
-  status: scored    — finalised by the VM after scoring. Each file entry gains `sha256` +
-                      `archive_pointer` (keep-forever archive), the `r2_key` is dropped (file
-                      deleted from R2), and the 9 metric CSVs sit beside metadata.yaml.
-                      Maintainer-uploaded baselines (e.g. lr) are written directly as `scored`.
+  status: scored    — written by the score-and-publish Action after scoring. Each file entry
+                      gains `sha256` (of the scored raw) and RETAINS its `r2_key` — the raw file
+                      stays in R2 `incoming/` (archiving is now a separate manual/scheduled sweep,
+                      not part of scoring). The 9 metric CSVs sit beside metadata.yaml.
+                      `archive_pointer` is optional: present only once a submission has been
+                      swept into the keep-forever archive. Maintainer baselines (e.g. lr) are
+                      written directly as `scored`.
 
 Identity / ownership:
   - `model_id` is owned on first submission. `owner` is sha256(owner_token) — never the raw
@@ -40,8 +43,9 @@ CORE_FILE_FIELDS = ["filename", "setting", "target"]
 ALLOWED_FILE_FIELDS = CORE_FILE_FIELDS + ["rows", "r2_key", "sha256", "archive_pointer"]
 # Required by stage (in addition to core):
 STAGE_REQUIRED = {
-    STATUS_PENDING: ["r2_key"],                  # raw file is in R2, awaiting scoring
-    STATUS_SCORED: ["sha256", "archive_pointer"],  # raw file archived; hash recorded
+    STATUS_PENDING: ["r2_key"],   # raw file is in R2, awaiting scoring
+    STATUS_SCORED: ["sha256"],    # scored; hash of the raw recorded. r2_key retained (raw stays
+                                  # in R2); archive_pointer added later by the archive sweep.
 }
 
 

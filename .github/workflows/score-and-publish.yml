@@ -1,0 +1,95 @@
+name: Score and publish
+
+# Runs AFTER a submission PR merges (merge to main == a push to main). Validation already ran
+# pre-merge (validate-pr.yml), so a merged submission is assumed valid. This workflow scores
+# every still-`pending` submission, rebuilds the leaderboard, and commits the metrics + docs/ +
+# the `scored` metadata back to main. GitHub Pages redeploys on the push.
+#
+# Scoring runs on a GitHub-hosted runner (eval.py on 9 files takes minutes — well under limits).
+# There is NO VM/poller. Archiving is a SEPARATE manual/scheduled sweep: this workflow never
+# touches the archive and never deletes the raw R2 files (they remain in incoming/).
+#
+# ── Self-trigger loop guard ────────────────────────────────────────────────────────────────
+# This workflow triggers on pushes to main and also pushes to main, and its commit changes a
+# metadata.yaml (pending -> scored), which matches the trigger path. The guard is the
+# **`[skip ci]` in the commit message**: GitHub does not start ANY workflow for a push whose head
+# commit message contains `[skip ci]`. So the scoring commit cannot re-trigger this workflow.
+# (Path filters can't help here — the status flip *is* a metadata.yaml change. validate-pr.yml is
+# unaffected: it triggers on pull_request, not push.) Backstop: step 1 is idempotent — a stray run
+# would find nothing pending, rebuild docs/ identically, produce no diff, and not commit.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "submissions/**/metadata.yaml"
+
+permissions:
+  contents: write          # commit metrics + docs/ + scored metadata, push to main
+
+concurrency:
+  group: score-and-publish # serialize runs so two near-simultaneous merges don't race on push
+  cancel-in-progress: false
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Reuse the same ~164 MB truth table cache key as validate-pr.yml (committed manifest sha).
+      - name: Cache truth table
+        uses: actions/cache@v4
+        with:
+          path: .truth-cache
+          key: truth-${{ hashFiles('reference/truth_table_manifest.json') }}
+
+      - name: Score all pending submissions (download from R2 + join lr truth + eval.py)
+        id: score
+        env:
+          OBJECTSTORE_BACKEND: r2
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          TRUTH_TABLE_URL: ${{ secrets.TRUTH_TABLE_URL }}
+          FLUX_TRUTH_CACHE: ${{ github.workspace }}/.truth-cache
+        run: |
+          set +e
+          python scripts/score_submissions.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      # Same code path the retired rebuild-leaderboard.yml used; this workflow now owns docs/.
+      - name: Rebuild leaderboard
+        run: python scripts/build_leaderboard.py
+
+      - name: Commit metrics + docs + scored metadata
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add submissions/ docs/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            # [skip ci] is the loop guard — see the header comment.
+            git commit -m "Score submissions + rebuild leaderboard [skip ci]"
+            git push
+          fi
+
+      - name: Fail if any submission failed to score
+        if: steps.score.outputs.exit_code != '0'
+        run: |
+          echo "One or more submissions failed to score (see the Score step log). They remain"
+          echo "pending and will be retried on the next push to main."
+          exit 1

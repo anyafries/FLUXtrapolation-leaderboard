@@ -56,7 +56,7 @@ Proves: the sandboxed gate end-to-end. Use **real** lr-style data so validation 
 3. Then submit deliberately broken data (drop 100 rows from one file) → expect the comment to fail
    `index_completeness` and **no merge**.
 
-### (e) Throwaway-fork test — a fork PR cannot merge  ← the security boundary
+### (e) Throwaway-fork test — a fork PR cannot merge  ← the security boundary (TODO!)
 Proves the claim in the report: forks get a read-only token + no secrets, so they can never merge.
 1. From a **throwaway GitHub account**, fork the repo and open a PR adding any
    `submissions/x_val_mean/metadata.yaml` by hand.
@@ -65,6 +65,22 @@ Proves the claim in the report: forks get a read-only token + no secrets, so the
    (if reached) is denied by the read-only token.
 3. Confirm the PR stays open/unmerged. This is the test that cannot be done locally — do it once here.
 
+### (f) Scoring + publish — a merged submission scores and reaches the board
+Proves: the post-merge `Score and publish` workflow (no VM). The merge from (d) is the trigger.
+1. After (d) auto-merges a **known-good** submission, watch the **`Score and publish`** Action fire
+   on the push to `main`.
+2. Expect it to: download the raw files from R2, score them, write the 9 metric CSVs into
+   `submissions/<model>_val_<strategy>/`, flip that `metadata.yaml` to **`status: scored`** (each
+   file gains `sha256`, keeps its `r2_key`), rebuild `docs/`, and push **one** commit titled
+   `Score submissions + rebuild leaderboard [skip ci]`.
+3. **Loop check:** confirm that scoring commit does **NOT** start another `Score and publish` run
+   (the `[skip ci]` guard). There should be exactly one scoring run per merge.
+4. Confirm the model appears on the **Pages** leaderboard once Pages redeploys, and that the raw
+   files are **still in R2 `incoming/`** (scoring does not delete them; archiving is the separate
+   sweep in `deploy/SETUP.md`).
+5. **Self-heal check (optional):** open the merged `metadata.yaml`, set `status` back to `pending`,
+   commit to `main`; the workflow re-scores it and flips it back to `scored`.
+
 ### Cleanup
-Delete the `bringup-test` R2 objects, KV `owner:bringup-test`, the throwaway fork PR/branch, and any
-test submission folders merged to `main`.
+Delete the `bringup-test` R2 objects, KV `owner:bringup-test` (use `scripts/cleanup_submission.py`),
+the throwaway fork PR/branch, and any test submission folders merged to `main`.
