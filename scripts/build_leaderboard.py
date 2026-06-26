@@ -39,23 +39,6 @@ DISPLAY_NAMES = {
     "TA40": "temperature",
 }
 
-# Diagram + one-line description shown inside the table header under each scenario title.
-# Keyed by the DISPLAY_NAMES value (the label that appears in the level-0 header).
-SCENARIO_MEDIA = {
-    "temporal": {
-        "img": "figures/time_split.png",
-        "desc": "Train on years before 2018, validate on 2018, test on later years.",
-    },
-    "spatial": {
-        "img": "figures/site_split_space.png",
-        "desc": "Hold out 40 test sites; train and validate on the rest.",
-    },
-    "temperature": {
-        "img": "figures/site_split_ta.png",
-        "desc": "Hold out warmer southern sites; train and validate on northern ones.",
-    },
-}
-
 DROP_SCALES = {'daily', 'monthly'}
 
 REQUIRED_COLUMNS = [
@@ -370,7 +353,6 @@ def main():
             aggfunc='median',
             settings_names=DISPLAY_NAMES,
             index_display=display_map,
-            scenario_media=SCENARIO_MEDIA,
             return_html=True,
         )
 
@@ -381,7 +363,6 @@ def main():
             aggfunc=lambda x: x.quantile(0.9),
             settings_names=DISPLAY_NAMES,
             index_display=display_map,
-            scenario_media=SCENARIO_MEDIA,
             return_html=True,
         )
 
