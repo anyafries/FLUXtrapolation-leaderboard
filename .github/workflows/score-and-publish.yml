@@ -10,7 +10,7 @@ name: Score and publish
 # touches the archive and never deletes the raw R2 files (they remain in incoming/).
 #
 # ── Self-trigger loop guard ────────────────────────────────────────────────────────────────
-# This workflow triggers on pushes to main and also pushes to main, and its commit changes a
+# This workflow triggers on completion of validate-pr.yml and also pushes to main, and its commit changes a
 # metadata.yaml (pending -> scored), which matches the trigger path. The guard is the
 # **`[skip ci]` in the commit message**: GitHub does not start ANY workflow for a push whose head
 # commit message contains `[skip ci]`. So the scoring commit cannot re-trigger this workflow.
@@ -19,10 +19,9 @@ name: Score and publish
 # would find nothing pending, rebuild docs/ identically, produce no diff, and not commit.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "submissions/**/metadata.yaml"
+  workflow_run:
+    workflows: ["Validate submission"]   # must EXACTLY match validate-pr.yml's `name:` field
+    types: [completed]
 
 permissions:
   contents: write          # commit metrics + docs/ + scored metadata, push to main
@@ -34,6 +33,7 @@ concurrency:
 jobs:
   score:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
