@@ -1,48 +1,67 @@
-model_id: "constant"
-display_name: null
-email: "anfries@ethz.ch"
+model_id: constant
+display_name: constant
+email: anfries@ethz.ch
 description: null
-code_url: "https://github.com/anyafries/FLUXtrapolation"
+code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
-owner: "91da20a424fa2586fbcb8d37a988aeb68eaa3c6c028d2ae5ebb866ef07642f32"
-val_strategy: "mean"
-submitted_at: "2026-06-26T13:25:33+00:00"
+owner: 91da20a424fa2586fbcb8d37a988aeb68eaa3c6c028d2ae5ebb866ef07642f32
+val_strategy: mean
+val_strategy_display: null
+submitted_at: '2026-06-26T13:25:33+00:00'
 is_baseline: false
-status: pending
+status: scored
 files:
-- filename: "spatial-easy40_ET_constant_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "ET"
-  r2_key: "incoming/constant_val_mean/spatial-easy40_ET_constant_val_mean_predictions.csv"
-- filename: "spatial-easy40_GPP_constant_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "GPP"
-  r2_key: "incoming/constant_val_mean/spatial-easy40_GPP_constant_val_mean_predictions.csv"
-- filename: "spatial-easy40_NEE_constant_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "NEE"
-  r2_key: "incoming/constant_val_mean/spatial-easy40_NEE_constant_val_mean_predictions.csv"
-- filename: "TA40_ET_constant_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "ET"
-  r2_key: "incoming/constant_val_mean/TA40_ET_constant_val_mean_predictions.csv"
-- filename: "TA40_GPP_constant_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "GPP"
-  r2_key: "incoming/constant_val_mean/TA40_GPP_constant_val_mean_predictions.csv"
-- filename: "TA40_NEE_constant_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "NEE"
-  r2_key: "incoming/constant_val_mean/TA40_NEE_constant_val_mean_predictions.csv"
-- filename: "time-split_ET_constant_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "ET"
-  r2_key: "incoming/constant_val_mean/time-split_ET_constant_val_mean_predictions.csv"
-- filename: "time-split_GPP_constant_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "GPP"
-  r2_key: "incoming/constant_val_mean/time-split_GPP_constant_val_mean_predictions.csv"
-- filename: "time-split_NEE_constant_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "NEE"
-  r2_key: "incoming/constant_val_mean/time-split_NEE_constant_val_mean_predictions.csv"
+- filename: spatial-easy40_ET_constant_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  r2_key: incoming/constant_val_mean/spatial-easy40_ET_constant_val_mean_predictions.csv
+  sha256: 35c336b91485ef185967f748deac5fd0944ed05b6c3d43bf3fabb33644e7fcc9
+- filename: spatial-easy40_GPP_constant_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  r2_key: incoming/constant_val_mean/spatial-easy40_GPP_constant_val_mean_predictions.csv
+  sha256: 176b1b3d657923b4956cf95290e417413ff91c1ecd97013c31e660b66a2ce427
+- filename: spatial-easy40_NEE_constant_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  r2_key: incoming/constant_val_mean/spatial-easy40_NEE_constant_val_mean_predictions.csv
+  sha256: 2356ea53c0e323d5e8de0d3dfd9ec1f1e7813097c04bda859d5b1907e55f2293
+- filename: TA40_ET_constant_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  r2_key: incoming/constant_val_mean/TA40_ET_constant_val_mean_predictions.csv
+  sha256: 62e002a6758925c2135b46208146b131e583bd65595ddff4bcd0544e9efa4002
+- filename: TA40_GPP_constant_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  r2_key: incoming/constant_val_mean/TA40_GPP_constant_val_mean_predictions.csv
+  sha256: 0458c94f0dc9992b24fe4b30fc9fc5b52fe9fef474ee0b7fac778fcdcc876166
+- filename: TA40_NEE_constant_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  r2_key: incoming/constant_val_mean/TA40_NEE_constant_val_mean_predictions.csv
+  sha256: f23fd9567452168533acd0dbecedd4cc819c7ed3e02135bb13428d23f572e4a6
+- filename: time-split_ET_constant_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  r2_key: incoming/constant_val_mean/time-split_ET_constant_val_mean_predictions.csv
+  sha256: 0fa4be460f06579ca26a9ad93ebf4cb3c873c498f10161fa371fb69a1aa42d4a
+- filename: time-split_GPP_constant_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  r2_key: incoming/constant_val_mean/time-split_GPP_constant_val_mean_predictions.csv
+  sha256: baf07c9a20ed44e17d46c23f66af2b69c6df9924623f5133db885fe62d7af441
+- filename: time-split_NEE_constant_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  r2_key: incoming/constant_val_mean/time-split_NEE_constant_val_mean_predictions.csv
+  sha256: 10b6e7784bd21d749b1a267c439819b7174b02689a39d83b6b352fa61accf5e4

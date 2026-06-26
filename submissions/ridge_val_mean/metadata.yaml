@@ -1,48 +1,67 @@
-model_id: "ridge"
-display_name: null
-email: "anfries@ethz.ch"
+model_id: ridge
+display_name: ridge
+email: anfries@ethz.ch
 description: null
-code_url: "https://github.com/anyafries/FLUXtrapolation"
+code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
-owner: "05733bc5abb2461b05d02981d4570d37f692795a3d29b7c00c282ece440ff19d"
-val_strategy: "mean"
-submitted_at: "2026-06-26T13:01:07+00:00"
+owner: 05733bc5abb2461b05d02981d4570d37f692795a3d29b7c00c282ece440ff19d
+val_strategy: mean
+val_strategy_display: null
+submitted_at: '2026-06-26T13:01:07+00:00'
 is_baseline: false
-status: pending
+status: scored
 files:
-- filename: "spatial-easy40_ET_ridge_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "ET"
-  r2_key: "incoming/ridge_val_mean/spatial-easy40_ET_ridge_val_mean_predictions.csv"
-- filename: "spatial-easy40_GPP_ridge_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "GPP"
-  r2_key: "incoming/ridge_val_mean/spatial-easy40_GPP_ridge_val_mean_predictions.csv"
-- filename: "spatial-easy40_NEE_ridge_val_mean_predictions.csv"
-  setting: "spatial-easy40"
-  target: "NEE"
-  r2_key: "incoming/ridge_val_mean/spatial-easy40_NEE_ridge_val_mean_predictions.csv"
-- filename: "TA40_ET_ridge_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "ET"
-  r2_key: "incoming/ridge_val_mean/TA40_ET_ridge_val_mean_predictions.csv"
-- filename: "TA40_GPP_ridge_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "GPP"
-  r2_key: "incoming/ridge_val_mean/TA40_GPP_ridge_val_mean_predictions.csv"
-- filename: "TA40_NEE_ridge_val_mean_predictions.csv"
-  setting: "TA40"
-  target: "NEE"
-  r2_key: "incoming/ridge_val_mean/TA40_NEE_ridge_val_mean_predictions.csv"
-- filename: "time-split_ET_ridge_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "ET"
-  r2_key: "incoming/ridge_val_mean/time-split_ET_ridge_val_mean_predictions.csv"
-- filename: "time-split_GPP_ridge_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "GPP"
-  r2_key: "incoming/ridge_val_mean/time-split_GPP_ridge_val_mean_predictions.csv"
-- filename: "time-split_NEE_ridge_val_mean_predictions.csv"
-  setting: "time-split"
-  target: "NEE"
-  r2_key: "incoming/ridge_val_mean/time-split_NEE_ridge_val_mean_predictions.csv"
+- filename: spatial-easy40_ET_ridge_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  r2_key: incoming/ridge_val_mean/spatial-easy40_ET_ridge_val_mean_predictions.csv
+  sha256: 4403f8c182ade498e07371f5b04a93e483f9027ae5bc9f216d4784414ac97622
+- filename: spatial-easy40_GPP_ridge_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  r2_key: incoming/ridge_val_mean/spatial-easy40_GPP_ridge_val_mean_predictions.csv
+  sha256: 848fbc0e4151379149b49b421f66a92c16fac26465dedf0fd0809094bfad54f3
+- filename: spatial-easy40_NEE_ridge_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  r2_key: incoming/ridge_val_mean/spatial-easy40_NEE_ridge_val_mean_predictions.csv
+  sha256: 31ac20041da7b552638dd8ea261e6508fbdaeb3d4603ea960f602c582d64af30
+- filename: TA40_ET_ridge_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  r2_key: incoming/ridge_val_mean/TA40_ET_ridge_val_mean_predictions.csv
+  sha256: b5ad7b6e36259567bb29b727795796de2e147a7b5af4e16beb77bf287f18843b
+- filename: TA40_GPP_ridge_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  r2_key: incoming/ridge_val_mean/TA40_GPP_ridge_val_mean_predictions.csv
+  sha256: ba90e4e01ea82993952608bd5d79fef0429638ccff3f1755ff74fa20634b7e29
+- filename: TA40_NEE_ridge_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  r2_key: incoming/ridge_val_mean/TA40_NEE_ridge_val_mean_predictions.csv
+  sha256: af58c3da65e299172b90046e7c11c0ddd7bd24e0674bc58ba79f2168aee7d5d1
+- filename: time-split_ET_ridge_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  r2_key: incoming/ridge_val_mean/time-split_ET_ridge_val_mean_predictions.csv
+  sha256: b6a974315eb8b044c08d01e03512bfe07dd304d61c9757f11e968021c23c536e
+- filename: time-split_GPP_ridge_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  r2_key: incoming/ridge_val_mean/time-split_GPP_ridge_val_mean_predictions.csv
+  sha256: aaa9632cffec76701fcc95f6a9bb853a72c3d391f6d16626584205e3c12b16fb
+- filename: time-split_NEE_ridge_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  r2_key: incoming/ridge_val_mean/time-split_NEE_ridge_val_mean_predictions.csv
+  sha256: ade23b5bd208bca9f3c16fbce5d18c42967c081524c6960a9a56e8f296cc359c
