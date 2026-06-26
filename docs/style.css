@@ -391,6 +391,29 @@ thead tr > :nth-child(2) { z-index: 3; }
   color: #b00020;
 }
 
+/* Per-file pre-upload validation list (one entry per file with a problem / in-progress check) */
+.inferred .file-errors {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.inferred .file-errors > li {
+  margin: 0.2rem 0;
+}
+
+.inferred .file-errors li.bad {
+  color: #b00020;
+}
+
+.inferred .file-errors li.checking {
+  color: #777;
+}
+
+.inferred .file-errors ul {
+  margin: 0.1rem 0;
+  padding-left: 1.1rem;
+}
+
 /* Primary submit button. Always clickable: grey when something's missing (clicking explains
    what), green once email + code URL + the 9 valid files are all present. */
 .btn-submit {

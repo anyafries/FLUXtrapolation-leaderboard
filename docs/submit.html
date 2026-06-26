@@ -107,66 +107,139 @@
       return null;
     }
 
-    // Inspect the uploaded files: are they exactly the 9 (setting,target) for one model+strategy?
-    function inspect() {
-      var files = uppy.getFiles();
-      var parsed = [], unparsable = [];
-      files.forEach(function (f) {
-        var info = parseFilename(f.name);
-        if (info) parsed.push(info); else unparsable.push(f.name);
-      });
-      if (!files.length) return { ready: false, msg: "", model_id: null, val_strategy: null };
-      if (unparsable.length) return { ready: false, err: true, msg: "Unrecognised filename: " + unparsable[0], model_id: null, val_strategy: null };
+    // The CSV header every prediction file must start with (checked client-side AND server-side).
+    var EXPECTED_HEADER = "y_true,y_pred,env,site_id,time";
 
-      var model = parsed[0].model, strategy = parsed[0].strategy;
-      var mixed = parsed.some(function (p) { return p.model !== model || p.strategy !== strategy; });
-      if (mixed) return { ready: false, err: true, msg: "All files must share one model and validation strategy.", model_id: null, val_strategy: null };
-
-      var combos = {};
-      parsed.forEach(function (p) { combos[p.setting + "/" + p.target] = true; });
-      var missing = [];
-      VALID_SETTINGS.forEach(function (s) {
-        VALID_TARGETS.forEach(function (t) { if (!combos[s + "/" + t]) missing.push(s + "/" + t); });
+    function escapeHtml(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
-      var detected = "Detected model id: <code>" + model + "</code>, validation strategy: <code>" + strategy + "</code>";
-      if (files.length !== 9 || missing.length) {
-        return { ready: false, msg: detected + " — " + files.length + "/9 files" + (missing.length ? "; missing: " + missing.join(", ") : ""), model_id: model, val_strategy: strategy };
+    }
+
+    // Read ONLY the first line (the CSV header) — slice a small prefix off the Blob instead of
+    // loading the whole (potentially huge) file. Strips a UTF-8 BOM and trailing CR.
+    function readHeader(blob) {
+      return blob.slice(0, 8192).text().then(function (chunk) {
+        return chunk.split(/\r?\n/, 1)[0].replace(/^\uFEFF/, "").trim();
+      });
+    }
+
+    // Per-file pre-upload checks (filename shape + header row), keyed by Uppy file id. This is a
+    // fast-fail UX layer ONLY — the Worker and the validate-pr Action re-check everything.
+    var fileChecks = {};
+
+    function validateFile(file) {
+      var rec = { name: file.name, errors: [], checking: true, info: null };
+      fileChecks[file.id] = rec;
+
+      rec.info = parseFilename(file.name);
+      if (!rec.info) {
+        rec.errors.push("name must be {setting}_{target}_{model_id}_val_{strategy}.csv "
+          + "— settings: time-split, spatial-easy40, TA40; targets: GPP, ET, NEE");
       }
-      return { ready: true, msg: detected + " — all 9 files present.", model_id: model, val_strategy: strategy };
+
+      readHeader(file.data).then(function (header) {
+        if (header !== EXPECTED_HEADER) {
+          rec.errors.push('header row must be exactly "' + EXPECTED_HEADER + '" (found "' + header + '")');
+        }
+      }, function () {
+        rec.errors.push("could not read the file to check its header row");
+      }).then(function () {
+        rec.checking = false;
+        refresh();
+      });
+    }
+
+    // Aggregate the per-file checks + cross-file rules (exactly 9 files; one model/strategy;
+    // all 9 setting×target combos). Returns everything refresh()/readiness()/meta() need.
+    function validate() {
+      var files = uppy.getFiles();
+      var perFile = files.map(function (f) {
+        return fileChecks[f.id] || { name: f.name, errors: [], checking: true, info: null };
+      });
+      var checking = perFile.some(function (r) { return r.checking; });
+      var anyFileErrors = perFile.some(function (r) { return r.errors.length; });
+
+      var parsed = perFile.map(function (r) { return r.info; }).filter(Boolean);
+      var model = parsed.length ? parsed[0].model : null;
+      var strategy = parsed.length ? parsed[0].strategy : null;
+      var mixed = parsed.some(function (p) { return p.model !== model || p.strategy !== strategy; });
+
+      var problems = [];
+      if (files.length !== 9) problems.push(files.length + "/9 files (need exactly 9)");
+      if (mixed) problems.push("all files must share one model id and validation strategy");
+      if (model && !mixed) {
+        var combos = {};
+        parsed.forEach(function (p) { combos[p.setting + "/" + p.target] = true; });
+        var missing = [];
+        VALID_SETTINGS.forEach(function (s) {
+          VALID_TARGETS.forEach(function (t) { if (!combos[s + "/" + t]) missing.push(s + "/" + t); });
+        });
+        if (missing.length) problems.push("missing: " + missing.join(", "));
+      }
+
+      var ready = !checking && !anyFileErrors && problems.length === 0 && files.length === 9;
+      return {
+        perFile: perFile, count: files.length, checking: checking, anyFileErrors: anyFileErrors,
+        model_id: (model && !mixed) ? model : null,
+        val_strategy: (strategy && !mixed) ? strategy : null,
+        problems: problems, ready: ready,
+      };
+    }
+
+    // A summary line + a per-file list of any problems / in-progress checks.
+    function renderStatus(v) {
+      if (!v.count) return "";
+      var head = "";
+      if (v.model_id) {
+        head = "Detected model id: <code>" + escapeHtml(v.model_id)
+          + "</code>, validation strategy: <code>" + escapeHtml(v.val_strategy) + "</code>";
+      }
+      if (v.ready) head += (head ? " — " : "") + "all 9 files valid ✓";
+      else if (v.checking) head += (head ? " — " : "") + "checking files…";
+      else if (v.problems.length) head += (head ? " — " : "") + escapeHtml(v.problems.join("; "));
+
+      var list = "";
+      v.perFile.forEach(function (r) {
+        if (r.checking) {
+          list += '<li class="checking"><code>' + escapeHtml(r.name) + "</code> — checking…</li>";
+        } else if (r.errors.length) {
+          list += '<li class="bad"><code>' + escapeHtml(r.name) + "</code><ul>"
+            + r.errors.map(function (e) { return "<li>" + escapeHtml(e) + "</li>"; }).join("") + "</ul></li>";
+        }
+      });
+      return head + (list ? '<ul class="file-errors">' + list + "</ul>" : "");
     }
 
     function emailOk() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("email").value.trim()); }
     function codeUrlOk() { return /^https?:\/\/\S+$/.test($("code_url").value.trim()); }
 
-    // What still blocks submission? Returns { ok, reasons[], info }.
+    // What still blocks submission? Returns { ok, reasons[], v }.
     function readiness() {
-      var info = inspect();
+      var v = validate();
       var reasons = [];
       if (!emailOk()) reasons.push("enter a valid email");
       if (!codeUrlOk()) reasons.push("enter a code URL (https://…)");
-      if (!info.ready) {
-        reasons.push(uppy.getFiles().length ? "complete all 9 matching prediction files"
-                                            : "add the 9 prediction CSV files");
-      }
-      return { ok: reasons.length === 0, reasons: reasons, info: info };
+      if (v.checking) reasons.push("wait for the file checks to finish");
+      else if (!v.ready) reasons.push(v.count ? "fix the file problems listed below" : "add the 9 prediction CSV files");
+      return { ok: reasons.length === 0, reasons: reasons, v: v };
     }
 
     // The button stays clickable; green = ready, grey = not (clicking explains what's missing).
     function refresh() {
       var r = readiness();
-      var el = $("inferred");
-      el.innerHTML = r.info.msg;
-      el.className = "inferred" + (r.info.err ? " err" : "");
+      $("inferred").innerHTML = renderStatus(r.v);
+      $("inferred").className = "inferred";
       var btn = $("submit-btn");
       btn.classList.toggle("ready", r.ok);
       btn.title = r.ok ? "Submit your model" : "Not ready: " + r.reasons.join(", ");
     }
 
     function meta() {
-      var info = inspect();
+      var v = validate();
       return {
-        model_id: info.model_id,
-        val_strategy: info.val_strategy,
+        model_id: v.model_id,
+        val_strategy: v.val_strategy,
         display_name: $("display_name").value.trim() || null,
         val_strategy_display: $("val_strategy_display").value.trim() || null,
         email: $("email").value.trim() || null,
@@ -276,8 +349,8 @@
         listParts: function () { return []; }, // fresh uploads only; no resume across sessions
       });
 
-    uppy.on("file-added", refresh);
-    uppy.on("file-removed", refresh);
+    uppy.on("file-added", function (file) { validateFile(file); refresh(); });
+    uppy.on("file-removed", function (file) { delete fileChecks[file.id]; refresh(); });
     ["email", "code_url"].forEach(function (id) { $(id).addEventListener("input", refresh); });
 
     $("submit-btn").addEventListener("click", function () {
