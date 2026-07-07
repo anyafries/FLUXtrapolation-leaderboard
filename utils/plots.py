@@ -323,7 +323,6 @@ def get_pivot_df_with_scores(df, target, metric, aggfunc='median',
                              model_order=None,
                              settings_order=None,
                              baseline_model='lr'):
-    assert lower_is_better, "This function currently assumes that lower metric values are better"
     subset = df[(df['target'] == target) & (df['scale'] != 'spatial')]
 
     # Use (model, val_strategy) as index when val_strategy is available
@@ -352,7 +351,8 @@ def get_pivot_df_with_scores(df, target, metric, aggfunc='median',
                 ordered_cols.append(col)
     pivot_df = pivot_df[ordered_cols]
 
-    skill_scores_df, overall_scores = get_weighted_skill_scores(pivot_df, baseline_model=baseline_model)
+    skill_scores_df, overall_scores = get_weighted_skill_scores(
+        pivot_df, baseline_model=baseline_model, lower_is_better=lower_is_better)
 
     if model_order is not None:
         pivot_df = pivot_df.reindex(model_order)
@@ -381,20 +381,25 @@ def format_sig_figs(val, n=2):
 def get_hex_relative_color(val, best_val, rel_threshold=0.2, lower_is_better=True):
     """
     Colors values based on their distance from the best value in the column.
-    Green = Best
-    White = Best + (Best * rel_threshold) [for lower_is_better]
+    Green  = Best (lowest for errors, highest for R²/NSE).
+    White  = rel_threshold worse than best, e.g. 1.2x best for errors and
+             0.8x best for higher-is-better metrics.
+
+    The white point is measured relative to |best| so the direction stays correct
+    even when best is negative (an all-negative R² column still fades the right way).
     """
     if pd.isna(val) or pd.isna(best_val):
         return "FFFFFF"
 
+    margin = rel_threshold * abs(best_val)
     if lower_is_better:
-        limit = best_val * (1 + rel_threshold)
+        limit = best_val + margin
         if val <= best_val: ratio = 1.0
         elif val >= limit: ratio = 0.0
         else:
             ratio = (limit - val) / (limit - best_val)
     else:
-        limit = best_val * (1 - rel_threshold)
+        limit = best_val - margin
         if val >= best_val: ratio = 1.0
         elif val <= limit: ratio = 0.0
         else:
@@ -407,9 +412,17 @@ def get_hex_relative_color(val, best_val, rel_threshold=0.2, lower_is_better=Tru
     return f"{r:02X}{g:02X}{b:02X}"
 
 
-def get_weighted_skill_scores(df, baseline_model='constant'):
+def get_weighted_skill_scores(df, baseline_model='constant', lower_is_better=True):
     """
     Computes Continuous Skill Scores relative to a baseline.
+
+    The skill score is normalised so higher is always better, 0 == on par with
+    the baseline, and 1 == a perfect score, regardless of the metric's direction:
+      - lower-is-better metrics (RMSE, MAE, rMAE): perfect score is 0, so
+        skill = 1 - metric / baseline.
+      - higher-is-better metrics (NSE / R², bounded above by 1): perfect score
+        is 1, so skill = (metric - baseline) / (1 - baseline).
+
     Returns:
       - skill_scores_df: The cell-by-cell skill scores.
       - overall_scores: A Pandas Series of the final weighted average per model.
@@ -433,7 +446,13 @@ def get_weighted_skill_scores(df, baseline_model='constant'):
             return None, None
         baseline_errors = df.loc[baseline_model]
 
-    skill_scores_df = 1 - (df / baseline_errors)
+    if lower_is_better:
+        # Perfect score is 0 error; skill = fraction of the baseline error removed.
+        skill_scores_df = 1 - (df / baseline_errors)
+    else:
+        # Higher-is-better metric bounded above by 1 (NSE / R²); skill = fraction
+        # of the remaining gap to a perfect score that the model closes vs. baseline.
+        skill_scores_df = (df - baseline_errors) / (1 - baseline_errors)
 
     aligned_weights = pd.Series(index=df.columns, dtype=float)
     for col in df.columns:
@@ -572,8 +591,12 @@ def create_html_leaderboard(
 
     display_df = pd.DataFrame(index=pivot_df.index, columns=pivot_df.columns)
 
-    # Fixed decimals: ET values are small (4), GPP/NEE larger (2).
-    value_decimals = 4 if target == 'ET' else 2
+    # Dimensionless metrics (R²/NSE, relative errors) read fine at 2 decimals for
+    # every target; unit-bearing errors (RMSE, MAE) need 4 for the small ET values.
+    if metric.lower() in ('nse', 'r2_score', 'relative_mae', 'relative_bias'):
+        value_decimals = 2
+    else:
+        value_decimals = 4 if target == 'ET' else 2
 
     for col in pivot_df.columns:
         for row in pivot_df.index:

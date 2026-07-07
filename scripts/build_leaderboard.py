@@ -33,6 +33,46 @@ VALID_VAL_STRATEGIES = {'mean', 'max', 'discrepancy'}
 
 TAB_ORDER = ['ET', 'GPP', 'NEE']
 
+# Metrics offered by the "Metric:" control bar. `col` is the CSV column; `label`
+# is the button/heading text; `lower_is_better` flips colouring, sorting and the
+# skill-score direction (R²/NSE is the only higher-is-better metric here).
+METRICS = [
+    {'key': 'rmse', 'col': 'rmse',         'label': 'RMSE', 'lower_is_better': True},
+    {'key': 'mae',  'col': 'mae',          'label': 'MAE',  'lower_is_better': True},
+    {'key': 'rmae', 'col': 'relative_mae', 'label': 'rMAE', 'lower_is_better': True},
+    {'key': 'nse',  'col': 'nse',          'label': 'R²',   'lower_is_better': False},
+]
+DEFAULT_METRIC = 'rmse'
+
+# Percentiles offered by the "Percentile:" control bar. The 'tail' option is the
+# worst-case percentile: the 90th for errors (lower is better) but the 10th for
+# R²/NSE (higher is better), so it always means "how bad do the bad sites get".
+AGGREGATIONS = [
+    {'key': 'tail',   'btn': '90th'},
+    {'key': 'median', 'btn': 'Median'},
+]
+DEFAULT_AGG = 'tail'
+
+
+def agg_func(agg_key, lower_is_better):
+    """Pandas aggregation for an (agg, metric-direction) pair, applied across sites."""
+    if agg_key == 'median':
+        return 'median'
+    q = 0.9 if lower_is_better else 0.1  # worst-case tail flips with metric direction
+    return lambda x: x.quantile(q)
+
+
+def agg_heading(agg_key, lower_is_better):
+    """Heading prefix shown above the table for an (agg, metric-direction) pair."""
+    if agg_key == 'median':
+        return 'Median'
+    return '90th-percentile' if lower_is_better else '10th-percentile'
+
+
+def tail_btn_label(lower_is_better):
+    """Label for the tail button, which reads '90th' for errors and '10th' for R²/NSE."""
+    return '90th' if lower_is_better else '10th'
+
 DISPLAY_NAMES = {
     "time-split": "temporal",
     "spatial-easy40": "spatial",
@@ -179,39 +219,67 @@ def build_tabbed_index(tab_panels):
     Build a single tabbed index.html.
 
     Args:
-        tab_panels: dict mapping target -> {'median': table_html, 'q90': table_html}
+        tab_panels: nested dict target -> metric_key -> agg_key -> table_html.
     """
     present = [t for t in TAB_ORDER if t in tab_panels]
     first_tab = present[0] if present else TAB_ORDER[0]
     tabs_js = '[' + ', '.join(f'"{t}"' for t in present) + ']'
+    metric_label = {m['key']: m['label'] for m in METRICS}
+    metric_lower = {m['key']: m['lower_is_better'] for m in METRICS}
+    # JS map: metric -> label for the 'tail' percentile button (90th vs 10th).
+    tail_label_js = '{' + ', '.join(
+        f'"{m["key"]}": "{tail_btn_label(m["lower_is_better"])}"' for m in METRICS
+    ) + '}'
 
+    # Flux-target tabs.
     buttons = []
-    panels = []
     for target in present:
         is_first = target == first_tab
         aria = "true" if is_first else "false"
         cls = ' class="active"' if is_first else ''
-        hidden_attr = '' if is_first else ' hidden'
         buttons.append(
             f'      <button role="tab" data-target="{target}" '
             f'aria-selected="{aria}"{cls}>{target}</button>'
         )
-        median_html = tab_panels[target]['median']
-        q90_html = tab_panels[target]['q90']
+    buttons_html = '\n'.join(buttons)
+
+    # Metric control bar.
+    metric_buttons = '\n'.join(
+        f'        <button class="metric-btn{" active" if m["key"] == DEFAULT_METRIC else ""}" '
+        f'data-metric="{m["key"]}">{m["label"]}</button>'
+        for m in METRICS
+    )
+    # Percentile control bar.
+    agg_buttons = '\n'.join(
+        f'        <button class="agg-btn{" active" if a["key"] == DEFAULT_AGG else ""}" '
+        f'data-agg="{a["key"]}">{a["btn"]}</button>'
+        for a in AGGREGATIONS
+    )
+
+    # One agg-panel per (metric, percentile); JS shows the active pair per target.
+    panels = []
+    for target in present:
+        hidden_attr = '' if target == first_tab else ' hidden'
+        inner = []
+        for m in METRICS:
+            for a in AGGREGATIONS:
+                html = tab_panels[target][m['key']][a['key']]
+                active = m['key'] == DEFAULT_METRIC and a['key'] == DEFAULT_AGG
+                ph = '' if active else ' hidden'
+                heading = f"{agg_heading(a['key'], metric_lower[m['key']])} {metric_label[m['key']]}"
+                inner.append(
+                    f'      <div class="agg-panel" data-metric="{m["key"]}" '
+                    f'data-agg="{a["key"]}"{ph}>\n'
+                    f'        <h2>{heading}</h2>\n'
+                    f'        <div class="table-scroll">{html}</div>\n'
+                    f'      </div>'
+                )
+        inner_html = '\n'.join(inner)
         panels.append(
             f'    <div role="tabpanel" data-tab="{target}"{hidden_attr}>\n'
-            f'      <div class="agg-panel" data-agg="q90">\n'
-            f'        <h2>90th-percentile RMSE</h2>\n'
-            f'        <div class="table-scroll">{q90_html}</div>\n'
-            f'      </div>\n'
-            f'      <div class="agg-panel" data-agg="median" hidden>\n'
-            f'        <h2>Median RMSE</h2>\n'
-            f'        <div class="table-scroll">{median_html}</div>\n'
-            f'      </div>\n'
+            f'{inner_html}\n'
             f'    </div>'
         )
-
-    buttons_html = '\n'.join(buttons)
     panels_html = '\n'.join(panels)
 
     return f"""\
@@ -243,21 +311,26 @@ def build_tabbed_index(tab_panels):
   </p>
   <main>
     <p class="metric-note">
-      Each cell is the column metric — <strong>RMSE</strong> for the scenario/scale columns
-      (lower is better) — coloured by relative performance within that column: darker green is the
-      best value, fading to white at 1.2× the best. The <strong>Skill score</strong> column is
-      relative to the lr (linear-regression) baseline: <strong>0</strong> = on par
-      with lr, <strong>1</strong> = best possible (zero error); negative means worse than lr.
+      Each cell is the selected metric for that scenario/scale column, aggregated across
+      sites (or site-years), and coloured by relative performance within the column: darker
+      green is the best value. <strong>RMSE</strong>, <strong>MAE</strong> and
+      <strong>rMAE</strong> (relative MAE) are errors — lower is better; <strong>R²</strong>
+      (the Nash–Sutcliffe efficiency) is higher-is-better. The <strong>Skill score</strong>
+      column is relative to the lr (linear-regression) baseline: <strong>0</strong> = on par
+      with lr, <strong>1</strong> = best possible; negative means worse than lr.
     </p>
     <div class="controls">
       <div role="tablist" class="tab-bar" aria-label="Flux target">
         <span class="tab-label" aria-hidden="true">Evaluate flux:</span>
 {buttons_html}
       </div>
-      <div class="tab-bar agg-bar" role="group" aria-label="RMSE aggregation">
-        <span class="tab-label" aria-hidden="true">RMSE:</span>
-        <button class="agg-btn active" data-agg="q90">90th percentile</button>
-        <button class="agg-btn" data-agg="median">Median</button>
+      <div class="tab-bar metric-bar" role="group" aria-label="Metric">
+        <span class="tab-label" aria-hidden="true">Metric:</span>
+{metric_buttons}
+      </div>
+      <div class="tab-bar agg-bar" role="group" aria-label="Percentile">
+        <span class="tab-label" aria-hidden="true">Percentile:</span>
+{agg_buttons}
       </div>
     </div>
 {panels_html}
@@ -285,19 +358,40 @@ def build_tabbed_index(tab_panels):
     var hash = location.hash.slice(1);
     activateTab(VALID_TABS.indexOf(hash) !== -1 ? hash : '{first_tab}');
 
-    // RMSE aggregation toggle (Median vs 90th percentile); 90th is the default.
+    // Metric (RMSE / MAE / rMAE / R²) and percentile (tail / Median) toggles.
+    // A table is shown when it matches BOTH the active metric and percentile.
+    // The tail button reads "90th" for errors but "10th" for R² (higher-is-better),
+    // since the worst-case tail is the low end there.
+    var TAIL_LABEL = {tail_label_js};
+    var curMetric = '{DEFAULT_METRIC}', curAgg = '{DEFAULT_AGG}';
+    function updatePanels() {{
+      document.querySelectorAll('.agg-panel').forEach(function (p) {{
+        p.hidden = !(p.dataset.metric === curMetric && p.dataset.agg === curAgg);
+      }});
+    }}
+    function activateMetric(m) {{
+      curMetric = m;
+      document.querySelectorAll('.metric-btn').forEach(function (b) {{
+        b.classList.toggle('active', b.dataset.metric === m);
+      }});
+      var tailBtn = document.querySelector('.agg-btn[data-agg="tail"]');
+      if (tailBtn && TAIL_LABEL[m]) tailBtn.textContent = TAIL_LABEL[m];
+      updatePanels();
+    }}
     function activateAgg(a) {{
+      curAgg = a;
       document.querySelectorAll('.agg-btn').forEach(function (b) {{
         b.classList.toggle('active', b.dataset.agg === a);
       }});
-      document.querySelectorAll('.agg-panel').forEach(function (p) {{
-        p.hidden = p.dataset.agg !== a;
-      }});
+      updatePanels();
     }}
+    document.querySelectorAll('.metric-btn').forEach(function (b) {{
+      b.addEventListener('click', function () {{ activateMetric(b.dataset.metric); }});
+    }});
     document.querySelectorAll('.agg-btn').forEach(function (b) {{
       b.addEventListener('click', function () {{ activateAgg(b.dataset.agg); }});
     }});
-    activateAgg('q90');
+    activateMetric(curMetric);
 
     // Column hover highlight (rows are handled in CSS via tr:hover).
     document.querySelectorAll('table').forEach(function (table) {{
@@ -346,27 +440,24 @@ def main():
             continue
         target_df = results[results['target'] == target]
 
-        median_html = create_html_leaderboard(
-            target_df,
-            target=target,
-            metric='rmse',
-            aggfunc='median',
-            settings_names=DISPLAY_NAMES,
-            index_display=display_map,
-            return_html=True,
-        )
+        # One table per (metric, percentile): target -> metric_key -> agg_key -> html.
+        per_metric = {}
+        for m in METRICS:
+            per_agg = {}
+            for a in AGGREGATIONS:
+                per_agg[a['key']] = create_html_leaderboard(
+                    target_df,
+                    target=target,
+                    metric=m['col'],
+                    aggfunc=agg_func(a['key'], m['lower_is_better']),
+                    lower_is_better=m['lower_is_better'],
+                    settings_names=DISPLAY_NAMES,
+                    index_display=display_map,
+                    return_html=True,
+                )
+            per_metric[m['key']] = per_agg
 
-        q90_html = create_html_leaderboard(
-            target_df,
-            target=target,
-            metric='rmse',
-            aggfunc=lambda x: x.quantile(0.9),
-            settings_names=DISPLAY_NAMES,
-            index_display=display_map,
-            return_html=True,
-        )
-
-        tab_panels[target] = {'median': median_html, 'q90': q90_html}
+        tab_panels[target] = per_metric
         logger.info(f"Built leaderboard tables for {target}")
 
     index_path = os.path.join(docs_dir, 'index.html')
