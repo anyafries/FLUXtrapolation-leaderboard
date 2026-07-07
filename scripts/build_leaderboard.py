@@ -73,6 +73,18 @@ def tail_btn_label(lower_is_better):
     """Label for the tail button, which reads '90th' for errors and '10th' for R²/NSE."""
     return '90th' if lower_is_better else '10th'
 
+
+# Footnote shown under the rMAE tables, explaining the "#" placeholder. rMAE = MAE
+# divided by the signed mean of observations, which collapses toward zero on the
+# anom/iav scales and is negative for NEE, so those cells explode or flip sign.
+RMAE_FOOTNOTE = (
+    '<p class="table-footnote"><span class="hash">#</span> rMAE is hidden where '
+    '|value|&nbsp;&gt;&nbsp;100. rMAE is MAE divided by the mean of the observations, '
+    'and that denominator collapses toward zero on the anomaly (<code>anom</code>) and '
+    'interannual (<code>iav</code>) scales and turns negative for NEE — so those values '
+    'blow up or flip sign and are not meaningful.</p>'
+)
+
 DISPLAY_NAMES = {
     "time-split": "temporal",
     "spatial-easy40": "spatial",
@@ -267,11 +279,12 @@ def build_tabbed_index(tab_panels):
                 active = m['key'] == DEFAULT_METRIC and a['key'] == DEFAULT_AGG
                 ph = '' if active else ' hidden'
                 heading = f"{agg_heading(a['key'], metric_lower[m['key']])} {metric_label[m['key']]}"
+                footnote = f'\n        {RMAE_FOOTNOTE}' if m['key'] == 'rmae' else ''
                 inner.append(
                     f'      <div class="agg-panel" data-metric="{m["key"]}" '
                     f'data-agg="{a["key"]}"{ph}>\n'
                     f'        <h2>{heading}</h2>\n'
-                    f'        <div class="table-scroll">{html}</div>\n'
+                    f'        <div class="table-scroll">{html}</div>{footnote}\n'
                     f'      </div>'
                 )
         inner_html = '\n'.join(inner)

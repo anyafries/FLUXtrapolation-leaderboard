@@ -155,6 +155,38 @@ relative to the `lr` baseline (higher = better).
 
 ---
 
+## Known issues / TODO
+
+- **rMAE should be normalised by `mean(|ytrue|)`, not the signed `mean(ytrue)`.**
+  `relative_mae = mae / mean(ytrue)` ([utils/eval_utils.py:46](utils/eval_utils.py#L46)) divides by the
+  *signed* mean of the observations, and MAE is always ≥ 0, so the sign and scale of rMAE are entirely
+  the denominator's. This breaks in two ways:
+  - **Blows up on `anom`/`iav`.** Those scales are mean-centred, so `mean(ytrue)` sits next to zero (the
+    `== 0` guard never catches it) and the ratio explodes — median magnitudes around 1e16, both signs,
+    versus a sane ~0.3–0.6 at `hourly`/`seasonal`.
+  - **Goes negative for NEE.** Net ecosystem exchange is negative when the site is a net carbon sink, so
+    `mean(ytrue) < 0` for most NEE sites and rMAE comes out negative *even at clean scales* (~77% of NEE
+    `hourly` site-years), while GPP (≥ 0 by definition) is never negative.
+
+  **Fix:** change the denominator to `mean(|ytrue|)` (or another non-negative scale like the std or observed
+  range) so rMAE stays ≥ 0 and well-scaled for NEE, `anom`, and `iav` alike. This changes every rMAE value,
+  so it requires **re-scoring all submissions** and rebuilding the leaderboard — hence not done inline.
+
+  **Interim leaderboard behaviour:** cells with `|rMAE| > 100` are shown as `#` (greyed, excluded from the
+  colour scale) with a footnote, rather than printing the meaningless blow-ups. See the value-formatting
+  block in [utils/plots.py](utils/plots.py) (`is_unreliable`) and `RMAE_FOOTNOTE` in
+  [scripts/build_leaderboard.py](scripts/build_leaderboard.py).
+
+- **Add a median AE metric.** Alongside `mae` (mean of `|y_pred - y_true|` within each site/site-year),
+  compute a **median** absolute error — the median of `|y_pred - y_true|` over that env's samples. It's
+  robust to the handful of extreme timesteps that dominate the mean, so it complements MAE. Add it in
+  [utils/eval_utils.py](utils/eval_utils.py) (a new `median_ae` column), expose it in the `Metric:` bar
+  (`METRICS` in [scripts/build_leaderboard.py](scripts/build_leaderboard.py)), and **re-score submissions**
+  so the column is populated. (Distinct from the leaderboard's existing across-site median aggregation —
+  this is a robust per-env error, then aggregated across sites like the others.)
+
+---
+
 ## Ops
 
 - **Rebuild the truth table:** `python scripts/build_truth_table.py` (after changing the `lr` raw set),

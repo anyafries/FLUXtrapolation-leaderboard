@@ -138,6 +138,26 @@ a {
   overflow-x: auto;
 }
 
+/* Footnote under the rMAE tables, explaining the "#" placeholder cells */
+.table-footnote {
+  max-width: 90ch;
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  color: #666;
+}
+
+.table-footnote .hash {
+  font-weight: 700;
+  color: #444;
+}
+
+.table-footnote code {
+  background: #f2f2f2;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
 /* Preserve inline color styles emitted by pandas Styler */
 table {
   border-collapse: collapse;

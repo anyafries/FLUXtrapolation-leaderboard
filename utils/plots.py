@@ -598,6 +598,14 @@ def create_html_leaderboard(
     else:
         value_decimals = 4 if target == 'ET' else 2
 
+    # rMAE divides by the (signed) mean of observations, which collapses toward zero
+    # on the anom/iav scales and is negative for NEE — so it explodes or flips sign.
+    # Flag any such unreliable cell (|value| > 100) with "#" instead of a number; a
+    # footnote under the table explains it. Scoped to rMAE so a legitimately large
+    # negative R²/NSE (which can reach ~150) is never hidden.
+    def is_unreliable(v):
+        return metric.lower() == 'relative_mae' and pd.notna(v) and abs(v) > 100
+
     for col in pivot_df.columns:
         for row in pivot_df.index:
             val = pivot_df.loc[row, col]
@@ -608,6 +616,8 @@ def create_html_leaderboard(
             elif display_mode == 'skill_score' and skill_scores_df is not None and col in skill_scores_df.columns:
                 ss = skill_scores_df.loc[row, col]
                 display_df.loc[row, col] = f"{ss:.2f}" if pd.notna(ss) else "-"
+            elif is_unreliable(val):
+                display_df.loc[row, col] = "#"
             else:
                 display_df.loc[row, col] = f"{val:.{value_decimals}f}"
 
@@ -652,10 +662,15 @@ def create_html_leaderboard(
                 styles[col] = 'background-color: #f8f9fa;'
                 continue
             col_data = pivot_df[col]
-            best_val = col_data.min() if lower_is_better else col_data.max()
+            # Unreliable "#" cells are excluded from the colour scale (so they don't
+            # drag the best value) and rendered neutral grey rather than coloured.
+            reliable = col_data[[not is_unreliable(v) for v in col_data]]
+            best_val = (reliable.min() if lower_is_better else reliable.max()) if reliable.notna().any() else float('nan')
             for row in pivot_df.index:
                 val = pivot_df.loc[row, col]
-                if pd.notna(val):
+                if is_unreliable(val):
+                    styles.loc[row, col] = 'background-color: #ffffff; color: #b0b0b0;'
+                elif pd.notna(val) and pd.notna(best_val):
                     hex_color = get_hex_relative_color(val, best_val, rel_threshold=rel_threshold, lower_is_better=lower_is_better)
                     styles.loc[row, col] = f'background-color: #{hex_color}; color: #1a1a1a;'
         return styles
