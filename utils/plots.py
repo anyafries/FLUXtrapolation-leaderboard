@@ -535,6 +535,12 @@ def create_html_leaderboard(
         scale_order, model_order, settings_order, baseline_model
     )
 
+    # The baseline model's skill score is trivially 0 (it's measured against itself), so show a
+    # dash instead. Capture its row positions now, keyed on the real model_id, before relabeling.
+    def _row_model(key):
+        return key[0] if isinstance(key, tuple) else key
+    baseline_positions = {i for i, k in enumerate(pivot_df.index) if _row_model(k) == baseline_model}
+
     # Relabel the row index to submitter-chosen display names. Done AFTER scoring/ordering so
     # the skill-score baseline and model order stay keyed on the real model_id / val_strategy.
     # index_display maps (model_id, val_strategy) -> {'model': label, 'val': label}.
@@ -561,6 +567,8 @@ def create_html_leaderboard(
         if skill_scores_df is not None:
             skill_scores_df.columns = pivot_df.columns
 
+    baseline_labels = {pivot_df.index[i] for i in baseline_positions}
+
     if overall_scores is not None:
         pivot_df.insert(0, ('Summary', 'Skill score ↑'), overall_scores)
 
@@ -581,7 +589,7 @@ def create_html_leaderboard(
             if pd.isna(val):
                 display_df.loc[row, col] = "-"
             elif col[0] == 'Summary':
-                display_df.loc[row, col] = f"<b>{val:.2f}</b>"
+                display_df.loc[row, col] = "-" if row in baseline_labels else f"<b>{val:.3f}</b>"
             elif display_mode == 'skill_score' and skill_scores_df is not None and col in skill_scores_df.columns:
                 ss = skill_scores_df.loc[row, col]
                 display_df.loc[row, col] = f"{ss:.2f}" if pd.notna(ss) else "-"
@@ -626,7 +634,7 @@ def create_html_leaderboard(
         styles = pd.DataFrame('', index=pivot_df.index, columns=pivot_df.columns)
         for col in pivot_df.columns:
             if col[0] == 'Summary':
-                styles[col] = 'background-color: #f8f9fa;'
+                styles[col] = 'background-color: #f8f9fa; text-align: center;'
                 continue
             col_data = pivot_df[col]
             best_val = col_data.min() if lower_is_better else col_data.max()
