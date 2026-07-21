@@ -133,6 +133,13 @@ a {
   font-size: 0.85em;
 }
 
+.review-note {
+  max-width: 90ch;
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
 /* Each table scrolls horizontally on its own, so the tabs and notes stay put */
 .table-scroll {
   overflow-x: auto;
@@ -220,14 +227,16 @@ th.col_heading.level1 span {
   display: inline-block;
 }
 
-/* Freeze the two row-label columns (Model, Validation) during horizontal scroll */
+/* Freeze the two row-label columns (Model, Validation) during horizontal scroll.
+   Widths are snug — just wide enough for the longest label (incl. "discrepancy") plus a buffer —
+   and long names truncate with an ellipsis. */
 thead tr > :nth-child(1),
 tbody tr > :nth-child(1) {
   position: sticky;
   left: 0;
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   background: #fff;
@@ -236,14 +245,34 @@ tbody tr > :nth-child(1) {
 thead tr > :nth-child(2),
 tbody tr > :nth-child(2) {
   position: sticky;
-  left: 120px;
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
+  left: 90px;
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
   overflow: hidden;
   text-overflow: ellipsis;
   background: #fff;
-  box-shadow: 2px 0 0 #d3d3d3;   /* divider that survives border-collapse + sticky */
+}
+
+/* The frozen-column divider (survives border-collapse + sticky) — only on the body rows, not the
+   header label cell, so it doesn't run up through the header at all. */
+tbody tr > :nth-child(2) {
+  box-shadow: 1px 0 0 #d3d3d3;
+}
+
+/* Institution (col 3) + Reviewed (col 4): only as wide as their content, capped so a long
+   institution name can't blow the column out (it truncates with an ellipsis instead). */
+thead tr > :nth-child(3),
+tbody tr > :nth-child(3) {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+thead tr > :nth-child(4),
+tbody tr > :nth-child(4) {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Stacking: frozen header corner on top (3), header (2), frozen body cells (1) */

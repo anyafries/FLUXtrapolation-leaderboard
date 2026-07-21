@@ -4,10 +4,13 @@ email: null
 description: null
 code_url: null
 paper_url: null
+institution: null
 owner: c3d5d683a1faa3f1dd8db0823c661c0e94f5db6aa8c0165c55472b805fac6563
 val_strategy: mean
+val_strategy_display: null
 submitted_at: '2026-06-19T07:57:55+00:00'
 is_baseline: false
+reviewed: true
 status: scored
 files:
 - filename: spatial-easy40_ET_coral_val_mean_predictions.csv

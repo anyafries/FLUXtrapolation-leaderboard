@@ -143,11 +143,19 @@ def load_all_submissions():
     return combined
 
 
-def load_display_map():
-    """Map (model_id, val_strategy) -> {'model': display_name, 'val': val_strategy_display}.
+# Short labels for the narrow "Val." column (used when the submitter gives no val_strategy_display).
+VAL_ABBREV = {'discrepancy': 'disc'}
 
-    Read from each submission's metadata.yaml so the leaderboard can show submitter-chosen
-    labels instead of the raw model_id / val_strategy. Missing labels fall back to the raw id.
+
+def load_display_map():
+    """Map (model_id, val_strategy) -> per-row display attributes read from metadata.yaml.
+
+    Returns, for each submission, the submitter-chosen labels plus the provenance/trust
+    attributes the leaderboard renders as extra row-heading columns:
+      {'model': display_name, 'val': val_strategy_display,
+       'institution': institution, 'reviewed': bool, 'is_baseline': bool}
+    Missing labels fall back to the raw id (abbreviated via VAL_ABBREV for the val strategy);
+    a missing institution stays None (renders '-').
     """
     submissions_dir = os.path.abspath(SUBMISSIONS_DIR)
     out = {}
@@ -169,7 +177,10 @@ def load_display_map():
             continue
         out[(model_id, val_strategy)] = {
             'model': meta.get('display_name') or model_id,
-            'val': meta.get('val_strategy_display') or val_strategy,
+            'val': meta.get('val_strategy_display') or VAL_ABBREV.get(val_strategy, val_strategy),
+            'institution': meta.get('institution'),
+            'reviewed': bool(meta.get('reviewed', False)),
+            'is_baseline': bool(meta.get('is_baseline', False)),
         }
     return out
 
@@ -261,6 +272,12 @@ def build_tabbed_index(tab_panels):
       </div>
     </div>
 {panels_html}
+    <p class="review-note">
+      <strong>*</strong> For top-performing methods from other institutions or contributors, we
+      manually check the submitted code to ensure, for example, that there is no test-set leakage.
+      If we find issues, we (temporarily) remove the submission and contact the author. A ✓ in the
+      Reviewed column marks a method whose code has been checked.
+    </p>
   </main>
   <footer class="site-footer">
     <p>For any issues, contact anya[dot]fries[at]stat[dot]math[dot]ethz[dot]ch</p>

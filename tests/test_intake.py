@@ -49,6 +49,11 @@ def test_intake_clean_passes(truth_fixture, tmp_path):
     rep = validate_intake(md, object_store=store, truth_path=truth_path, recorded_owner=None)
     assert rep.passed, rep.to_markdown()
     assert rep.checks[0].name == "metadata" and rep.checks[0].passed
+    # Pending intake metadata carries the provenance/trust fields (institution set later by the
+    # Worker from the form; reviewed defaults false) — required TOP_FIELDS, so validation needs them.
+    m = meta_mod.load_metadata(md)
+    assert "institution" in m and "reviewed" in m
+    assert m["reviewed"] is False
 
 
 def test_intake_dropped_rows_fails_index(truth_fixture, tmp_path):
