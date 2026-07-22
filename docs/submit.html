@@ -34,12 +34,16 @@
   <main>
     <form class="submit-form" id="meta" onsubmit="return false">
       <div>
-        <label>Email <span class="hint">for contact; not shown publicly</span></label>
+        <label>Email <span class="hint">required; for contact; not shown publicly</span></label>
         <input id="email" type="email" required>
       </div>
       <div>
-        <label>Code URL <span class="hint">for reproducibility and checking</span></label>
+        <label>Code URL <span class="hint">required; for reproducibility and checking</span></label>
         <input id="code_url" type="url" required>
+      </div>
+      <div>
+        <label>Institution <span class="hint">required; shown on the leaderboard. Write "Independent" if unaffiliated, or "N/A" to not disclose</span></label>
+        <input id="institution" required>
       </div>
       <div>
         <label>Comments <span class="hint">optional; any details on the model, validation strategy or links to associated papers</span></label>
@@ -213,6 +217,7 @@
 
     function emailOk() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("email").value.trim()); }
     function codeUrlOk() { return /^https?:\/\/\S+$/.test($("code_url").value.trim()); }
+    function institutionOk() { return $("institution").value.trim().length > 0; }
 
     // What still blocks submission? Returns { ok, reasons[], v }.
     function readiness() {
@@ -220,6 +225,7 @@
       var reasons = [];
       if (!emailOk()) reasons.push("enter a valid email");
       if (!codeUrlOk()) reasons.push("enter a code URL (https://…)");
+      if (!institutionOk()) reasons.push("enter an institution (or 'Independent' / 'N/A')");
       if (v.checking) reasons.push("wait for the file checks to finish");
       else if (!v.ready) reasons.push(v.count ? "fix the file problems listed below" : "add the 9 prediction CSV files");
       return { ok: reasons.length === 0, reasons: reasons, v: v };
@@ -245,6 +251,7 @@
         email: $("email").value.trim() || null,
         description: $("description").value.trim() || null,
         code_url: $("code_url").value.trim() || null,
+        institution: $("institution").value.trim() || null,
       };
     }
     // POST to the Worker. On failure, throw an Error annotated with { status, code, error, kind }
@@ -351,7 +358,7 @@
 
     uppy.on("file-added", function (file) { validateFile(file); refresh(); });
     uppy.on("file-removed", function (file) { delete fileChecks[file.id]; refresh(); });
-    ["email", "code_url"].forEach(function (id) { $(id).addEventListener("input", refresh); });
+    ["email", "code_url", "institution"].forEach(function (id) { $(id).addEventListener("input", refresh); });
 
     $("submit-btn").addEventListener("click", function () {
       var r = readiness();

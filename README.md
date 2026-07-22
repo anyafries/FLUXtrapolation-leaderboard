@@ -160,6 +160,11 @@ relative to the `lr` baseline (higher = better).
 
 - **Rebuild the truth table:** `python scripts/build_truth_table.py` (after changing the `lr` raw set),
   then `python scripts/build_baseline_lr.py` to re-register + regression-check the baseline.
+- **Mark a submission as reviewed:** after manually checking a method's code (e.g. no test-set
+  leakage), open its `submissions/{model_id}_val_{val_strategy}/metadata.yaml`, set `reviewed: true`,
+  and rebuild (`python scripts/build_leaderboard.py`, or just let the next publish run). A ✓ then
+  appears in the leaderboard's **Reviewed** column. To un-review, set it back to `false`. The
+  submitter's declared `institution` is shown in the adjacent column (`null` renders as `-`).
 - **Remove a submission:** `python scripts/cleanup_submission.py` (dry-run by default; clears R2,
   KV owner key, and the repo folder).
 - **Archive scored submissions (free R2):** run on the VM after a *"submission scored successfully"*
@@ -174,6 +179,11 @@ relative to the `lr` baseline (higher = better).
   ```
   Add `--download` to archive + verify without deleting from R2, or `--model-id X --val-strategy Y`
   to target one submission. See [deploy/SETUP.md](deploy/SETUP.md) → "Scoring & archiving".
+- **Redeploy the Worker** (after any change under `worker/src/`): `cd worker && npx wrangler deploy`
+  (run `npx wrangler login` first if prompted). Secrets, KV, and R2 are already configured, so this
+  just pushes the new code — no re-setup. The Worker's metadata schema must stay in sync with
+  `server/metadata.py`, or intake PRs fail validation. Only update `WORKER_URL` in
+  `docs/submit.html` if the printed URL changes.
 - **Deploy / first-time setup:** see [deploy/SETUP.md](deploy/SETUP.md) and
   [deploy/BRINGUP.md](deploy/BRINGUP.md). Worker secrets via `wrangler secret put`; Pages serves
   `/docs` on `main`.

@@ -208,11 +208,13 @@ function buildMetadataYaml(m) {
     `description: ${yamlString(m.description)}`,
     `code_url: ${yamlString(m.code_url)}`,
     `paper_url: ${yamlString(m.paper_url)}`,
+    `institution: ${yamlString(m.institution)}`,
     `owner: ${yamlString(m.owner)}`,
     `val_strategy: ${yamlString(m.val_strategy)}`,
     `val_strategy_display: ${yamlString(m.val_strategy_display)}`,
     `submitted_at: ${yamlString(m.submitted_at)}`,
     `is_baseline: false`,
+    `reviewed: false`,
     `status: pending`,
     `files:`,
   ];
@@ -282,6 +284,8 @@ async function finalize(env, body, req) {
     return bad(env, "invalid_val_strategy", "val_strategy must be one of: mean, max, discrepancy.");
   if (!EMAIL_RE.test(cleanEmail(email) || ""))
     return bad(env, "invalid_email", "A valid contact email is required.");
+  if (typeof body.institution !== "string" || !body.institution.trim())
+    return bad(env, "invalid_institution", "An institution is required (write 'Independent' or 'N/A' if you prefer not to disclose).");
 
   const hour = Math.floor(Date.now() / 3.6e6);
   const day = Math.floor(Date.now() / 8.64e7);
@@ -333,6 +337,7 @@ async function finalize(env, body, req) {
     description: body.description,
     code_url: body.code_url,
     paper_url: null,                     // folded into the "description" / comments field
+    institution: body.institution.trim(),
     owner: ownerHash,
     val_strategy,
     val_strategy_display: body.val_strategy_display,

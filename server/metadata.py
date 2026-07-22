@@ -32,13 +32,17 @@ import hashlib
 
 import yaml
 
-# Top-level fields required at every stage.
+# Top-level fields required at every stage. `institution` is required — the submitter must provide
+# one (the form + relay enforce a non-empty value; baselines carry an explicit null that renders '-').
 TOP_FIELDS = [
     "model_id", "display_name", "email", "description", "code_url", "paper_url",
-    "owner", "val_strategy", "submitted_at", "is_baseline", "status",
+    "institution", "owner", "val_strategy", "submitted_at", "is_baseline", "status",
 ]
-# Optional top-level fields (present on new submissions, absent on older ones — not required).
-OPTIONAL_TOP_FIELDS = ["val_strategy_display"]
+# Optional top-level fields, defaulted when absent. `reviewed` is NOT a submission field — the relay
+# writes it false at intake and a maintainer flips it to true later after checking the code — so a
+# missing value simply defaults to false rather than failing validation. `build_metadata` still
+# always writes it, so scored/baseline docs carry it.
+OPTIONAL_TOP_FIELDS = ["val_strategy_display", "reviewed"]
 
 STATUS_PENDING = "pending"
 STATUS_SCORED = "scored"
@@ -71,7 +75,8 @@ def _file_entry(f):
 def build_metadata(model_id, val_strategy, owner, files, *, status=STATUS_SCORED,
                    display_name=None, email=None, description=None,
                    code_url=None, paper_url=None, val_strategy_display=None,
-                   is_baseline=False, submitted_at=None):
+                   institution=None, is_baseline=False, reviewed=False,
+                   submitted_at=None):
     """Assemble a metadata dict. `files` is a list of dicts; each must carry CORE_FILE_FIELDS
     plus the fields STAGE_REQUIRED for `status`."""
     if status not in STAGE_REQUIRED:
@@ -88,11 +93,13 @@ def build_metadata(model_id, val_strategy, owner, files, *, status=STATUS_SCORED
         "description": description,
         "code_url": code_url,
         "paper_url": paper_url,
+        "institution": institution,
         "owner": owner,
         "val_strategy": val_strategy,
         "val_strategy_display": val_strategy_display,
         "submitted_at": submitted_at or utcnow_iso(),
         "is_baseline": bool(is_baseline),
+        "reviewed": bool(reviewed),
         "status": status,
         "files": [_file_entry(f) for f in files],
     }

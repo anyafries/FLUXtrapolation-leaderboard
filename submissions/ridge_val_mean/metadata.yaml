@@ -4,11 +4,13 @@ email: anfries@ethz.ch
 description: null
 code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
+institution: null
 owner: 05733bc5abb2461b05d02981d4570d37f692795a3d29b7c00c282ece440ff19d
 val_strategy: mean
 val_strategy_display: null
 submitted_at: '2026-06-26T13:01:07+00:00'
 is_baseline: false
+reviewed: true
 status: scored
 files:
 - filename: spatial-easy40_ET_ridge_val_mean_predictions.csv

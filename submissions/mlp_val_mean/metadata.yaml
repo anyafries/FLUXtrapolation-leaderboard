@@ -1,0 +1,69 @@
+model_id: mlp
+display_name: mlp
+email: null
+description: null
+code_url: https://github.com/anyafries/FLUXtrapolation
+paper_url: null
+institution: '-'
+owner: b2229e4e8d385a635588f559983ada255b48cd73a1af47459b3886a70129620e
+val_strategy: mean
+val_strategy_display: null
+submitted_at: '2026-07-22T09:57:13+00:00'
+is_baseline: false
+reviewed: false
+status: scored
+files:
+- filename: spatial-easy40_ET_mlp_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: ET
+  rows: 1665696
+  r2_key: incoming/mlp_val_mean/spatial-easy40_ET_mlp_val_mean_predictions.csv
+  sha256: 321805b5006ad631fff6923563f17fe99d073c348c20abd35b03ae98b0a48603
+- filename: spatial-easy40_GPP_mlp_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: GPP
+  rows: 1665696
+  r2_key: incoming/mlp_val_mean/spatial-easy40_GPP_mlp_val_mean_predictions.csv
+  sha256: e587914495525451d3c561709e7ec04f76bb6a7acc82013152f075f4e4e38692
+- filename: spatial-easy40_NEE_mlp_val_mean_predictions.csv
+  setting: spatial-easy40
+  target: NEE
+  rows: 1665696
+  r2_key: incoming/mlp_val_mean/spatial-easy40_NEE_mlp_val_mean_predictions.csv
+  sha256: 1a6c887ab954540482c1c2786d6f011cfcb8e4395b2929de9280cb287864e4fe
+- filename: TA40_ET_mlp_val_mean_predictions.csv
+  setting: TA40
+  target: ET
+  rows: 1481568
+  r2_key: incoming/mlp_val_mean/TA40_ET_mlp_val_mean_predictions.csv
+  sha256: 52f8827a295f2473d64a9d919a16b6b79b83a4e086672d300fc9d4ec90ce633a
+- filename: TA40_GPP_mlp_val_mean_predictions.csv
+  setting: TA40
+  target: GPP
+  rows: 1481568
+  r2_key: incoming/mlp_val_mean/TA40_GPP_mlp_val_mean_predictions.csv
+  sha256: bf707d7248bdec9e87ff83ec121376b43f8fb327255d211d16043aa2d404ff78
+- filename: TA40_NEE_mlp_val_mean_predictions.csv
+  setting: TA40
+  target: NEE
+  rows: 1481568
+  r2_key: incoming/mlp_val_mean/TA40_NEE_mlp_val_mean_predictions.csv
+  sha256: b2ec1f0acaf69dc08f45da04c8a074adc45ca702628a5f417b15846f2059a1be
+- filename: time-split_ET_mlp_val_mean_predictions.csv
+  setting: time-split
+  target: ET
+  rows: 2981088
+  r2_key: incoming/mlp_val_mean/time-split_ET_mlp_val_mean_predictions.csv
+  sha256: 8c51ffbe13b03745cf734b53b1d4fbac2e7744657fe0afdaf8889d0625ffcc4d
+- filename: time-split_GPP_mlp_val_mean_predictions.csv
+  setting: time-split
+  target: GPP
+  rows: 2981088
+  r2_key: incoming/mlp_val_mean/time-split_GPP_mlp_val_mean_predictions.csv
+  sha256: 2cf73212994fd66f974856fa6e4fe693b41696db55696d0ecd3a55142c0f1a48
+- filename: time-split_NEE_mlp_val_mean_predictions.csv
+  setting: time-split
+  target: NEE
+  rows: 2981088
+  r2_key: incoming/mlp_val_mean/time-split_NEE_mlp_val_mean_predictions.csv
+  sha256: dbe6fa444e21a7cf9eea387ace77a8f882014fd7733e5ac19907c3984a27a8b9

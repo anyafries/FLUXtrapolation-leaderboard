@@ -41,3 +41,36 @@ def test_no_index_display_keeps_raw_ids():
     html = create_html_leaderboard(_toy_df(), target="ET", metric="rmse", return_html=True)
     assert "foo" in html and "lr" in html
     assert "Foo Net" not in html
+
+
+def test_institution_and_reviewed_columns():
+    """Institution + Reviewed row-heading columns render from index_display. The ✓ depends solely
+    on `reviewed` (is_baseline does NOT tick a row); an unreviewed row stays blank."""
+    html = create_html_leaderboard(
+        _toy_df(), target="ET", metric="rmse",
+        index_display={
+            ("foo", "mean"): {"model": "Foo Net", "val": "mean",
+                              "institution": "ETH Zürich", "reviewed": True},
+            ("lr", "mean"): {"model": "lr", "val": "mean",
+                             "institution": None, "reviewed": False, "is_baseline": True},
+        },
+        return_html=True,
+    )
+    # Column headers present; the Reviewed header carries the footnote star (wrapped, non-bold).
+    assert "Institution" in html
+    assert "Reviewed" in html and 'class="rev-star"' in html
+    # foo is reviewed -> exactly one tick; the unreviewed baseline lr does not get one.
+    assert "ETH Zürich" in html
+    assert html.count("✓") == 1
+
+
+def test_missing_institution_renders_dash():
+    """A row whose index_display lacks an institution renders '-' (not a crash)."""
+    html = create_html_leaderboard(
+        _toy_df(), target="ET", metric="rmse",
+        index_display={("foo", "mean"): {"model": "Foo Net", "val": "mean"}},
+        return_html=True,
+    )
+    assert "Institution" in html
+    # foo has no institution key -> '-'; no tick anywhere (nothing reviewed).
+    assert "✓" not in html
