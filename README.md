@@ -43,6 +43,7 @@ scripts/                  # maintainer / CI entrypoints
   build_truth_table.py    #   lr raw predictions → reference/truth_table.parquet (+ manifest)
   build_baseline_lr.py    #   register the lr baseline as a normal submission
   cleanup_submission.py   #   maintainer removal of one submission (R2 + KV + repo); dry-run default
+  archive_sweep.py        #   manual sweep: archive scored raw files (R2 → submissions_raw/) then delete from R2; dry-run default
 
 server/                   # Python package imported by the GitHub Actions
   intake.py               #   validate-pr entrypoint: validate the metadata-only PR
@@ -66,7 +67,7 @@ utils/
 eval.py                   # load/compare experiments; compute metrics from predictions
 reference/                # truth_table.parquet (~164 MB) + committed manifest (cache key)
 submissions/              # merged submissions: {model_id}_val_{strategy}/{metadata.yaml + 9 CSVs}
-submissions_raw/          # raw lr predictions (source for the truth table)
+submissions_raw/          # lr/ = raw lr predictions (truth-table source); {id}_val_*/ = archived scored submissions (archive_sweep.py)
 submissions_metrics/      # preserved MVP metrics (regression check for the lr baseline)
 tests/                    # pytest suite for the server package
 deploy/                   # SETUP.md, BRINGUP.md, r2-cors.json
@@ -161,6 +162,18 @@ relative to the `lr` baseline (higher = better).
   then `python scripts/build_baseline_lr.py` to re-register + regression-check the baseline.
 - **Remove a submission:** `python scripts/cleanup_submission.py` (dry-run by default; clears R2,
   KV owner key, and the repo folder).
+- **Archive scored submissions (free R2):** run on the VM after a *"submission scored successfully"*
+  email. Archives each `scored` submission's raw files to `submissions_raw/{id}_val_{strategy}/`,
+  verifies each (size + ETag + sha256), records `archive_pointer` in `metadata.yaml`, then deletes
+  from R2 — per file, only after a verified local copy exists. Dry-run by default; idempotent.
+
+  ```bash
+  source ~/.r2_env                              # load R2 creds (R2_ENDPOINT/BUCKET/ACCESS_KEY/SECRET)
+  python scripts/archive_sweep.py               # DRY RUN: preview what it would do
+  python scripts/archive_sweep.py --confirm     # archive + DELETE the verified files from R2
+  ```
+  Add `--download` to archive + verify without deleting from R2, or `--model-id X --val-strategy Y`
+  to target one submission. See [deploy/SETUP.md](deploy/SETUP.md) → "Scoring & archiving".
 - **Deploy / first-time setup:** see [deploy/SETUP.md](deploy/SETUP.md) and
   [deploy/BRINGUP.md](deploy/BRINGUP.md). Worker secrets via `wrangler secret put`; Pages serves
   `/docs` on `main`.
