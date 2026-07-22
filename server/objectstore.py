@@ -43,6 +43,15 @@ class ObjectStore(ABC):
         """True if `key` is present."""
 
     @abstractmethod
+    def head(self, key):
+        """Return {'size': int, 'etag': str|None} for `key`. Raise ObjectStoreError if absent.
+
+        `etag` is the store's reported entity tag (quotes stripped). For a single-part S3/R2
+        object it is the hex MD5 of the content; for a multipart object it has a `-<n>` suffix
+        and is NOT a plain content hash — callers must check the form before using it.
+        """
+
+    @abstractmethod
     def list_prefix(self, prefix):
         """Return a sorted list of all keys under `prefix` (recursively)."""
 
@@ -89,6 +98,17 @@ class R2ObjectStore(ObjectStore):
         except ClientError:
             return False
 
+    def head(self, key):
+        from botocore.exceptions import ClientError
+        try:
+            r = self._s3().head_object(Bucket=self.bucket, Key=key)
+        except ClientError as e:
+            raise ObjectStoreError(f"head failed for {key}: {e}") from e
+        etag = r.get("ETag")
+        if etag:
+            etag = etag.strip('"')
+        return {"size": r.get("ContentLength"), "etag": etag}
+
     def list_prefix(self, prefix):
         keys = []
         paginator = self._s3().get_paginator("list_objects_v2")
@@ -123,6 +143,17 @@ class LocalObjectStore(ObjectStore):
 
     def exists(self, key):
         return os.path.exists(self._p(key))
+
+    def head(self, key):
+        import hashlib
+        p = self._p(key)
+        if not os.path.exists(p):
+            raise ObjectStoreError(f"object not found: {key}")
+        h = hashlib.md5()
+        with open(p, "rb") as f:
+            for b in iter(lambda: f.read(1 << 20), b""):
+                h.update(b)
+        return {"size": os.path.getsize(p), "etag": h.hexdigest()}
 
     def list_prefix(self, prefix):
         base = self._p(prefix)

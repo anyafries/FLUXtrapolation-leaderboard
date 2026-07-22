@@ -63,20 +63,27 @@ leaderboard, and commits everything back to `main` (Pages redeploys). Its commit
 `[skip ci]` so the push can't re-trigger scoring. It reuses the same R2 + `TRUTH_TABLE_URL` secrets
 as validate-pr.yml.
 
-**Archiving is a separate manual/scheduled sweep** — scoring intentionally leaves the raw files in
-R2 `incoming/` and never touches the archive. To archive (R2 is S3-compatible; export the R2 keys
-as `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` first):
+**Archiving is a separate manual sweep — run it on the VM** — scoring intentionally leaves the raw
+files in R2 `incoming/` and never touches the archive. Run `scripts/archive_sweep.py` by hand
+whenever you get a **"submission scored successfully"** email. It walks every `status: scored`
+submission (pending / in-flight ones are never touched), and per file: downloads the raw CSV from
+R2 (via `server.objectstore`, same R2 creds as the Actions) into the local archive
+(`server.archive`, filesystem backend), **verifies** it (downloaded size == R2 size; md5 == R2
+ETag when the ETag is a plain MD5; sha256 == the `sha256` scoring recorded in metadata.yaml),
+records an `archive_pointer` per file in metadata.yaml, and only then deletes that file from R2 —
+per file, never before a verified local copy exists.
 
 ```bash
-# 1) list raw files still in the dock
-aws s3 ls s3://fluxtrapolation/incoming/ --recursive --endpoint-url "$R2_ENDPOINT"
-# 2) copy them to your keep-forever archive (another bucket / local mount / Dropbox / …)
-aws s3 sync s3://fluxtrapolation/incoming/ s3://flux-archive/incoming/ --endpoint-url "$R2_ENDPOINT"
-# 3) ONLY after verifying the copy, optionally delete a swept submission from the dock
-aws s3 rm s3://fluxtrapolation/incoming/<model>_val_<strategy>/ --recursive --endpoint-url "$R2_ENDPOINT"
+# from the repo root, first load the R2 creds (same set as the Actions)
+source ~/.r2_env                                                  # R2_ENDPOINT/BUCKET/ACCESS_KEY_ID/SECRET_ACCESS_KEY
+python scripts/archive_sweep.py                                   # DRY RUN: preview only
+python scripts/archive_sweep.py --model-id coral --val-strategy mean   # preview just one
+python scripts/archive_sweep.py --download                        # archive + verify, but DON'T delete from R2
+python scripts/archive_sweep.py --confirm                         # archive + DELETE the verified files from R2
 ```
 
-Until you run this, raw files accumulate in `incoming/` — hence keep the lifecycle `incoming/`
-expiry long (or off) so nothing is deleted before it's archived (step 3 above). A
-`server/archive.py` (ArchiveBackend) abstraction exists for a future automated sweep; it is not
-wired into any workflow yet.
+`--confirm` is what performs the R2 deletion; without it nothing is deleted. The sweep is
+idempotent (already-archived files are skipped; safe to re-run). The archive defaults to
+`submissions_raw/` under the repo (already gitignored); override with `--archive-dir` or
+`ARCHIVE_BASE`. Until you sweep, raw files accumulate in `incoming/` — keep the lifecycle
+`incoming/` expiry long (or off) so nothing is deleted before it's archived.
