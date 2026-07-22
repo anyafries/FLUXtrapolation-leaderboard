@@ -166,6 +166,11 @@ relative to the `lr` baseline (higher = better).
   submitter's declared `institution` is shown in the adjacent column (`null` renders as `-`).
 - **Remove a submission:** `python scripts/cleanup_submission.py` (dry-run by default; clears R2,
   KV owner key, and the repo folder).
+- **Redeploy the Worker** (after any change under `worker/src/`): `cd worker && npx wrangler deploy`
+  (run `npx wrangler login` first if prompted). Secrets, KV, and R2 are already configured, so this
+  just pushes the new code — no re-setup. The Worker's metadata schema must stay in sync with
+  `server/metadata.py`, or intake PRs fail validation. Only update `WORKER_URL` in
+  `docs/submit.html` if the printed URL changes.
 - **Deploy / first-time setup:** see [deploy/SETUP.md](deploy/SETUP.md) and
   [deploy/BRINGUP.md](deploy/BRINGUP.md). Worker secrets via `wrangler secret put`; Pages serves
   `/docs` on `main`.
