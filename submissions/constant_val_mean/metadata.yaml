@@ -1,6 +1,6 @@
 model_id: constant
 display_name: constant
-email: anfries@ethz.ch
+email: null
 description: null
 code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
@@ -19,51 +19,60 @@ files:
   rows: 1665696
   r2_key: incoming/constant_val_mean/spatial-easy40_ET_constant_val_mean_predictions.csv
   sha256: 35c336b91485ef185967f748deac5fd0944ed05b6c3d43bf3fabb33644e7fcc9
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/spatial-easy40_ET_constant_val_mean_predictions.csv
 - filename: spatial-easy40_GPP_constant_val_mean_predictions.csv
   setting: spatial-easy40
   target: GPP
   rows: 1665696
   r2_key: incoming/constant_val_mean/spatial-easy40_GPP_constant_val_mean_predictions.csv
   sha256: 176b1b3d657923b4956cf95290e417413ff91c1ecd97013c31e660b66a2ce427
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/spatial-easy40_GPP_constant_val_mean_predictions.csv
 - filename: spatial-easy40_NEE_constant_val_mean_predictions.csv
   setting: spatial-easy40
   target: NEE
   rows: 1665696
   r2_key: incoming/constant_val_mean/spatial-easy40_NEE_constant_val_mean_predictions.csv
   sha256: 2356ea53c0e323d5e8de0d3dfd9ec1f1e7813097c04bda859d5b1907e55f2293
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/spatial-easy40_NEE_constant_val_mean_predictions.csv
 - filename: TA40_ET_constant_val_mean_predictions.csv
   setting: TA40
   target: ET
   rows: 1481568
   r2_key: incoming/constant_val_mean/TA40_ET_constant_val_mean_predictions.csv
   sha256: 62e002a6758925c2135b46208146b131e583bd65595ddff4bcd0544e9efa4002
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/TA40_ET_constant_val_mean_predictions.csv
 - filename: TA40_GPP_constant_val_mean_predictions.csv
   setting: TA40
   target: GPP
   rows: 1481568
   r2_key: incoming/constant_val_mean/TA40_GPP_constant_val_mean_predictions.csv
   sha256: 0458c94f0dc9992b24fe4b30fc9fc5b52fe9fef474ee0b7fac778fcdcc876166
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/TA40_GPP_constant_val_mean_predictions.csv
 - filename: TA40_NEE_constant_val_mean_predictions.csv
   setting: TA40
   target: NEE
   rows: 1481568
   r2_key: incoming/constant_val_mean/TA40_NEE_constant_val_mean_predictions.csv
   sha256: f23fd9567452168533acd0dbecedd4cc819c7ed3e02135bb13428d23f572e4a6
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/TA40_NEE_constant_val_mean_predictions.csv
 - filename: time-split_ET_constant_val_mean_predictions.csv
   setting: time-split
   target: ET
   rows: 2981088
   r2_key: incoming/constant_val_mean/time-split_ET_constant_val_mean_predictions.csv
   sha256: 0fa4be460f06579ca26a9ad93ebf4cb3c873c498f10161fa371fb69a1aa42d4a
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/time-split_ET_constant_val_mean_predictions.csv
 - filename: time-split_GPP_constant_val_mean_predictions.csv
   setting: time-split
   target: GPP
   rows: 2981088
   r2_key: incoming/constant_val_mean/time-split_GPP_constant_val_mean_predictions.csv
   sha256: baf07c9a20ed44e17d46c23f66af2b69c6df9924623f5133db885fe62d7af441
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/time-split_GPP_constant_val_mean_predictions.csv
 - filename: time-split_NEE_constant_val_mean_predictions.csv
   setting: time-split
   target: NEE
   rows: 2981088
   r2_key: incoming/constant_val_mean/time-split_NEE_constant_val_mean_predictions.csv
   sha256: 10b6e7784bd21d749b1a267c439819b7174b02689a39d83b6b352fa61accf5e4
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/constant_val_mean/time-split_NEE_constant_val_mean_predictions.csv

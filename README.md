@@ -133,13 +133,12 @@ table also defines the **required index** (the rows a complete submission must c
 
 ## Submission format (reference)
 
-A submission is **9 metric CSVs** = 3 settings × 3 targets, for one `val_strategy`, sitting beside
-the `metadata.yaml` the relay adds:
+A submission is **9 raw prediction CSVs** = 3 settings × 3 targets, for one `val_strategy`,
+uploaded through the drop box on [docs/submit.html](docs/submit.html). Filenames are the only
+metadata channel — `model_id` and `val_strategy` are parsed from them:
 
 ```
-submissions/{model_id}_val_{val_strategy}/
-  metadata.yaml
-  {setting}_{target}_{model_id}_val_{val_strategy}.csv      # × 9
+{setting}_{target}_{model_id}_val_{val_strategy}_predictions.csv      # × 9
 ```
 
 | field | valid values |
@@ -148,8 +147,22 @@ submissions/{model_id}_val_{val_strategy}/
 | `target` | `GPP`, `ET`, `NEE` |
 | `val_strategy` | `mean`, `max`, `discrepancy` |
 
-CSV columns (exact order):
-`target,setting,model,scale,env,n_samples,mse,rmse,mae,nse,r2_score,bias,relative_mae,relative_bias`
+CSV columns (order-independent; extras ignored):
+`y_true, y_pred, env, site_id, time`
+
+Each row is one prediction at one `(site_id, time)` — the key scoring joins on. `env` is the
+evaluation group (a site for `spatial-easy40`/`TA40`, a `(site, year)` pair for `time-split`).
+
+What the validator enforces on each file
+([server/validation.py](server/validation.py) is the source of truth): the file's
+`(site_id, time)` set must match the truth index for that `(setting, target)` **exactly** — no
+missing and no extra rows, no duplicates; `y_pred` must be finite and non-NaN; and the submitted
+`y_true` must agree with the `lr` truth within tolerance. That last check only rejects wrong-data
+uploads — scoring discards your `y_true` and uses the canonical values regardless.
+
+> The 9 **metric** CSVs in `submissions/{model_id}_val_{val_strategy}/` (columns
+> `target,setting,model,scale,env,n_samples,mse,rmse,…`) are an **output** of scoring, written
+> beside `metadata.yaml` by `score-and-publish.yml` — never something a submitter uploads.
 
 The leaderboard shows **RMSE** by temporal scale (hourly → iav) and a **Skill score** summary
 relative to the `lr` baseline (higher = better).
@@ -169,7 +182,8 @@ relative to the `lr` baseline (higher = better).
   KV owner key, and the repo folder).
 - **Archive scored submissions (free R2):** run on the VM after a *"submission scored successfully"*
   email. Archives each `scored` submission's raw files to `submissions_raw/{id}_val_{strategy}/`,
-  verifies each (size + ETag + sha256), records `archive_pointer` in `metadata.yaml`, then deletes
+  verifies each (size, sha256 vs metadata; ETag only when it's a plain MD5), records
+  `archive_pointer` in `metadata.yaml`, then deletes
   from R2 — per file, only after a verified local copy exists. Dry-run by default; idempotent.
 
   ```bash

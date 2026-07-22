@@ -19,51 +19,60 @@ files:
   rows: 1665696
   r2_key: incoming/mmd_val_mean/spatial-easy40_ET_mmd_val_mean_predictions.csv
   sha256: daadc946ce582851fcbd33bb23ebffab65a88b5b09a58b3317a4b410cad4af2d
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/spatial-easy40_ET_mmd_val_mean_predictions.csv
 - filename: spatial-easy40_GPP_mmd_val_mean_predictions.csv
   setting: spatial-easy40
   target: GPP
   rows: 1665696
   r2_key: incoming/mmd_val_mean/spatial-easy40_GPP_mmd_val_mean_predictions.csv
   sha256: 930dd6360df19872b61a923e3d2c08ac7ba33f6ae033ed710f5624575f824827
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/spatial-easy40_GPP_mmd_val_mean_predictions.csv
 - filename: spatial-easy40_NEE_mmd_val_mean_predictions.csv
   setting: spatial-easy40
   target: NEE
   rows: 1665696
   r2_key: incoming/mmd_val_mean/spatial-easy40_NEE_mmd_val_mean_predictions.csv
   sha256: 065797e2d67839377ed6ed2169c389616a428c4716c7b4d977806845ec5aed80
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/spatial-easy40_NEE_mmd_val_mean_predictions.csv
 - filename: TA40_ET_mmd_val_mean_predictions.csv
   setting: TA40
   target: ET
   rows: 1481568
   r2_key: incoming/mmd_val_mean/TA40_ET_mmd_val_mean_predictions.csv
   sha256: 851567d387bd862752fcfc340f27f967e1e272b4ad9eeca6ada4ec3d47014062
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/TA40_ET_mmd_val_mean_predictions.csv
 - filename: TA40_GPP_mmd_val_mean_predictions.csv
   setting: TA40
   target: GPP
   rows: 1481568
   r2_key: incoming/mmd_val_mean/TA40_GPP_mmd_val_mean_predictions.csv
   sha256: 263da7594ad1fde81fdaa812874136bc97b456118eab55238661cc60d0917800
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/TA40_GPP_mmd_val_mean_predictions.csv
 - filename: TA40_NEE_mmd_val_mean_predictions.csv
   setting: TA40
   target: NEE
   rows: 1481568
   r2_key: incoming/mmd_val_mean/TA40_NEE_mmd_val_mean_predictions.csv
   sha256: ddd3ae706be46f338a3050074bf3460b92e69af1dcade3fef437c71886a4c620
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/TA40_NEE_mmd_val_mean_predictions.csv
 - filename: time-split_ET_mmd_val_mean_predictions.csv
   setting: time-split
   target: ET
   rows: 2981088
   r2_key: incoming/mmd_val_mean/time-split_ET_mmd_val_mean_predictions.csv
   sha256: 5cb52d92623238bc9d40c7be7ea43625bf98a3dfbea4166635817e1ba8fe82b7
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/time-split_ET_mmd_val_mean_predictions.csv
 - filename: time-split_GPP_mmd_val_mean_predictions.csv
   setting: time-split
   target: GPP
   rows: 2981088
   r2_key: incoming/mmd_val_mean/time-split_GPP_mmd_val_mean_predictions.csv
   sha256: bb838412093c3a538ebb223d68fa4c4c1a6414e23ba839ee179c2dc9036a17af
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/time-split_GPP_mmd_val_mean_predictions.csv
 - filename: time-split_NEE_mmd_val_mean_predictions.csv
   setting: time-split
   target: NEE
   rows: 2981088
   r2_key: incoming/mmd_val_mean/time-split_NEE_mmd_val_mean_predictions.csv
   sha256: 2ede5ed001330c5c3a63428d59403c8b392b21475a115fc4555a2b38983ce144
+  archive_pointer: file:///sfs/u/anfries/FLUXtrapolation-leaderboard/submissions_raw/mmd_val_mean/time-split_NEE_mmd_val_mean_predictions.csv
