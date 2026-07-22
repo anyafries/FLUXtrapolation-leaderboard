@@ -32,14 +32,17 @@ import hashlib
 
 import yaml
 
-# Top-level fields required at every stage.
+# Top-level fields required at every stage. `institution` is required — the submitter must provide
+# one (the form + relay enforce a non-empty value; baselines carry an explicit null that renders '-').
 TOP_FIELDS = [
     "model_id", "display_name", "email", "description", "code_url", "paper_url",
-    "institution", "owner", "val_strategy", "submitted_at", "is_baseline",
-    "reviewed", "status",
+    "institution", "owner", "val_strategy", "submitted_at", "is_baseline", "status",
 ]
-# Optional top-level fields (present on new submissions, absent on older ones — not required).
-OPTIONAL_TOP_FIELDS = ["val_strategy_display"]
+# Optional top-level fields, defaulted when absent. `reviewed` is NOT a submission field — the relay
+# writes it false at intake and a maintainer flips it to true later after checking the code — so a
+# missing value simply defaults to false rather than failing validation. `build_metadata` still
+# always writes it, so scored/baseline docs carry it.
+OPTIONAL_TOP_FIELDS = ["val_strategy_display", "reviewed"]
 
 STATUS_PENDING = "pending"
 STATUS_SCORED = "scored"
