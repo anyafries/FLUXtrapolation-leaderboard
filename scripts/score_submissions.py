@@ -92,7 +92,8 @@ def score_one(meta_path, meta, store, truth_path, workdir):
         files=scored_files, status=meta_mod.STATUS_SCORED,
         display_name=meta.get("display_name"), email=meta.get("email"),
         description=meta.get("description"), code_url=meta.get("code_url"),
-        paper_url=meta.get("paper_url"), is_baseline=meta.get("is_baseline", False),
+        paper_url=meta.get("paper_url"), institution=meta.get("institution"),
+        is_baseline=meta.get("is_baseline", False), reviewed=meta.get("reviewed", False),
         submitted_at=meta.get("submitted_at"),
     )
     meta_mod.write_metadata(meta_path, new_meta)

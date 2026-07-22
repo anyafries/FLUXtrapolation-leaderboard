@@ -90,6 +90,32 @@ def test_scores_pending_then_idempotent(tmp_path, truth_fixture, monkeypatch):
     assert {f: os.path.getmtime(out_dir / f) for f in os.listdir(out_dir)} == mtimes
 
 
+def test_institution_and_reviewed_survive_scoring(tmp_path, truth_fixture, monkeypatch):
+    """The pending->scored rebuild must carry `institution` and `reviewed` through unchanged."""
+    truth_path, _manifest, truth_df = truth_fixture
+    store_root = tmp_path / "r2"
+    subs_dir = tmp_path / "submissions"
+    store, out_dir = _seed(tmp_path, truth_df, store_root, subs_dir)
+
+    # Add the provenance/trust fields to the pending metadata before scoring.
+    meta_path = str(out_dir / "metadata.yaml")
+    meta = meta_mod.load_metadata(meta_path)
+    meta["institution"] = "ETH Zürich"
+    meta["reviewed"] = True
+    meta_mod.write_metadata(meta_path, meta)
+
+    monkeypatch.setattr(score_submissions, "SUBMISSIONS_DIR", str(subs_dir))
+    monkeypatch.setattr(score_submissions, "get_object_store", lambda: store)
+    monkeypatch.setattr(score_submissions, "ensure_local_truth", lambda: truth_path)
+
+    assert score_submissions.main() == 0
+    scored = meta_mod.load_metadata(meta_path)
+    assert scored["status"] == meta_mod.STATUS_SCORED
+    assert scored["institution"] == "ETH Zürich"
+    assert scored["reviewed"] is True
+    assert meta_mod.validate_metadata(scored) == []
+
+
 def test_failed_submission_left_pending(tmp_path, truth_fixture, monkeypatch):
     """A submission whose raw rows fall outside the truth index fails to score, stays pending,
     and the run exits non-zero — without deleting its R2 objects."""
