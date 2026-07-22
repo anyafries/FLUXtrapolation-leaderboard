@@ -24,6 +24,12 @@ concurrency:
 
 jobs:
   validate:
+    # Only real relay submissions (opened from a `submission/...` branch by the Worker,
+    # worker/src/index.js) go through the intake gate. Maintainer PRs — code, docs, or even
+    # a metadata.yaml edit like flipping `reviewed: true` — are skipped, so they are never
+    # judged or auto-merged by the submission validator. Auto-merge lives inside this job,
+    # so a skipped run cannot bypass the gate: such PRs simply fall to a normal human merge.
+    if: startsWith(github.head_ref, 'submission/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (base repo code; fetch history for the PR diff)
@@ -51,9 +57,11 @@ jobs:
         id: changed
         run: |
           git fetch origin "${{ github.base_ref }}"
-          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
-          echo "Changed files:"; echo "$CHANGED"
-          echo "files<<EOF" >> "$GITHUB_OUTPUT"; echo "$CHANGED" >> "$GITHUB_OUTPUT"; echo "EOF" >> "$GITHUB_OUTPUT"
+          # Write to a file rather than a step output: the list is fed to server.intake as
+          # argv, and interpolating a multi-line value into a command runs every line after
+          # the first as its own shell command.
+          git diff --name-only "origin/${{ github.base_ref }}...HEAD" > changed_files.txt
+          echo "Changed files:"; cat changed_files.txt
 
       - name: "Validate submission (sandbox: download from R2 + full validation)"
         id: validate
@@ -67,7 +75,10 @@ jobs:
           FLUX_TRUTH_CACHE: ${{ github.workspace }}/.truth-cache
         run: |
           set +e
-          python -m server.intake ${{ steps.changed.outputs.files }} \
+          # Read the diff into an array so each path is one argv element — never re-split or
+          # re-executed by the shell, whatever it contains.
+          mapfile -t FILES < changed_files.txt
+          python -m server.intake "${FILES[@]}" \
             --base-ref "origin/${{ github.base_ref }}" \
             --json-out report.json > report.md 2>&1
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"

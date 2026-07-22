@@ -7,7 +7,7 @@ import os
 import pytest
 
 from server import metadata as meta_mod
-from server.intake import validate_intake
+from server.intake import validate_intake, _guard_changed_files
 from server.objectstore import LocalObjectStore, incoming_key
 from server.validation import parse_raw_filename
 from conftest import write_submission, MODEL, STRATEGY
@@ -98,3 +98,20 @@ def test_intake_owner_match_passes(truth_fixture, tmp_path):
     rep = validate_intake(md, object_store=store, truth_path=truth_path,
                           recorded_owner=meta_mod.owner_hash("mine"))
     assert rep.passed, rep.to_markdown()
+
+
+def test_guard_accepts_single_metadata():
+    meta_files, other = _guard_changed_files(["submissions/lr_val_mean/metadata.yaml"])
+    assert meta_files == ["submissions/lr_val_mean/metadata.yaml"]
+    assert other == []
+
+
+def test_guard_rejects_multi_file_diff():
+    # A PR that changes a metadata.yaml alongside other files: the whole diff must reach the
+    # guard (the shell passes it as argv), which keeps only the submission metadata and flags
+    # the rest as not allowed. This is the multi-file case that previously broke the workflow's
+    # unquoted command interpolation.
+    changed = ["submissions/lr_val_mean/metadata.yaml", "docs/index.html", "README.md"]
+    meta_files, other = _guard_changed_files(changed)
+    assert meta_files == ["submissions/lr_val_mean/metadata.yaml"]
+    assert other == ["docs/index.html", "README.md"]
