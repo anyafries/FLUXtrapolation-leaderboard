@@ -481,7 +481,7 @@ def build_tabbed_index(tab_panels):
     <section class="intro">
       <div class="intro-main">
         <div class="hero">
-          <h1><span class="flux">FLUX</span>trapolation benchmark</h1>
+          <h1><span class="flux">FLUX</span>trapolation leaderboard</h1>
           <p>This leaderboard tracks machine-learning model performance on the FLUXtrapolation
             benchmark for extrapolating ecosystem fluxes. Each model is scored on prediction
             error of three fluxes (ET, GPP, NEE) in three extrapolation scenarios (temporal,
