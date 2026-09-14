@@ -7,72 +7,84 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%A4%B4</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=9d8449cd">
   <link href="https://releases.transloadit.com/uppy/v4.13.3/uppy.min.css" rel="stylesheet">
 </head>
 <body>
   <header class="site-header">
-    <h1 class="site-title"><span class="flux">FLUX</span>trapolation benchmark</h1>
-    <nav class="nav-cards">
-      <a class="navcard" href="index.html">Leaderboard</a>
-      <a class="navcard active" href="submit.html">Submit result</a>
-      <a class="navcard" href="https://arxiv.org/abs/2605.19812" target="_blank" rel="noopener">Paper <span class="ext" aria-hidden="true">↗</span></a>
-      <a class="navcard" href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
+    <a class="brand" href="index.html"><span class="flux">FLUX</span>trapolation <span class="brand-tag">Benchmark</span></a>
+    <nav class="site-nav" aria-label="Site">
+      <a class="btn-primary" href="index.html">Leaderboard</a>
+      <a href="https://arxiv.org/abs/2605.19812" target="_blank" rel="noopener">Paper <span class="ext" aria-hidden="true">↗</span></a>
+      <a href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub <span class="ext" aria-hidden="true">↗</span></a>
+      <a class="active" href="submit.html">Submit a result</a>
     </nav>
   </header>
-  <h2 class="page-title">Submit a model</h2>
-  <p class="page-desc">
-    One submission is <strong>9 files</strong> — the 3 fluxes (GPP, ET, NEE) for each of the
-    three scenarios (temporal, spatial, temperature). These are the raw predictions you get by
-    running the benchmark on your model — see the
-    <a href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub repo</a>.
+  <main class="page">
+    <section class="hero">
+      <div class="hero-text">
+      <h1>Submit a model</h1>
+      <p>
+        One submission is <strong>9 files</strong> — the 3 fluxes (GPP, ET, NEE) for each of the
+        three extrapolation scenarios (temporal, spatial, temperature). These are the raw
+        predictions you get by running the benchmark on your model — see the
+        <a href="https://github.com/anyafries/FLUXtrapolation" target="_blank" rel="noopener">GitHub repo</a>.
+        We require a link to your code so we can check there is no test-set leakage (this check
+        is done after your scores are posted), and an email in case of questions or issues. The
+        leaderboard should reflect your scores in less than 30 minutes.
+      </p>
+      </div>
+    </section>
 
-    We require a link to your code so we can check there is no test-set leakage (this check is
-    done after your scores are posted), and an email in case of questions or issues. The
-    leaderboard should reflect your scores in less than 30 minutes.
-  </p>
-  <main>
-    <form class="submit-form" id="meta" onsubmit="return false">
-      <div>
-        <label>Email <span class="hint">required; for contact; not shown publicly</span></label>
-        <input id="email" type="email" required>
-      </div>
-      <div>
-        <label>Code URL <span class="hint">required; for reproducibility and checking</span></label>
-        <input id="code_url" type="url" required>
-      </div>
-      <div>
-        <label>Institution <span class="hint">required; shown on the leaderboard. Write "Independent" if unaffiliated, or "N/A" to not disclose</span></label>
-        <input id="institution" required>
-      </div>
-      <div>
-        <label>Comments <span class="hint">optional; any details on the model, validation strategy or links to associated papers</span></label>
-        <textarea id="description" rows="2"></textarea>
-      </div>
-      <div>
-        <label>Display name <span class="hint">optional; to show your model under a different name than the model_id in your file names</span></label>
-        <input id="display_name">
-      </div>
-      <div>
-        <label>Validation strategy display <span class="hint">optional; to show your validation strategy under a different name</span></label>
-        <input id="val_strategy_display">
-      </div>
-    </form>
+    <section class="submit-step">
+      <div class="eyebrow">1 · Your details</div>
+      <form class="submit-form" id="meta" onsubmit="return false">
+        <div>
+          <label>Email <span class="hint">required; for contact; not shown publicly</span></label>
+          <input id="email" type="email" required>
+        </div>
+        <div>
+          <label>Code URL <span class="hint">required; for reproducibility and checking</span></label>
+          <input id="code_url" type="url" required>
+        </div>
+        <div>
+          <label>Institution <span class="hint">required; shown on the leaderboard. Write "Independent" if unaffiliated, or "N/A" to not disclose</span></label>
+          <input id="institution" required>
+        </div>
+        <div>
+          <label>Comments <span class="hint">optional; any details on the model, validation strategy or links to associated papers</span></label>
+          <textarea id="description" rows="2"></textarea>
+        </div>
+        <div>
+          <label>Display name <span class="hint">optional; to show your model under a different name than the model_id in your file names</span></label>
+          <input id="display_name">
+        </div>
+        <div>
+          <label>Validation strategy display <span class="hint">optional; to show your validation strategy under a different name</span></label>
+          <input id="val_strategy_display">
+        </div>
+      </form>
+    </section>
 
-    <!-- <p class="hint" style="max-width: 640px;">
-      Each file must be named <code>{setting}_{target}_{model_id}_val_{val_strategy}_predictions.csv</code>
-      — settings: time-split, spatial-easy40, TA40; targets: GPP, ET, NEE.
-      Columns: <code>y_true, y_pred, env, site_id, time</code>.
-      Your <strong>model_id</strong> and <strong>validation strategy</strong> are read automatically from these names.
-    </p> -->
-    <div id="uppy"></div>
-    <p id="inferred" class="inferred"></p>
-    <button id="submit-btn" class="btn-submit" type="button">Submit</button>
-    <div id="result" class="result"></div>
+    <section class="submit-step">
+      <div class="eyebrow">2 · Upload the 9 prediction files</div>
+      <p class="section-desc">
+        Files are named <code>{setting}_{target}_{model_id}_val_{val_strategy}_predictions.csv</code>;
+        your model id and validation strategy are read from these names.
+      </p>
+      <div id="uppy"></div>
+      <p id="inferred" class="inferred"></p>
+    </section>
+
+    <section class="submit-step">
+      <div class="eyebrow">3 · Submit</div>
+      <button id="submit-btn" class="btn-submit" type="button">Submit</button>
+      <div id="result" class="result"></div>
+    </section>
   </main>
 
   <footer class="site-footer">
-    <p>For any issues, contact: anya [dot] fries [at] stat [dot] math [dot] ethz [dot] ch</p>
+    <p>For any issues, contact anya[dot]fries[at]stat[dot]math[dot]ethz[dot]ch</p>
     <p>© Copyright 2026 Anya Fries. Hosted by GitHub Pages.</p>
   </footer>
 

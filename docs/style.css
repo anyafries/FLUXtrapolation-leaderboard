@@ -1,12 +1,21 @@
 /* FLUXtrapolation Leaderboard — stylesheet */
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Accent (FLUX wordmark, nav-card borders/fill, active tab) — everywhere but the table heatmap */
+  /* Accent (FLUX wordmark, Submit button, #1 card, links) — everywhere but the table heatmap */
   --accent: #FF5200;
-  /* Darker shade for small text-on-white (links, active tab label) where #FF5200 lacks contrast */
+  /* Darker shade for small text-on-white (links) where #FF5200 lacks contrast */
   --accent-text: #D94600;
+  --ink: #1a1a1a;
+  --ink-2: #444;
+  --muted: #6b6b6b;
+  --line: #e4e4e4;
+  --line-strong: #d3d3d3;
+  --ground: #f3f3f3;
+  --green: #2e9e5b;
+  --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 *, *::before, *::after {
@@ -14,143 +23,470 @@
 }
 
 body {
-  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 16px;
   line-height: 1.5;
-  color: #1a1a1a;
+  color: var(--ink);
   background: #fff;
   margin: 0;
-  padding: 1.5rem 2rem 3rem;
-}
-
-/* Shared top header: brand title left, nav cards right, on one blue banner row */
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  background: #d5e3f9;
-  margin: -1.5rem -2rem 0;   /* bleed over the body padding to a full-width banner */
-  padding: 1rem 2rem;
-}
-
-.site-title {
-  margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.flux {
-  color: var(--accent);
-}
-
-/* Per-page heading below the header banner (Leaderboard / Submit a model) */
-.page-title {
-  margin: 1.25rem 0 0.35rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.page-desc {
-  margin: 0 0 0.5rem;
-  color: #333;
-}
-
-h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-top: 2rem;
 }
 
 p {
-  max-width: 70ch;
   margin: 0;
-  color: #333;
+  color: var(--ink-2);
 }
 
 a {
   color: var(--accent-text);
 }
 
-/* Headline action cards — top-right site nav (on every page) */
-.nav-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--ground);
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
 }
 
-.navcard {
-  border: 1.5px solid var(--accent);
-  border-radius: 6px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--accent-text);
+/* Small uppercase mono labels (section eyebrows, control labels, card captions) */
+.eyebrow,
+.ctl-label,
+.brand-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- Header */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  padding: 0.85rem 2rem;
+  border-bottom: 1px solid var(--line);
   background: #fff;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.brand .flux {
+  color: var(--accent);
+}
+
+.brand-tag {
+  margin-left: 0.45rem;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+}
+
+/* Every item gets the same padding, so the four labels sit at the same positions whether an
+   item is rendered as the plain current-page link or as the orange button. */
+.site-nav a {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.site-nav a:hover {
+  color: var(--ink);
+}
+
+/* Current page: plain, underlined */
+.site-nav a.active {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
+.site-nav .ext {
+  font-size: 0.8em;
+  margin-left: 0.1rem;
+}
+
+/* The other page's entry point: orange button */
+.site-nav a.btn-primary {
+  background: var(--accent);
+  color: #fff;
   transition: opacity 0.15s;
 }
 
-/* Current page — filled in */
-.navcard.active {
-  background: var(--accent);
-  border-color: var(--accent);
+.site-nav a.btn-primary:hover {
   color: #fff;
+  opacity: 0.85;
 }
 
-/* Hover — semi-transparent so it reads as a distinct state */
-.navcard:hover {
-  opacity: 0.55;
+/* ---------------------------------------------------------------- Page frame */
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
 }
 
-/* The current-page card stays solid white-on-accent (never fades to transparent) */
-.navcard.active:hover {
-  opacity: 1;
+/* Hero: text left, illustration right */
+/* Leaderboard top block: heading + intro + controls on the left, illustration on the right,
+   at a fixed size and centred vertically on the block. */
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 1rem 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
 }
 
-/* External-link marker on Paper / GitHub */
-.navcard .ext {
-  font-size: 0.85em;
-  margin-left: 0.15rem;
+.intro-main {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-/* Explanatory note above the flux tabs */
-.metric-note {
-  max-width: 90ch;
-  margin: 0 0 1.25rem;
+.hero-img {
+  flex: 0 0 auto;
+  height: 220px;
+  width: auto;
+  border-radius: 8px;
+}
+
+/* Tablet widths: a smaller image leaves the paragraph room beside it */
+@media (max-width: 960px) {
+  .hero-img {
+    height: 170px;
+  }
+}
+
+.hero h1,
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.75rem;
+}
+
+.hero h1 .flux {
+  color: var(--accent);
+}
+
+.hero p,
+.page-desc {
+  color: var(--ink-2);
+}
+
+.page-desc {
+  max-width: 70ch;
+}
+
+.page-desc {
+  margin-bottom: 1.5rem;
+}
+
+/* ---------------------------------------------------------------- Controls */
+
+/* Three stacked rows: label column left, pill groups aligned in the second column */
+.controls {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  align-items: center;
+  justify-content: start;
+  gap: 0.8rem 1.25rem;
+  margin: 2rem 0 0;
+}
+
+.ctl-group {
+  display: contents;
+}
+
+.ctl-label {
+  line-height: 1.25;
+}
+
+.pills {
+  display: inline-flex;
+  width: fit-content;        /* the grey backing ends at the last pill, not the column edge */
+  justify-self: start;
+  padding: 3px;
+  background: var(--ground);
+  border-radius: 7px;
+}
+
+.pill {
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+}
+
+.pill:hover {
+  color: var(--ink);
+}
+
+.pill.active {
+  background: #fff;
+  color: var(--accent-text);
+  font-weight: 600;
+  border-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- Sections */
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1.5rem;
+}
+
+.section-desc {
+  max-width: 80ch;
+  margin: 0.2rem 0 1rem;
+}
+
+.section-desc + .section-desc {
+  margin-top: -0.5rem;
+}
+
+.section-desc.muted {
+  color: var(--muted);
   font-size: 0.9rem;
-  color: #555;
 }
 
-.metric-note code {
-  background: #f2f2f2;
-  padding: 0.05rem 0.3rem;
-  border-radius: 3px;
-  font-size: 0.85em;
+/* Skill score leader cards */
+/* Three across; one per row once they'd no longer fit side by side (never two + one) */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 800px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cards {
+  margin-top: 0.5rem;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem 0.85rem;
+  background: #fff;
+}
+
+.card.top {
+  border-color: var(--green);
+}
+
+.card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.card .rank {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.card .name {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card .score {
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.card .bar {
+  height: 4px;
+  margin: 0.7rem 0 0.2rem;
+  background: var(--ground);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.card .bar span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+}
+
+/* Full results */
+.results {
+  margin-top: 2.5rem;
+}
+
+.results-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.results-head .section-desc {
+  margin-bottom: 0.15rem;
+}
+
+.sorted-by {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.howto-btn {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.howto-btn:hover {
+  text-decoration: underline;
+}
+
+.howto {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem 2.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 0 0 1.5rem;
+}
+
+.howto[hidden] {
+  display: none;
+}
+
+.howto.howto-single {
+  grid-template-columns: 1fr;
+  max-width: 80ch;
+}
+
+.howto p {
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.tint-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.tint-bar {
+  flex: 1;
+  height: 10px;
+  border: 1px solid var(--line);
+  background: linear-gradient(90deg, #63BE7B, #fff);
+}
+
+.glossary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 1rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.glossary dt {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.glossary dd {
+  margin: 0;
+  color: var(--ink-2);
 }
 
 .review-note {
   max-width: 90ch;
   margin: 1.25rem 0 0;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--muted);
 }
 
-/* Each table scrolls horizontally on its own, so the tabs and notes stay put */
+/* ---------------------------------------------------------------- Results table */
+
+/* Each table scrolls horizontally on its own, so the controls and notes stay put. The box is
+   only as wide as the table it holds. */
 .table-scroll {
+  width: fit-content;
+  max-width: 100%;
   overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
-/* Preserve inline color styles emitted by pandas Styler */
+/* All three scenarios: the table may break out of the page column, centred on it, up to its
+   natural width — no wider — and scrolls once the window is narrower than that. */
+.table-scroll.fill {
+  max-width: calc(100vw - 4.5rem);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Per-cell heatmap colours are inline (pandas Styler); everything else lives here. */
+/* Separate (not collapsed) borders: each cell paints its own right/bottom edge, so the frozen
+   columns stay fully opaque while the heatmap cells scroll underneath them. With collapsed
+   borders the shared edges belong half to the neighbour and show through as coloured lines. */
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: auto;             /* only as wide as the content needs */
   font-size: 13px;
 }
+
+
 
 thead {
   position: sticky;
@@ -160,37 +496,51 @@ thead {
 }
 
 th, td {
-  border: 1px solid #d3d3d3;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   padding: 6px 10px;
   white-space: nowrap;
 }
 
-/* Alternating row stripes — only on body rows without an inline background */
-tbody tr:nth-child(even) td:not([style*="background"]) {
-  background-color: #f9f9f9;
+/* No border under the last body row (the scroll box draws the outer edge) */
+tbody tr:last-child > th,
+tbody tr:last-child > td {
+  border-bottom: 0;
 }
 
-/* Row + column hover tracking. Row is pure CSS; column is toggled via .hl-col by script.
-   background-clip: padding-box keeps the highlight from bleeding under the white scenario gaps. */
+td {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  text-align: right;
+}
+
+/* Columns hidden by the Shift filter */
+.col-hidden {
+  display: none;
+}
+
+/* Alternating row stripes — only on body rows without an inline background */
+tbody tr:nth-child(even) td:not([style*="background"]) {
+  background-color: #fafafa;
+}
+
+/* Row + column hover tracking. Row is pure CSS; column is toggled via .hl-col by script. */
 tbody tr:hover > td,
 tbody tr:hover > th {
   box-shadow: inset 0 2px 0 #c8dbf7, inset 0 -2px 0 #c8dbf7;
-  background-clip: padding-box;
 }
 
 tbody tr:hover > th.row_heading {
   background: #eff4fc !important;
-  background-clip: padding-box;
 }
 
 .hl-col {
   box-shadow: inset 2px 0 0 #c8dbf7, inset -2px 0 0 #c8dbf7;
-  background-clip: padding-box;
 }
 
 th.col_heading.level1.hl-col {
   background: #eff4fc !important;
-  background-clip: padding-box;
 }
 
 /* Intersection of hovered row and column — full blue box */
@@ -198,11 +548,17 @@ tbody tr:hover > .hl-col {
   box-shadow: inset 0 0 0 2px #8ab4f8;
 }
 
-/* Index / row-header column */
+/* Row headings: Model (bold, links to the code) | Val. | Institution */
 th.row_heading {
   text-align: left;
   background: #fff;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+th.row_heading.level1,
+th.row_heading.level2 {
+  font-weight: 400;
+  color: var(--ink-2);
 }
 
 /* Model name -> code_url link (only rendered when the submission provided one) */
@@ -211,24 +567,70 @@ th.row_heading a {
   text-decoration: underline dotted;
   text-underline-offset: 2px;
 }
+
 th.row_heading a:hover {
   color: var(--accent-text);
   text-decoration: underline solid;
 }
 
-/* Group header row (level 0 column headings) */
+/* ✓ after a reviewed model's name (see the note under the table) */
+.rev-tick {
+  font-weight: 400;
+  color: var(--green);
+}
+
+/* Empty top-left corner (above Model / Val. / Institution): no bottom border, but the
+   Model | Val. | Institution column lines continue up through it. */
+th.blank {
+  border: 0;
+  background: #fff;
+}
+
+th.blank:not(.level0) {
+  border-right: 1px solid var(--line);
+}
+
+/* Column labels lifted into the scale-label row (Model / Val. / Institution) */
+th.index_name {
+  vertical-align: bottom;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Scenario group header row (level 0): temporal / spatial / temperature */
 th.col_heading.level0 {
-  background-color: #ececec;
-  font-weight: bold;
+  background: var(--ground);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
   text-align: center;
 }
 
-/* Scale headers (level 1) — rotated */
+/* Scale headers (level 1) — rotated, mono, uppercase; the skill score header stays bold */
 th.col_heading.level1 {
-  height: 80px;
+  height: 96px;
   vertical-align: bottom;
-  padding: 4px;
+  padding: 6px 4px;
   min-width: 28px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+th.col_heading.level1.col0 {
+  font-weight: 600;
+  color: var(--ink);
 }
 
 th.col_heading.level1 span {
@@ -238,16 +640,64 @@ th.col_heading.level1 span {
   display: inline-block;
 }
 
-/* Freeze the two row-label columns (Model, Validation) during horizontal scroll.
-   Widths are snug — just wide enough for the longest label (incl. "discrepancy") plus a buffer —
-   and long names truncate with an ellipsis. */
+/* Skill score cells: bold mono, centred */
+td.col0 {
+  text-align: center;
+  font-weight: 600;
+}
+
+/* White gap between the temporal / spatial / temperature scenario blocks, closed on its right
+   by a thin grey line (a pseudo-element, so it doesn't collide with the hover box-shadows).
+   Not needed when a single scenario is shown (the gap would sit right after the skill score). */
+td.col7, th.col7,
+td.col13, th.col13 {
+  border-left: 8px solid #fff;
+  position: relative;
+}
+
+td.col7::before, th.col7::before,
+td.col13::before, th.col13::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+table.single td.col7, table.single th.col7,
+table.single td.col13, table.single th.col13 {
+  border-left: 0;
+}
+
+table.single .col7::before,
+table.single .col13::before {
+  display: none;
+}
+
+/* Grey section dividers on both sides of the skill-score column. Both are painted by the
+   frozen skill cell itself so they stay put while the scenario blocks scroll underneath. */
+td.col0, th.col0 {
+  border-left: 2px solid var(--line-strong);
+  border-right: 2px solid var(--line-strong);
+}
+
+thead tr > :nth-child(3),
+tbody tr > :nth-child(3) {
+  border-right: 0;          /* Institution: the divider is drawn by the skill cell */
+}
+
+/* Freeze the row-label columns + skill score during horizontal scroll:
+   Model (1) | Val. (2) | Institution (3) | Skill score (4). Widths are snug; long labels
+   truncate with an ellipsis. */
 thead tr > :nth-child(1),
 tbody tr > :nth-child(1) {
   position: sticky;
   left: 0;
-  width: 90px;
-  min-width: 90px;
-  max-width: 90px;
+  width: 118px;
+  min-width: 118px;
+  max-width: 118px;
   overflow: hidden;
   text-overflow: ellipsis;
   background: #fff;
@@ -256,139 +706,159 @@ tbody tr > :nth-child(1) {
 thead tr > :nth-child(2),
 tbody tr > :nth-child(2) {
   position: sticky;
-  left: 90px;
-  width: 64px;
-  min-width: 64px;
-  max-width: 64px;
+  left: 118px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
   background: #fff;
 }
 
-/* The frozen-column divider (survives border-collapse + sticky) — only on the body rows, not the
-   header label cell, so it doesn't run up through the header at all. */
-tbody tr > :nth-child(2) {
-  box-shadow: 1px 0 0 #d3d3d3;
-}
-
-/* Institution (col 3) + Reviewed (col 4): only as wide as their content, capped so a long
-   institution name can't blow the column out (it truncates with an ellipsis instead). */
 thead tr > :nth-child(3),
 tbody tr > :nth-child(3) {
-  max-width: 150px;
+  position: sticky;
+  left: 178px;
+  width: 116px;
+  min-width: 116px;
+  max-width: 116px;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: #fff;
 }
+
 thead tr > :nth-child(4),
 tbody tr > :nth-child(4) {
-  max-width: 96px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  position: sticky;
+  left: 294px;
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
 }
 
 /* Stacking: frozen header corner on top (3), header (2), frozen body cells (1) */
 tbody tr > :nth-child(1),
-tbody tr > :nth-child(2) { z-index: 1; }
+tbody tr > :nth-child(2),
+tbody tr > :nth-child(3),
+tbody tr > :nth-child(4) { z-index: 1; }
 
 thead tr > :nth-child(1),
-thead tr > :nth-child(2) { z-index: 3; }
+thead tr > :nth-child(2),
+thead tr > :nth-child(3),
+thead tr > :nth-child(4) { z-index: 3; }
 
-/* Flux + RMSE control row — two tab groups sharing one baseline */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem 2.5rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 0;                /* stacking context for the baseline + active tab */
-}
+/* ---------------------------------------------------------------- Footer */
 
-/* Orange baseline drawn IN FRONT of the tabs, so it covers the grey tab borders
-   rather than sitting behind them. The active tab (raised above) still breaks it. */
-.controls::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--accent);
-  z-index: 2;
-}
-
-.controls .tab-bar {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-/* Tab bar — folder-style boxes per flux */
-.tab-bar {
-  display: flex;
-  align-items: flex-end;
-  border-bottom: 1px solid var(--accent);
-  margin-bottom: 1.5rem;
-  gap: 0.4rem;
-}
-
-.tab-bar .tab-label {
-  font-weight: 600;
-  color: #1a1a1a;
-  padding-right: 0.75rem;
-  padding-bottom: 0.5rem;
-}
-
-.tab-bar button {
-  background: #f7f7f7;
-  border: 1px solid #d3d3d3;
-  border-radius: 6px 6px 0 0;
-  margin-bottom: -1px;           /* sit on the baseline so the active tab can merge with it */
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
-  font-family: inherit;
-  cursor: pointer;
-  color: #555;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-}
-
-.tab-bar button:hover {
-  color: #111;
-  background: #f0f0f0;
-}
-
-.tab-bar button.active {
-  background: #fff;
-  border-color: var(--accent);
-  border-bottom-color: #fff;     /* erase the baseline under the active tab */
-  color: var(--accent-text);
-  font-weight: 700;
-  position: relative;
-  z-index: 3;                    /* sit above the orange baseline so it breaks the line */
-}
-
-/* Tab panel spacing */
-[role="tabpanel"] h2 {
-  margin-top: 1.75rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Small note under a table heading (e.g. "values scaled by 100" for ET) */
-.heading-note {
-  display: block;
+.site-footer {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1rem 2rem 1.5rem;
+  border-top: 1px solid var(--line);
   font-size: 0.8rem;
-  font-weight: normal;
-  color: #555;
-  margin-top: 0.15rem;
+  color: var(--muted);
+}
+
+.site-footer p {
+  margin: 0.15rem 0;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- Narrow screens */
+
+@media (max-width: 720px) {
+  .site-header,
+  .page,
+  .site-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero h1,
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .intro {
+    flex-wrap: wrap;
+  }
+
+  /* Image below the text, centred, capped so it doesn't dominate a phone screen */
+  .hero-img {
+    width: min(100%, 300px);
+    height: auto;
+    margin: 0 auto;
+  }
+
+  /* Controls: each label above its own pill row */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ctl-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .ctl-label br {
+    display: none;
+  }
+
+  /* All-scenarios table: no break-out, just the text column's width */
+  .table-scroll.fill {
+    max-width: 100%;
+    position: static;
+    transform: none;
+  }
+
+  .howto {
+    grid-template-columns: 1fr;
+  }
+
+  /* Only the model column stays frozen */
+  thead tr > :nth-child(2), tbody tr > :nth-child(2),
+  thead tr > :nth-child(3), tbody tr > :nth-child(3),
+  thead tr > :nth-child(4), tbody tr > :nth-child(4) {
+    position: static;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+/* Phones: let the pills wrap inside their grey backing */
+@media (max-width: 480px) {
+  .pills {
+    flex-wrap: wrap;
+  }
 }
 
 /* ---------------------------------------------------------------- Submit page */
+
+.submit-step {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.submit-step .section-desc {
+  font-size: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+#uppy {
+  max-width: 640px;
+}
 
 /* Metadata form */
 .submit-form {
   display: grid;
   gap: 0.9rem;
   max-width: 640px;
-  margin: 0 0 1.5rem;
+  margin: 0.5rem 0 0;
 }
 
 .submit-form label {
@@ -466,7 +936,7 @@ thead tr > :nth-child(2) { z-index: 3; }
 /* Primary submit button. Always clickable: grey when something's missing (clicking explains
    what), green once email + code URL + the 9 valid files are all present. */
 .btn-submit {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding: 0.6rem 1.5rem;
   font: inherit;
   font-weight: 700;
@@ -479,7 +949,7 @@ thead tr > :nth-child(2) { z-index: 3; }
 }
 
 .btn-submit.ready {
-  background: #2e9e5b;
+  background: var(--green);
 }
 
 .btn-submit:hover {
@@ -533,17 +1003,3 @@ thead tr > :nth-child(2) { z-index: 3; }
   background: #fffbe9;
 }
 
-/* Tiny site footer — full-width band flush to the bottom of the page */
-.site-footer {
-  margin: 3rem -2rem -3rem;       /* bleed over the body padding to the page edges */
-  padding: 1rem 2rem;
-  border-top: 1px solid #e0e0e0;
-  font-size: 0.8rem;
-  color: #777;
-}
-
-.site-footer p {
-  margin: 0.15rem 0;
-  max-width: none;
-  color: #777;
-}

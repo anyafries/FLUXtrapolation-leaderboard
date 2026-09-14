@@ -43,25 +43,33 @@ def test_no_index_display_keeps_raw_ids():
     assert "Foo Net" not in html
 
 
-def test_institution_and_reviewed_columns():
-    """Institution + Reviewed row-heading columns render from index_display. The ✓ depends solely
-    on `reviewed` (is_baseline does NOT tick a row); an unreviewed row stays blank."""
+def test_institution_column_and_reviewed_tick():
+    """Institution row-heading column renders from index_display; a reviewed submission gets a
+    ✓ after its model name, outside the code link. The ✓ depends solely on `reviewed`
+    (is_baseline does NOT tick a row); an unreviewed row gets none. The skill cell carries the
+    reviewed flag + plain model name + per-shift scores for the page's Shift filter / cards."""
     html = create_html_leaderboard(
         _toy_df(), target="ET", metric="rmse",
         index_display={
-            ("foo", "mean"): {"model": "Foo Net", "val": "mean",
-                              "institution": "ETH Zürich", "reviewed": True},
+            ("foo", "mean"): {"model": "Foo Net", "val": "mean", "institution": "ETH Zürich",
+                              "reviewed": True, "code_url": "https://example.org/foo"},
             ("lr", "mean"): {"model": "lr", "val": "mean",
                              "institution": None, "reviewed": False, "is_baseline": True},
         },
         return_html=True,
     )
-    # Column headers present; the Reviewed header carries the footnote star (wrapped, non-bold).
     assert "Institution" in html
-    assert "Reviewed" in html and 'class="rev-star"' in html
-    # foo is reviewed -> exactly one tick; the unreviewed baseline lr does not get one.
+    assert "Reviewed" not in html            # no separate column any more
     assert "ETH Zürich" in html
+    # foo is reviewed -> exactly one tick, after the closing </a> of the code link.
     assert html.count("✓") == 1
+    assert '>Foo Net</a> <span class="rev-tick"' in html
+    # Skill cell data attributes: reviewed flag only on foo; per-shift scores on both rows.
+    assert html.count('data-reviewed="1"') == 1
+    assert 'data-model="Foo Net"' in html and 'data-model="lr"' in html
+    for shift in ("time-split", "spatial-easy40", "TA40"):
+        assert html.count(f'data-ss-{shift}="') == 2
+    assert html.count('data-baseline="1"') == 1
 
 
 def test_missing_institution_renders_dash():

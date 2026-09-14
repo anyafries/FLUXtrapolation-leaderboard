@@ -479,7 +479,7 @@ HTML_PAGE_TEMPLATE = """\
 
 def _merge_index_names_into_header(html):
     """
-    Pandas renders the index names (Model, Validation, Institution, Reviewed*) on their own
+    Pandas renders the index names (Model, Validation, Institution) on their own
     trailing header row. Lift them into the rotated scale-label row and drop that extra row, so
     the labels line up at the same height as the scale headers. Works for any number of index
     levels (the run of leading blank cells in the scale-label row is replaced wholesale).
@@ -497,12 +497,8 @@ def _merge_index_names_into_header(html):
     )
     if not names:
         return html
-    # A trailing footnote marker (e.g. the * in "Reviewed*") is rendered non-bold via a span, so
-    # the header word stays bold while the star does not.
-    def _mark_star(txt):
-        return re.sub(r'\*$', '<span class="rev-star">*</span>', txt)
     name_ths = '\n      '.join(
-        f'<th class="index_name level{lvl}" >{_mark_star(txt)}</th>' for lvl, txt in names
+        f'<th class="index_name level{lvl}" >{txt}</th>' for lvl, txt in names
     )
     # Drop the standalone index-name row.
     html = re.sub(
@@ -543,7 +539,14 @@ def create_html_leaderboard(
     page_heading=None,
     return_html=False,
     index_display=None,
+    inline_styles=True,
 ):
+    """Render one flux's leaderboard as an HTML table.
+
+    inline_styles: emit the self-contained <style> rules (borders, rotated headers, ...) that make
+    the table readable on its own (eval.py / wrap_html). The site build passes False so
+    docs/style.css fully controls the look; the per-cell heatmap colours are always emitted.
+    """
     # --- 1. Data Preparation ---
     pivot_df, overall_scores, skill_scores_df = get_pivot_df_with_scores(
         df, target, metric, aggfunc, lower_is_better,
@@ -556,16 +559,20 @@ def create_html_leaderboard(
         return key[0] if isinstance(key, tuple) else key
     baseline_positions = {i for i, k in enumerate(pivot_df.index) if _row_model(k) == baseline_model}
 
-    # Relabel the row index to submitter-chosen display names AND append the provenance/trust
-    # columns (institution, reviewed). Done AFTER scoring/ordering so the skill-score baseline and
-    # model order stay keyed on the real model_id / val_strategy. index_display maps
+    # Relabel the row index to submitter-chosen display names AND append the institution
+    # column. Done AFTER scoring/ordering so the skill-score baseline and model order stay keyed
+    # on the real model_id / val_strategy. index_display maps
     # (model_id, val_strategy) -> {'model', 'val', 'institution', 'reviewed', 'is_baseline'}.
-    # Row-heading order becomes: Model | Validation | Institution | Reviewed.
+    # Row-heading order becomes: Model | Validation | Institution. A reviewed submission gets a
+    # tick after its model name (outside the code link); the flag is also kept per row so the
+    # skill cell can carry it for the page's leader cards.
     # overall_scores is joined into the table by index later, so pin it to the pivot's row order
     # now and relabel it in lockstep — after relabeling, the keys no longer match (display names
     # or the code_url link differ from the raw model_id), and alignment would silently yield NaN.
     if overall_scores is not None:
         overall_scores = overall_scores.reindex(pivot_df.index)
+    # Per-row plain model name + reviewed flag, in pivot row order (see _skill_cell below).
+    row_meta = []
     if index_display:
         def _attrs(key):
             mid = key[0] if isinstance(key, tuple) else key
@@ -576,32 +583,35 @@ def create_html_leaderboard(
             inst = disp.get('institution')
             return inst if inst not in (None, '') else '-'
 
-        def _reviewed_symbol(disp):
-            # ✓ = code has been reviewed by a maintainer; blank = not yet reviewed.
-            return '✓' if disp.get('reviewed') else ''
-
         def _model_label(mid, disp):
             # Model name links to the submission's code_url (new tab) when one was provided.
+            # ✓ after the name (never inside the link) = code reviewed by a maintainer.
             name = disp.get('model') or mid
             url = disp.get('code_url')
-            if not url:
-                return name
-            return (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
-                    f'rel="noopener noreferrer">{name}</a>')
+            label = name
+            if url:
+                label = (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+                         f'rel="noopener noreferrer">{name}</a>')
+            if disp.get('reviewed'):
+                label += ' <span class="rev-tick" title="Code reviewed">✓</span>'
+            return label
 
         new_index = []
         for key in pivot_df.index:
             mid, strat, disp = _attrs(key)
             model_label = _model_label(mid, disp)
             val_label = disp.get('val') or strat
-            new_index.append((model_label, val_label,
-                              _institution_label(disp), _reviewed_symbol(disp)))
+            new_index.append((model_label, val_label, _institution_label(disp)))
+            row_meta.append({'model': disp.get('model') or mid,
+                             'reviewed': bool(disp.get('reviewed'))})
         pivot_df.index = pd.MultiIndex.from_tuples(
-            new_index, names=['model', 'val_strategy', 'institution', 'reviewed'])
+            new_index, names=['model', 'val_strategy', 'institution'])
         if skill_scores_df is not None:
             skill_scores_df.index = pivot_df.index
         if overall_scores is not None:
             overall_scores.index = pivot_df.index
+    else:
+        row_meta.extend({'model': str(_row_model(k)), 'reviewed': False} for k in pivot_df.index)
 
     if settings_names is not None:
         renamed_cols = [(settings_names.get(s, s), sc) for s, sc in pivot_df.columns]
@@ -611,13 +621,21 @@ def create_html_leaderboard(
 
     baseline_labels = {pivot_df.index[i] for i in baseline_positions}
 
+    # Per-shift skill scores (plain mean of the cell-by-cell skill scores within one scenario
+    # block, i.e. the overall score restricted to that block). Keyed by the display name of the
+    # shift ('temporal', ...). The page's Shift filter swaps these in client-side.
+    shift_scores = {}
+    if skill_scores_df is not None:
+        for shift in dict.fromkeys(c[0] for c in skill_scores_df.columns):
+            cols = [c for c in skill_scores_df.columns if c[0] == shift]
+            shift_scores[shift] = skill_scores_df[cols].mean(axis=1, skipna=True)
+
     if overall_scores is not None:
         pivot_df.insert(0, ('Summary', 'Skill score ↑'), overall_scores)
 
-    # Friendly row-index labels shown in the table header. "Reviewed*" ties to the footnote
-    # explaining the manual code check.
+    # Friendly row-index labels shown in the table header.
     DISPLAY_INDEX_NAMES = {'model': 'Model', 'val_strategy': 'Val.',
-                           'institution': 'Institution', 'reviewed': 'Reviewed*'}
+                           'institution': 'Institution'}
     pivot_df.index = pivot_df.index.set_names(
         [DISPLAY_INDEX_NAMES.get(n, n) for n in pivot_df.index.names]
     )
@@ -635,13 +653,30 @@ def create_html_leaderboard(
     value_scale = 100 if target == 'ET' else 1
     value_decimals = 2
 
+    def _skill_cell(row_pos, row, val):
+        # The skill cell carries every per-shift score, the plain model name and the reviewed
+        # flag as data attributes, so the page can re-sort / swap the score per shift and build
+        # the leader cards without a rebuild. The baseline shows '-' (its score is trivially 0).
+        meta = row_meta[row_pos] if row_pos < len(row_meta) else {'model': '', 'reviewed': False}
+        attrs = f' data-ss-all="{val:.4f}"'
+        for shift, series in shift_scores.items():
+            sv = series.loc[row]
+            if pd.notna(sv):
+                attrs += f' data-ss-{html.escape(str(shift), quote=True)}="{sv:.4f}"'
+        attrs += f' data-model="{html.escape(str(meta["model"]), quote=True)}"'
+        if meta['reviewed']:
+            attrs += ' data-reviewed="1"'
+        if row in baseline_labels:
+            return f'<b class="ss" data-baseline="1"{attrs}>-</b>'
+        return f'<b class="ss"{attrs}>{val:.3f}</b>'
+
     for col in pivot_df.columns:
-        for row in pivot_df.index:
+        for row_pos, row in enumerate(pivot_df.index):
             val = pivot_df.loc[row, col]
             if pd.isna(val):
                 display_df.loc[row, col] = "-"
             elif col[0] == 'Summary':
-                display_df.loc[row, col] = "-" if row in baseline_labels else f"<b>{val:.3f}</b>"
+                display_df.loc[row, col] = _skill_cell(row_pos, row, val)
             elif display_mode == 'skill_score' and skill_scores_df is not None and col in skill_scores_df.columns:
                 ss = skill_scores_df.loc[row, col]
                 display_df.loc[row, col] = f"{ss:.2f}" if pd.notna(ss) else "-"
@@ -675,13 +710,8 @@ def create_html_leaderboard(
         {'selector': 'th.row_heading', 'props': [('background-color', '#ffffff'), ('text-align', 'left'), ('font-weight', 'bold')]},
         # Institution column (3rd row heading): normal weight, it's metadata not a headline.
         {'selector': 'th.row_heading.level2', 'props': [('font-weight', 'normal')]},
-        # Reviewed column (4th row heading): narrow, centered around the tick. Header stays bold
-        # (like Model / Validation); the cells (ticks) are normal weight.
-        {'selector': 'th.row_heading.level3',
-         'props': [('text-align', 'center'), ('font-weight', 'normal'), ('min-width', '20px'), ('white-space', 'nowrap')]},
-        {'selector': 'th.index_name.level3', 'props': [('text-align', 'center'), ('min-width', '20px')]},
-        # The footnote star in the "Reviewed*" header is not bold (only the word is).
-        {'selector': 'span.rev-star', 'props': [('font-weight', 'normal')]},
+        # The reviewed tick after a model name is not bold (only the name is).
+        {'selector': 'span.rev-tick', 'props': [('font-weight', 'normal')]},
         {'selector': 'th.index_name', 'props': [('vertical-align', 'bottom'), ('text-align', 'left'), ('font-weight', 'bold'), ('border-top', 'none')]},
         # Empty top-left corner (above Model/Validation/Institution/Reviewed): fully borderless, so
         # the row-info column lines start at the label row rather than running up through the corner.
@@ -697,6 +727,8 @@ def create_html_leaderboard(
         {'selector': 'td.col1, th.col1',
          'props': [('border-left', '2px solid #d3d3d3')]},
     ]
+    if not inline_styles:
+        table_styles = []
 
     def style_from_original(df_dummy):
         styles = pd.DataFrame('', index=pivot_df.index, columns=pivot_df.columns)
@@ -723,6 +755,9 @@ def create_html_leaderboard(
 
     table_html = styler.to_html()
     table_html = _merge_index_names_into_header(table_html)
+    # The 'Summary' group label over the skill-score column is an internal key only; the header
+    # cell stays (it carries the column divider) but renders empty.
+    table_html = table_html.replace('>Summary</th>', '></th>', 1)
 
     if return_html:
         return table_html

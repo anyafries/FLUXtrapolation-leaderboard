@@ -176,8 +176,9 @@ relative to the `lr` baseline (higher = better).
 - **Mark a submission as reviewed:** after manually checking a method's code (e.g. no test-set
   leakage), open its `submissions/{model_id}_val_{val_strategy}/metadata.yaml`, set `reviewed: true`,
   and rebuild (`python scripts/build_leaderboard.py`, or just let the next publish run). A ✓ then
-  appears in the leaderboard's **Reviewed** column. To un-review, set it back to `false`. The
-  submitter's declared `institution` is shown in the adjacent column (`null` renders as `-`).
+  appears after the model's name on the leaderboard (and only reviewed models qualify for the
+  top-3 cards). To un-review, set it back to `false`. The submitter's declared `institution` is
+  shown in the Institution column (`null` renders as `-`).
 - **Remove a submission:** `python scripts/cleanup_submission.py` (dry-run by default; clears R2,
   KV owner key, and the repo folder).
 - **Archive scored submissions (free R2):** run on the VM after a *"submission scored successfully"*
