@@ -11,6 +11,7 @@ utils/aggregation.py for recomputing metrics from raw predictions. Since
 submitters provide pre-computed metric CSVs, no recomputation is needed.
 """
 
+import hashlib
 import os
 import sys
 import pandas as pd
@@ -32,6 +33,16 @@ VALID_TARGETS = {'GPP', 'ET', 'NEE'}
 VALID_VAL_STRATEGIES = {'mean', 'max', 'discrepancy'}
 
 TAB_ORDER = ['ET', 'GPP', 'NEE']
+
+# Full flux names shown in the table headings, e.g. "Median RMSE - Evapotranspiration (ET)".
+TARGET_FULL_NAMES = {
+    'ET': 'Evapotranspiration',
+    'GPP': 'Gross primary production',
+    'NEE': 'Net ecosystem exchange',
+}
+
+# ET values are displayed scaled by 100 (see create_html_leaderboard); say so under the heading.
+HEADING_NOTES = {'ET': 'values scaled by 100'}
 
 DISPLAY_NAMES = {
     "time-split": "temporal",
@@ -153,9 +164,11 @@ def load_display_map():
     Returns, for each submission, the submitter-chosen labels plus the provenance/trust
     attributes the leaderboard renders as extra row-heading columns:
       {'model': display_name, 'val': val_strategy_display,
-       'institution': institution, 'reviewed': bool, 'is_baseline': bool}
+       'institution': institution, 'reviewed': bool, 'is_baseline': bool,
+       'code_url': code_url}
     Missing labels fall back to the raw id (abbreviated via VAL_ABBREV for the val strategy);
-    a missing institution stays None (renders '-').
+    a missing institution stays None (renders '-'). When code_url is set the model name is
+    rendered as a link to it (opens in a new tab).
     """
     submissions_dir = os.path.abspath(SUBMISSIONS_DIR)
     out = {}
@@ -181,8 +194,20 @@ def load_display_map():
             'institution': meta.get('institution'),
             'reviewed': bool(meta.get('reviewed', False)),
             'is_baseline': bool(meta.get('is_baseline', False)),
+            'code_url': meta.get('code_url') or None,
         }
     return out
+
+
+def _stylesheet_version():
+    """Short content hash of docs/style.css, used as a cache-busting query string on the
+    stylesheet link so browsers (and GitHub Pages' CDN) fetch fresh CSS after every change."""
+    css_path = os.path.join(DOCS_DIR, 'style.css')
+    try:
+        with open(css_path, 'rb') as f:
+            return hashlib.sha1(f.read()).hexdigest()[:8]
+    except OSError:
+        return '0'
 
 
 def build_tabbed_index(tab_panels):
@@ -209,14 +234,18 @@ def build_tabbed_index(tab_panels):
         )
         median_html = tab_panels[target]['median']
         q90_html = tab_panels[target]['q90']
+        full_name = TARGET_FULL_NAMES.get(target)
+        suffix = f' - {full_name} ({target})' if full_name else f' - {target}'
+        note = HEADING_NOTES.get(target)
+        note_html = f'<span class="heading-note">{note}</span>' if note else ''
         panels.append(
             f'    <div role="tabpanel" data-tab="{target}"{hidden_attr}>\n'
             f'      <div class="agg-panel" data-agg="q90">\n'
-            f'        <h2>90th-percentile RMSE</h2>\n'
+            f'        <h2>90th-percentile RMSE{suffix}{note_html}</h2>\n'
             f'        <div class="table-scroll">{q90_html}</div>\n'
             f'      </div>\n'
             f'      <div class="agg-panel" data-agg="median" hidden>\n'
-            f'        <h2>Median RMSE</h2>\n'
+            f'        <h2>Median RMSE{suffix}{note_html}</h2>\n'
             f'        <div class="table-scroll">{median_html}</div>\n'
             f'      </div>\n'
             f'    </div>'
@@ -224,6 +253,7 @@ def build_tabbed_index(tab_panels):
 
     buttons_html = '\n'.join(buttons)
     panels_html = '\n'.join(panels)
+    css_version = _stylesheet_version()
 
     return f"""\
 <!DOCTYPE html>
@@ -235,7 +265,7 @@ def build_tabbed_index(tab_panels):
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%A4%B4</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v={css_version}">
 </head>
 <body>
   <header class="site-header">

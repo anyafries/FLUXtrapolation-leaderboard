@@ -205,6 +205,17 @@ th.row_heading {
   font-weight: 600;
 }
 
+/* Model name -> code_url link (only rendered when the submission provided one) */
+th.row_heading a {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+th.row_heading a:hover {
+  color: var(--accent-text);
+  text-decoration: underline solid;
+}
+
 /* Group header row (level 0 column headings) */
 th.col_heading.level0 {
   background-color: #ececec;
@@ -359,6 +370,15 @@ thead tr > :nth-child(2) { z-index: 3; }
 [role="tabpanel"] h2 {
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
+}
+
+/* Small note under a table heading (e.g. "values scaled by 100" for ET) */
+.heading-note {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #555;
+  margin-top: 0.15rem;
 }
 
 /* ---------------------------------------------------------------- Submit page */

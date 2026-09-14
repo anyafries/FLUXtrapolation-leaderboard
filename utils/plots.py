@@ -4,6 +4,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
+import html
 import os
 import re
 import pandas as pd
@@ -560,6 +561,11 @@ def create_html_leaderboard(
     # model order stay keyed on the real model_id / val_strategy. index_display maps
     # (model_id, val_strategy) -> {'model', 'val', 'institution', 'reviewed', 'is_baseline'}.
     # Row-heading order becomes: Model | Validation | Institution | Reviewed.
+    # overall_scores is joined into the table by index later, so pin it to the pivot's row order
+    # now and relabel it in lockstep — after relabeling, the keys no longer match (display names
+    # or the code_url link differ from the raw model_id), and alignment would silently yield NaN.
+    if overall_scores is not None:
+        overall_scores = overall_scores.reindex(pivot_df.index)
     if index_display:
         def _attrs(key):
             mid = key[0] if isinstance(key, tuple) else key
@@ -574,10 +580,19 @@ def create_html_leaderboard(
             # ✓ = code has been reviewed by a maintainer; blank = not yet reviewed.
             return '✓' if disp.get('reviewed') else ''
 
+        def _model_label(mid, disp):
+            # Model name links to the submission's code_url (new tab) when one was provided.
+            name = disp.get('model') or mid
+            url = disp.get('code_url')
+            if not url:
+                return name
+            return (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+                    f'rel="noopener noreferrer">{name}</a>')
+
         new_index = []
         for key in pivot_df.index:
             mid, strat, disp = _attrs(key)
-            model_label = disp.get('model') or mid
+            model_label = _model_label(mid, disp)
             val_label = disp.get('val') or strat
             new_index.append((model_label, val_label,
                               _institution_label(disp), _reviewed_symbol(disp)))
@@ -585,6 +600,8 @@ def create_html_leaderboard(
             new_index, names=['model', 'val_strategy', 'institution', 'reviewed'])
         if skill_scores_df is not None:
             skill_scores_df.index = pivot_df.index
+        if overall_scores is not None:
+            overall_scores.index = pivot_df.index
 
     if settings_names is not None:
         renamed_cols = [(settings_names.get(s, s), sc) for s, sc in pivot_df.columns]
@@ -613,8 +630,10 @@ def create_html_leaderboard(
 
     display_df = pd.DataFrame(index=pivot_df.index, columns=pivot_df.columns)
 
-    # Fixed decimals: ET values are small (4), GPP/NEE larger (2).
-    value_decimals = 4 if target == 'ET' else 2
+    # ET values are small, so they are displayed scaled by 100 (the page heading says so);
+    # all fluxes then show 2 decimals. Colouring/skill scores use the unscaled pivot values.
+    value_scale = 100 if target == 'ET' else 1
+    value_decimals = 2
 
     for col in pivot_df.columns:
         for row in pivot_df.index:
@@ -627,7 +646,7 @@ def create_html_leaderboard(
                 ss = skill_scores_df.loc[row, col]
                 display_df.loc[row, col] = f"{ss:.2f}" if pd.notna(ss) else "-"
             else:
-                display_df.loc[row, col] = f"{val:.{value_decimals}f}"
+                display_df.loc[row, col] = f"{val * value_scale:.{value_decimals}f}"
 
     # --- 2. Styling ---
     table_styles = [

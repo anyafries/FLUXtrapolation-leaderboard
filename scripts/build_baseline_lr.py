@@ -149,6 +149,7 @@ def main():
         email=None,
         description="Trusted linear-regression baseline. Canonical ground-truth + index source "
                     "for scoring (see reference/truth_table.parquet).",
+        code_url="https://github.com/anyafries/FLUXtrapolation",
         is_baseline=True,
     )
     write_metadata(os.path.join(OUT_DIR, "metadata.yaml"), meta)
