@@ -2,7 +2,7 @@ model_id: coral
 display_name: coral
 email: null
 description: null
-code_url: null
+code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
 institution: null
 owner: c3d5d683a1faa3f1dd8db0823c661c0e94f5db6aa8c0165c55472b805fac6563

@@ -10,7 +10,7 @@ val_strategy: mean
 val_strategy_display: null
 submitted_at: '2026-07-22T12:18:13+00:00'
 is_baseline: false
-reviewed: false
+reviewed: true
 status: scored
 files:
 - filename: spatial-easy40_ET_mmd_val_mean_predictions.csv

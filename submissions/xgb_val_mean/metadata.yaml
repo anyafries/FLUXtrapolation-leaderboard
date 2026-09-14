@@ -2,7 +2,7 @@ model_id: xgb
 display_name: xgb
 email: null
 description: null
-code_url: null
+code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
 institution: null
 owner: 855ce88cacd091bbdc976be9eebc292705b9330209229a710f27ac279425d43a

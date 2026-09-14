@@ -3,7 +3,7 @@ display_name: lr
 email: null
 description: Trusted linear-regression baseline. Canonical ground-truth + index source
   for scoring (see reference/truth_table.parquet).
-code_url: null
+code_url: https://github.com/anyafries/FLUXtrapolation
 paper_url: null
 institution: null
 owner: maintainer
