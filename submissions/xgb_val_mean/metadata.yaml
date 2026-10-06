@@ -1,5 +1,5 @@
 model_id: xgb
-display_name: xgb
+display_name: XGBoost
 email: null
 description: null
 code_url: https://github.com/anyafries/FLUXtrapolation

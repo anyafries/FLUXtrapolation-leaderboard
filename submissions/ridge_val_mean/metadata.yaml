@@ -1,5 +1,5 @@
 model_id: ridge
-display_name: ridge
+display_name: Ridge reg.
 email: null
 description: null
 code_url: https://github.com/anyafries/FLUXtrapolation

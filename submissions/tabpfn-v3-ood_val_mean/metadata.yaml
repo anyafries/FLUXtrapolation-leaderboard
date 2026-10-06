@@ -10,7 +10,7 @@ val_strategy: mean
 val_strategy_display: null
 submitted_at: '2026-10-06T07:30:49+00:00'
 is_baseline: false
-reviewed: false
+reviewed: true
 status: scored
 files:
 - filename: spatial-easy40_ET_tabpfn-v3-ood_val_mean_predictions.csv
