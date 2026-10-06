@@ -1,5 +1,5 @@
 model_id: lr
-display_name: Linear Reg.
+display_name: Linear reg.
 email: null
 description: Trusted linear-regression baseline. Canonical ground-truth + index source
   for scoring (see reference/truth_table.parquet).
